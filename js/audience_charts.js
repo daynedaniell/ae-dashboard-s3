@@ -363,7 +363,102 @@ var legend = d3.select("body").append("svg")
 /*******************************************************************************
 *** HORIZONTAL BAR CHART *******************************************************
 *******************************************************************************/
+function hBarChart(attrName, indexDs) {
+  let innerWidth = 610;
 
+	let basics = barChartSetup(innerWidth);
+	let margin = basics.margin,
+      width = basics.width,
+      height = basics.height,
+  		barPadding = basics.barPadding;
+
+  let firstDatasetBarChart = indexDs;
+  //let maxAttrLength = d3.max(firstDatasetBarChart, function(d) { return d.attrib_value.length; }) * 9;
+  let maxAttrLength = width / 2;
+
+	let yScale = d3.scaleLinear()
+                 .domain([0, firstDatasetBarChart.length])
+					       .range([0, height]);
+
+	let xScale = d3.scaleLinear()
+		             .domain([0, d3.max(firstDatasetBarChart, function(d) { return d.target_pct; })])
+		             .range([0, width-maxAttrLength]);
+
+	/* Create SVG element */
+  let svg = d3.select("#"+attrName+"Chart")
+              .append("svg")
+		          .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+              .attr("id", attrName+"ChartPlot");
+
+	let plot = svg.append("g")
+		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  /* Attach index data and add the chart elems */
+	plot.selectAll("rect")
+      .data(firstDatasetBarChart)
+		  .enter()
+		  .append("rect")
+			.attr("x", function(d) {
+           return maxAttrLength;
+			})
+		  .attr("height", height / firstDatasetBarChart.length - barPadding)
+			.attr("y", function(d, i) {
+			     return yScale(i);
+			})
+			.attr("width", function(d) {
+			    return xScale(d.target_pct);
+			})
+			.attr("fill", function(d) {
+          return colorByIndexBar(d.index);
+      })
+      .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+      .on("click", up);
+
+
+	/* Add y labels to plot */
+	plot.selectAll("text")
+	    .data(firstDatasetBarChart)
+	    .enter()
+	    .append("text")
+	    .text(function(d) {
+			     return formatAsInteger(d3.format("d")(d.index));
+	    })
+	    .attr("text-anchor", "middle")
+	    /* Set y position to the top edge of each bar plus half the bar width */
+	    .attr("y", function(d, i) {
+			     return (i * (height / firstDatasetBarChart.length)) + ((height / firstDatasetBarChart.length - barPadding) / 2);
+	    })
+	    .attr("x", function(d) {
+			     return maxAttrLength + xScale(d.target_pct) - 20;
+	    })
+	    .attr("class", "xAxis")
+	    .attr("font-family", "sans-serif")
+	    .attr("font-size", "11px")
+	    .attr("fill", "white");
+
+	/* Add y labels to chart */
+	let yLabels = svg.append("g")
+		               .attr("transform", "translate(" + margin.left + "," + (margin.top)  + ")");
+
+	yLabels.selectAll("text.yAxis")
+		     .data(firstDatasetBarChart)
+		     .enter()
+		     .append("text")
+		     .text(function(d) { return d.attrib_value;})
+		     .attr("text-anchor", "start")
+			   /* Set y position to the top edge of each bar plus half the bar width */
+				 .attr("y", function(d, i) {
+				       return (i * (height / firstDatasetBarChart.length)) + ((height / firstDatasetBarChart.length - barPadding) / 2);
+				 })
+		     .attr("x", 0)
+		     .attr("class", "yAxis");
+
+  function up(d, i) {
+	   /* update all charts when user selects a single bar in this chart */
+     updateCharts(attrName, d.attrib_value);
+	}
+}
 
 
 
@@ -378,21 +473,15 @@ var legend = d3.select("body").append("svg")
 function updateCharts(attrName, attrValue) {
 //  console.log(attrName);
 //  console.log(attrValue);
-
+  let attrIndex = [];
   let indexCats = makeIndexCats();
-  let ageIndexCats = indexCats.age,
-      genderIndexCats = indexCats.gender,
-      ethnicityIndexCats = indexCats.ethnicity,
-      maritalIndexCats = indexCats.marital,
-      childrenIndexCats = indexCats.children,
-      educationIndexCats = indexCats.education,
-      incomeIndexCats = indexCats.income,
-      stateIndexCats = indexCats.state;
 
   let demogAttributesList = Object.keys(indexCats);
+  console.log(demogAttributesList);
   let barChartAttributesList = ["age", "ethnicity", "children", "education", "income"]
   let pieChartAttributesList = ["gender", "marital"]
   let mapChartAttributesList = ["state"]
+  let hBarChartAttributesList = ["interests", "retail"]
 
   demogAttributesList.forEach(function(demogAttributeListName) {
       if (attrName != demogAttributeListName) {
@@ -403,16 +492,60 @@ function updateCharts(attrName, attrValue) {
             d3.selectAll("#"+demogAttributeListName+"Chart svg .slice path").style("opacity", 1);
           } else if ( mapChartAttributesList.includes(demogAttributeListName) ) {
             d3.selectAll("#"+demogAttributeListName+"Chart svg path").style("opacity", 1);
+          } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+            d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
           }
-          attrIndex = indexAttr(demogAttributeListName,
-                                indexCats[demogAttributeListName],
-                                filterAttr(targetDemog, attrName, attrValue),
-                                randomDemog);
+
+          if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+            let filteredData = [];
+            let filteredIds = [];
+            if (attrName == "interests"){
+              filteredIds = filterAttr(targetInterests, attrName, attrValue).map(function(d) { return d.temp_id; });
+            } else if (attrName == "retail") {
+              filteredIds = filterAttr(targetRetail, attrName, attrValue).map(function(d) { return d.temp_id; });
+            } else {
+              filteredIds = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
+            }
+
+            if (demogAttributeListName == "interests"){
+              filteredData = targetInterests.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
+              attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomInterests);
+            } else {
+              filteredData = targetRetail.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
+              attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomRetail);
+            }
+            attrIndexTop = indexInterestsRetailTop5(attrIndex);
+          } else {
+            let filteredData = [];
+            let filteredIds = [];
+            if (attrName == "interests"){
+              filteredIds = filterAttr(targetInterests, attrName, attrValue).map(function(d) { return d.temp_id; });
+              filteredData = targetDemog.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
+            } else if (attrName == "retail") {
+              filteredIds = filterAttr(targetRetail, attrName, attrValue).map(function(d) { return d.temp_id; });
+              filteredData = targetDemog.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
+            } else {
+              filteredData = filterAttr(targetDemog, attrName, attrValue);
+            }
+            attrIndex = indexAttr(demogAttributeListName,
+                                  indexCats[demogAttributeListName],
+                                  filteredData,
+                                  randomDemog);
+          }
       } else {
-          attrIndex = indexAttr(demogAttributeListName,
-                                indexCats[demogAttributeListName],
-                                targetDemog,
-                                randomDemog);
+          if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+            if (demogAttributeListName == "interests"){
+              attrIndex = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
+            } else {
+              attrIndex = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
+            }
+            attrIndexTop = indexInterestsRetailTop5(attrIndex);
+          } else {
+            attrIndex = indexAttr(demogAttributeListName,
+                                  indexCats[demogAttributeListName],
+                                  targetDemog,
+                                  randomDemog);
+          }
       }
 
 
@@ -477,17 +610,14 @@ function updateCharts(attrName, attrValue) {
               })
               .attr("class", "yAxis");
       } else if ( pieChartAttributesList.includes(demogAttributeListName) ) {
-          // TODO: update pie chart
           d3.select("#"+demogAttributeListName+"Chart svg").remove();
           pieChart(demogAttributeListName, attrIndex);
-
-
-
-
       } else if ( mapChartAttributesList.includes(demogAttributeListName) ) {
-          // TODO: update map chart
           d3.select("#"+demogAttributeListName+"Chart svg").remove();
           mapChart(demogAttributeListName, attrIndex);
+      } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+          d3.select("#"+demogAttributeListName+"Chart svg").remove();
+          hBarChart(demogAttributeListName, attrIndexTop);
       }
 
   });
@@ -495,14 +625,13 @@ function updateCharts(attrName, attrValue) {
 
 
   /* Make the elems in selected chart opaque, except for the clicked chart elem */
-  if ( barChartAttributesList.includes(attrName) ) {
+  if ( barChartAttributesList.includes(attrName) | hBarChartAttributesList.includes(attrName) ) {
       d3.selectAll("#" + attrName + "Chart svg rect").style("opacity", 0.25);
       d3.selectAll("#" + attrName + "Chart svg [attrib-value='" + attrValue + "']").style("opacity", 1);
   } else if ( pieChartAttributesList.includes(attrName) ) {
       d3.selectAll("#" + attrName + "Chart svg .slice path").style("opacity", 0.25);
       d3.selectAll("#" + attrName + "Chart svg .slice [attrib-value=" + attrValue + "]").style("opacity", 1);
   } else if ( mapChartAttributesList.includes(attrName) ) {
-      // TODO: make the map opaque
       d3.selectAll("#" + attrName + "Chart svg path").style("opacity", 0.25);
       d3.selectAll("#" + attrName + "Chart svg [attrib-value=" + attrValue + "]").style("opacity", 1);
   }

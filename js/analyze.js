@@ -68,6 +68,7 @@ console.log(retailIndexTop0);
 
 
 
+
 barChart("age", ageIndex0);
 barChart("ethnicity", ethnicityIndex0);
 barChart("children", childrenIndex0);
@@ -79,4 +80,6 @@ pieChart("marital", maritalIndex0);
 
 mapChart("state", stateIndex0);
 
+hBarChart("interests", interestsIndexTop0);
+hBarChart("retail", retailIndexTop0);
 };
