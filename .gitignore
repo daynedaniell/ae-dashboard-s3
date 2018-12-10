@@ -1,0 +1,4 @@
+.ipynb_checkpoints/*
+py/*
+data/*
+*_old.*
