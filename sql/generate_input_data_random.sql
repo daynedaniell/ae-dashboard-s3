@@ -1,4 +1,4 @@
-/*** Random audience: 20K ***/
+/*** Random audience ***/
 
 -- ids crosswalk
 create table #random_aud_ids_xwalk (
