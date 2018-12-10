@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>AE Dashboard</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <link rel= "stylesheet" type= "text/css" href= "styles/custom.css">
+
+
+</head>
+<body>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">AE Insights</a>
+    </nav>
+
+
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-sm-1">
+            <ul class="nav">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">
+                  <span data-feather="home"></span>
+                  Dashboard <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file"></span>
+                  Interests
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="shopping-cart"></span>
+                  Retail
+                </a>
+              </li>
+            </ul>
+        </nav>
+
+        <main role="main" class="col-sm-10">
+
+          <div class="row audience-header">
+            <div class="col-sm-12">
+                <div class="audience-title">
+                    <h1>New Car Buyers</h1>
+                </div>
+                <!--
+                <div class="well">
+                    <div id="waveChart"></div>
+                </div>
+              -->
+            </div>
+        </div>
+          <div class="row">
+            <div class="col-sm-4">
+                <div class="well tile">
+                    <div class="tile-header">
+                        <h4>Age</h4>
+                    </div>
+                    <div id="ageChart"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="well tile">
+                    <div class="tile-header">
+                        <h4>Gender</h4>
+                    </div>
+                    <div id="genderChart"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="well tile">
+                    <div class="tile-header">
+                        <h4>Ethnicity</h4>
+                    </div>
+                    <div id="ethnicityChart"></div>
+                </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-4">
+                <div class="well tile">
+                    <div class="tile-header">
+                        <h4>Marital status</h4>
+                    </div>
+                    <div id="maritalChart"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="well tile">
+                    <div class="tile-header">
+                        <h4>Number of children</h4>
+                    </div>
+                    <div id="childrenChart"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="well tile">
+                    <div class="tile-header">
+                        <h4>Education</h4>
+                    </div>
+                    <div id="educationChart"></div>
+                </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="well tile">
+                  <div class="tile-header">
+                      <h4>Income</h4>
+                  </div>
+                  <div id="incomeChart"></div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="well tile">
+                  <div class="tile-header">
+                      <h4>Location</h4>
+                  </div>
+                  <div id="stateChart"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="well tile">
+                  <div class="tile-header">
+                      <h4>Interests</h4>
+                  </div>
+                  <div id="interestsChart"></div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="well tile">
+                  <div class="tile-header">
+                      <h4>Retail</h4>
+                  </div>
+                  <div id="retailChart"></div>
+              </div>
+            </div>
+          </div>
+
+
+        </main>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+    <!-- jquery js -->
+    <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+    <!-- Bootstrap compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <!-- Data science viz functions -->
+    <script src="js/audience_data_processing.js"></script>
+    <script src="js/audience_charts.js"></script>
+    <script src="js/analyze.js"></script>
+
+
+    <script>
+        async function f() {
+            // setting these as globals for now
+            targetDemog = await d3.tsv("data/demographics_target_1.tsv");
+            targetInterests = await d3.tsv("data/interests_target_1.tsv");
+            targetRetail = await d3.tsv("data/retail_target_1.tsv");
+
+            randomDemog = await d3.tsv("data/demographics_random.tsv");
+            randomInterests = await d3.tsv("data/interests_random.tsv");
+            randomRetail = await d3.tsv("data/retail_random.tsv");
+
+            statesPaths = await d3.json("js/us-states.json");
+
+            analyze();
+        }
+        f();
+
+    </script>
+
+</body>
+</html>

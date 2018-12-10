@@ -1,0 +1,48 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: white;
+    background: #252937;
+}
+body a{
+    color: white;
+}
+
+main {
+    background: white;
+    color: #252937;
+}
+
+.well {
+    border-radius: 6px;
+    box-shadow: 0 0 2px 0 rgba(32, 32, 32, 0.12);
+    background-color: #fafafa;
+    border: #fafafa;
+}
+
+.tile {
+    height: 400px;
+    padding-top: 1px;
+}
+
+.tile-header h4 {
+    margin-bottom: 0;
+}
+
+.selected-tile {
+    box-shadow: 0px 0px 10px 2px rgb(178, 183, 195);
+//    border: 4px solid #aeb4c3;
+}
+
+
+/* temp fixes */
+#genderChart svg {
+    margin-left: 42px;
+    margin-top: 32px;
+}
+#maritalChart svg {
+    margin-left: 42px;
+    margin-top: 32px;
+}
+#incomeChart svg g text {
+    font-size: 12px;
+}
