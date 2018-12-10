@@ -176,7 +176,9 @@ function makeIndexCats(){
     children : childrenIndexCats,
     education : educationIndexCats,
     income : incomeIndexCats,
-    state : stateIndexCats
+    state : stateIndexCats,
+    interests: [],
+    retail: []
 	};
 }
 
