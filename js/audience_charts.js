@@ -111,7 +111,10 @@ function barChart(attrName, indexDs) {
 			.attr("fill", function(d) {
           return colorByIndexBar(d.index);
       })
+      .attr("cursor", "pointer")
       .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+      .attr("target-pct", function(d) { return d.target_pct; })
+      .attr("index", function(d) { return d.index; })
       .on("click", up);
 
 
@@ -155,7 +158,13 @@ function barChart(attrName, indexDs) {
 
   function up(d, i) {
 	   /* update all charts when user selects a single bar in this chart */
-     updateCharts(attrName, d.attrib_value);
+     /* if clicking on already selected item, then reset the charts */
+     isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
+     if (isSelected){
+       drawCharts();
+     } else {
+       updateCharts(attrName, d.attrib_value);
+     }
 	}
 }
 
@@ -208,12 +217,13 @@ function pieChart(attrName, indexDs){
                 .enter()              /* create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array */
                 .append("svg:g")      /* create a group to hold each slice (we will have a <path> and a <text> element associated with each slice) */
                 .attr("class", "slice")
-                .on("mouseover", mouseover)
-                .on("mouseout", mouseout)
                 .on("click", up);
 
   arcs.append("svg:path")
+      .attr("cursor", "pointer")
       .attr("attrib-value", function(d) { return d.data.attrib_value; })    /* storing the Acxiom attrib value on the element */
+      .attr("target-pct", function(d) { return d.data.target_pct; })
+      .attr("index", function(d) { return d.data.index; })
       .attr("fill", function(d) {
           return colorByIndexPie(d.data.index, indexDs, d.data.attrib_value);
       })
@@ -232,24 +242,17 @@ function pieChart(attrName, indexDs){
 	    .attr("transform", function(d) { return "translate(" + arcFinal.centroid(d) + ")"; })
 	    .text(function(d) { return d.data.attrib_value; });
 
-  function mouseover() {
-      d3.select(this).select("path").transition()
-        .duration(750)
-     // .attr("d", arcFinal3)
-        ;
-  }
-
-  function mouseout() {
-      d3.select(this).select("path").transition()
-        .duration(750)
-     // .attr("d", arcFinal)
-        ;
-  }
-
   function up(d, i) {
       /* update all charts when user selects piece of the pie chart */
-      updateCharts(attrName, d.data.attrib_value);
+      /* if clicking on already selected item, then reset the charts */
+      isSelected = d3.select(".selected-tile #"+attrName+"Chart path[attrib-value="+d.data.attrib_value+"][selected='yes']")
+                     ._groups[0][0];
+      if (isSelected){
+        drawCharts();
+      } else {
+        updateCharts(attrName, d.data.attrib_value);
       }
+  }
 }
 
 
@@ -271,27 +274,13 @@ function mapChart(attrName, indexDs) {
   let path = d3.geoPath()               // path generator that will convert GeoJSON to SVG paths
 		  	       .projection(projection);  // tell path generator to use albersUsa projection
 
-  // Define linear scale for output
-  let color = d3.scaleLinear()
-			          .range(["rgb(213,222,217)","rgb(69,173,168)","rgb(84,36,55)"]);
-
-  let legendText = ["High index", "Low index", "Target %"];
-
   //Create SVG element and append map to the SVG
   let svg = d3.select("#"+attrName+"Chart")
 			        .append("svg")
 			        .attr("width", width)
 			        .attr("height", height);
 
-  // Append Div for tooltip to SVG
-  let div = d3.select("#"+attrName+"Chart")
-		          .append("div")
-    		      .attr("class", "tooltip")
-    		      .style("opacity", 0);
-
-
   let data = indexDs;
-  color.domain([0,1,2]); // setting the range of the input data
 
   data.forEach(function(catEntryIndex) {
       // Find the corresponding state inside the GeoJSON
@@ -320,11 +309,10 @@ function mapChart(attrName, indexDs) {
   	.style("fill", function(d) {
         return colorByIndexBar(d.properties.index);
     })
-    //.style("opacity", function(d) {
-    //    return d.properties.target_pct / 100.0;
-    //})
     .attr("attrib-value", function(d) { return d.properties.code; })    /* storing the Acxiom attrib value on the element */
-    .on("click", up);
+    .attr("target-pct", function(d) { return d.properties.target_pct; })
+    .attr("index", function(d) { return d.properties.index; })
+    ;
 
 /*
 // Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
@@ -351,12 +339,6 @@ var legend = d3.select("body").append("svg")
       	  .text(function(d) { return d; });
 	});
 */
-
-  function up(d, i) {
-      /* update all charts when user selects piece of the map chart */
-      updateCharts(attrName, d.properties.code);
-      }
-
 };
 
 
@@ -413,7 +395,10 @@ function hBarChart(attrName, indexDs) {
           return colorByIndexBar(d.index);
       })
       .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-      .on("click", up);
+      .attr("attrib-category", function(d) { return d.category; })
+      .attr("target-pct", function(d) { return d.target_pct; })
+      .attr("index", function(d) { return d.index; })
+      ;
 
 
 	/* Add y labels to plot */
@@ -453,16 +438,47 @@ function hBarChart(attrName, indexDs) {
 				 })
 		     .attr("x", 0)
 		     .attr("class", "yAxis");
-
-  function up(d, i) {
-	   /* update all charts when user selects a single bar in this chart */
-     updateCharts(attrName, d.attrib_value);
-	}
 }
 
 
 
+/*******************************************************************************
+*** DRAW ALL CHARTS **********************************************************
+*******************************************************************************/
+function drawCharts() {
 
+  let indexCats = makeIndexCats();
+  let demogAttributesList = Object.keys(indexCats);
+
+  demogAttributesList.forEach(function(demogAttributeListName) {
+    d3.select("#"+demogAttributeListName+"Chart svg").remove();
+  });
+
+  let ageIndex0 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
+  let genderIndex0 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
+  let ethnicityIndex0 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
+  let maritalIndex0 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
+  let childrenIndex0 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
+  let educationIndex0 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
+  let incomeIndex0 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
+  let stateIndex0 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
+  let interestsIndex0 = indexInterestsRetail("interests", targetInterests, randomInterests);
+  let interestsIndexTop0 = indexInterestsRetailTop5(interestsIndex0);
+  let retailIndex0 = indexInterestsRetail("retail", targetRetail, randomRetail);
+  let retailIndexTop0 = indexInterestsRetailTop5(retailIndex0);
+
+  barChart("age", ageIndex0);
+  barChart("ethnicity", ethnicityIndex0);
+  barChart("children", childrenIndex0);
+  barChart("education", educationIndex0);
+  barChart("income", incomeIndex0);
+  pieChart("gender", genderIndex0);
+  pieChart("marital", maritalIndex0);
+  mapChart("state", stateIndex0);
+  hBarChart("interests", interestsIndexTop0);
+  hBarChart("retail", retailIndexTop0);
+
+}
 
 
 /*******************************************************************************
@@ -477,7 +493,6 @@ function updateCharts(attrName, attrValue) {
   let indexCats = makeIndexCats();
 
   let demogAttributesList = Object.keys(indexCats);
-  console.log(demogAttributesList);
   let barChartAttributesList = ["age", "ethnicity", "children", "education", "income"]
   let pieChartAttributesList = ["gender", "marital"]
   let mapChartAttributesList = ["state"]
@@ -498,35 +513,18 @@ function updateCharts(attrName, attrValue) {
 
           if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
             let filteredData = [];
-            let filteredIds = [];
-            if (attrName == "interests"){
-              filteredIds = filterAttr(targetInterests, attrName, attrValue).map(function(d) { return d.temp_id; });
-            } else if (attrName == "retail") {
-              filteredIds = filterAttr(targetRetail, attrName, attrValue).map(function(d) { return d.temp_id; });
-            } else {
-              filteredIds = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
-            }
+            let filteredIds = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
 
             if (demogAttributeListName == "interests"){
               filteredData = targetInterests.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomInterests);
-            } else {
+            } else if (demogAttributeListName == "retail"){
               filteredData = targetRetail.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomRetail);
             }
             attrIndexTop = indexInterestsRetailTop5(attrIndex);
           } else {
-            let filteredData = [];
-            let filteredIds = [];
-            if (attrName == "interests"){
-              filteredIds = filterAttr(targetInterests, attrName, attrValue).map(function(d) { return d.temp_id; });
-              filteredData = targetDemog.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
-            } else if (attrName == "retail") {
-              filteredIds = filterAttr(targetRetail, attrName, attrValue).map(function(d) { return d.temp_id; });
-              filteredData = targetDemog.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
-            } else {
-              filteredData = filterAttr(targetDemog, attrName, attrValue);
-            }
+            let filteredData = filterAttr(targetDemog, attrName, attrValue);
             attrIndex = indexAttr(demogAttributeListName,
                                   indexCats[demogAttributeListName],
                                   filteredData,
@@ -536,7 +534,7 @@ function updateCharts(attrName, attrValue) {
           if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
             if (demogAttributeListName == "interests"){
               attrIndex = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
-            } else {
+            } else if (demogAttributeListName == "retail"){
               attrIndex = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
             }
             attrIndexTop = indexInterestsRetailTop5(attrIndex);
@@ -589,6 +587,10 @@ function updateCharts(attrName, attrValue) {
               .attr("height", function(d) {
                 return height-yScale(d.target_pct);
               })
+              .attr("cursor", "pointer")
+              .attr("attrib-value", function(d) { return d.attrib_value; })    /* updating the Acxiom attrib value on the element */
+              .attr("target-pct", function(d) { return d.target_pct; })
+              .attr("index", function(d) { return d.index; })
               .attr("fill", function(d) {
                 return colorByIndexBar(d.index);
               });
@@ -626,21 +628,27 @@ function updateCharts(attrName, attrValue) {
 
   /* Make the elems in selected chart opaque, except for the clicked chart elem */
   if ( barChartAttributesList.includes(attrName) | hBarChartAttributesList.includes(attrName) ) {
-      d3.selectAll("#" + attrName + "Chart svg rect").style("opacity", 0.25);
-      d3.selectAll("#" + attrName + "Chart svg [attrib-value='" + attrValue + "']").style("opacity", 1);
+      d3.selectAll("#" + attrName + "Chart svg rect")
+        .style("opacity", 0.25)
+        .attr("selected", "no")
+        ;
+      d3.selectAll("#" + attrName + "Chart svg [attrib-value='" + attrValue + "']")
+        .style("opacity", 1)
+        .attr("selected", "yes")
+        ;
   } else if ( pieChartAttributesList.includes(attrName) ) {
-      d3.selectAll("#" + attrName + "Chart svg .slice path").style("opacity", 0.25);
-      d3.selectAll("#" + attrName + "Chart svg .slice [attrib-value=" + attrValue + "]").style("opacity", 1);
-  } else if ( mapChartAttributesList.includes(attrName) ) {
-      d3.selectAll("#" + attrName + "Chart svg path").style("opacity", 0.25);
-      d3.selectAll("#" + attrName + "Chart svg [attrib-value=" + attrValue + "]").style("opacity", 1);
+      d3.selectAll("#" + attrName + "Chart svg .slice path")
+        .style("opacity", 0.25)
+        .attr("selected", "no")
+        ;
+      d3.selectAll("#" + attrName + "Chart svg .slice [attrib-value=" + attrValue + "]")
+        .style("opacity", 1)
+        .attr("selected", "yes")
+        ;
   }
 
   /* Highlight the selected tile */
   $( ".tile" ).removeClass("selected-tile");
   $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
-
-
-
 
 }
