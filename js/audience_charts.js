@@ -258,7 +258,7 @@ function pieChart(attrName, indexDs){
       })
       .attr("d", arc)     /* this creates the actual SVG path using the associated data (pie) with the arc drawing function */
       .append("svg:title") /* mouseover title showing the figures */
-      .text(function(d) { return d.data.attrib_value + ": " + formatAsPercentage(d.data.target_pct); });
+      ;
 
   d3.selectAll("g.slice").selectAll("path").attr("d", arcFinal );
 
