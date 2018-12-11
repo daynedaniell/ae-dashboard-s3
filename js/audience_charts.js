@@ -158,7 +158,13 @@ function barChart(attrName, indexDs) {
 
   function up(d, i) {
 	   /* update all charts when user selects a single bar in this chart */
-     updateCharts(attrName, d.attrib_value);
+     /* if clicking on already selected item, then reset the charts */
+     isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
+     if (isSelected){
+       drawCharts();
+     } else {
+       updateCharts(attrName, d.attrib_value);
+     }
 	}
 }
 
@@ -238,8 +244,15 @@ function pieChart(attrName, indexDs){
 
   function up(d, i) {
       /* update all charts when user selects piece of the pie chart */
-      updateCharts(attrName, d.data.attrib_value);
+      /* if clicking on already selected item, then reset the charts */
+      isSelected = d3.select(".selected-tile #"+attrName+"Chart path[attrib-value="+d.data.attrib_value+"][selected='yes']")
+                     ._groups[0][0];
+      if (isSelected){
+        drawCharts();
+      } else {
+        updateCharts(attrName, d.data.attrib_value);
       }
+  }
 }
 
 
@@ -429,7 +442,43 @@ function hBarChart(attrName, indexDs) {
 
 
 
+/*******************************************************************************
+*** DRAW ALL CHARTS **********************************************************
+*******************************************************************************/
+function drawCharts() {
 
+  let indexCats = makeIndexCats();
+  let demogAttributesList = Object.keys(indexCats);
+
+  demogAttributesList.forEach(function(demogAttributeListName) {
+    d3.select("#"+demogAttributeListName+"Chart svg").remove();
+  });
+
+  let ageIndex0 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
+  let genderIndex0 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
+  let ethnicityIndex0 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
+  let maritalIndex0 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
+  let childrenIndex0 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
+  let educationIndex0 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
+  let incomeIndex0 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
+  let stateIndex0 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
+  let interestsIndex0 = indexInterestsRetail("interests", targetInterests, randomInterests);
+  let interestsIndexTop0 = indexInterestsRetailTop5(interestsIndex0);
+  let retailIndex0 = indexInterestsRetail("retail", targetRetail, randomRetail);
+  let retailIndexTop0 = indexInterestsRetailTop5(retailIndex0);
+
+  barChart("age", ageIndex0);
+  barChart("ethnicity", ethnicityIndex0);
+  barChart("children", childrenIndex0);
+  barChart("education", educationIndex0);
+  barChart("income", incomeIndex0);
+  pieChart("gender", genderIndex0);
+  pieChart("marital", maritalIndex0);
+  mapChart("state", stateIndex0);
+  hBarChart("interests", interestsIndexTop0);
+  hBarChart("retail", retailIndexTop0);
+
+}
 
 
 /*******************************************************************************
@@ -444,7 +493,6 @@ function updateCharts(attrName, attrValue) {
   let indexCats = makeIndexCats();
 
   let demogAttributesList = Object.keys(indexCats);
-  console.log(demogAttributesList);
   let barChartAttributesList = ["age", "ethnicity", "children", "education", "income"]
   let pieChartAttributesList = ["gender", "marital"]
   let mapChartAttributesList = ["state"]
@@ -580,21 +628,27 @@ function updateCharts(attrName, attrValue) {
 
   /* Make the elems in selected chart opaque, except for the clicked chart elem */
   if ( barChartAttributesList.includes(attrName) | hBarChartAttributesList.includes(attrName) ) {
-      d3.selectAll("#" + attrName + "Chart svg rect").style("opacity", 0.25);
-      d3.selectAll("#" + attrName + "Chart svg [attrib-value='" + attrValue + "']").style("opacity", 1);
+      d3.selectAll("#" + attrName + "Chart svg rect")
+        .style("opacity", 0.25)
+        .attr("selected", "no")
+        ;
+      d3.selectAll("#" + attrName + "Chart svg [attrib-value='" + attrValue + "']")
+        .style("opacity", 1)
+        .attr("selected", "yes")
+        ;
   } else if ( pieChartAttributesList.includes(attrName) ) {
-      d3.selectAll("#" + attrName + "Chart svg .slice path").style("opacity", 0.25);
-      d3.selectAll("#" + attrName + "Chart svg .slice [attrib-value=" + attrValue + "]").style("opacity", 1);
-  } else if ( mapChartAttributesList.includes(attrName) ) {
-      d3.selectAll("#" + attrName + "Chart svg path").style("opacity", 0.25);
-      d3.selectAll("#" + attrName + "Chart svg [attrib-value=" + attrValue + "]").style("opacity", 1);
+      d3.selectAll("#" + attrName + "Chart svg .slice path")
+        .style("opacity", 0.25)
+        .attr("selected", "no")
+        ;
+      d3.selectAll("#" + attrName + "Chart svg .slice [attrib-value=" + attrValue + "]")
+        .style("opacity", 1)
+        .attr("selected", "yes")
+        ;
   }
 
   /* Highlight the selected tile */
   $( ".tile" ).removeClass("selected-tile");
   $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
-
-
-
 
 }
