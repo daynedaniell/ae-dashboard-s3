@@ -359,12 +359,9 @@ function mapChart(attrName, indexDs) {
         return colorByIndexBar(d.properties.index);
     })
     .attr("attrib-value", function(d) { return d.properties.code; })    /* storing the Acxiom attrib value on the element */
-
     .on("mouseover", mouseover)
     .on("mouseout", mouseout)
     .on("mousemove", mouseover)
-    .on("click", up)
-
     .attr("target-pct", function(d) { return d.properties.target_pct; })
     .attr("index", function(d) { return d.properties.index; })
     ;
@@ -396,12 +393,6 @@ var legend = d3.select("body").append("svg")
 	});
 */
 
-
-  function up(d, i) {
-      /* update all charts when user selects piece of the map chart */
-      updateCharts(attrName, d.properties.code);
-      }
-
   function mouseover(d) {
     tooltip.transition()
         .duration(200)
@@ -414,7 +405,6 @@ var legend = d3.select("body").append("svg")
   function mouseout() {
       tooltip.transition(300).style('opacity', 0);
   }
-
 
 };
 
@@ -472,17 +462,13 @@ function hBarChart(attrName, indexDs) {
           return colorByIndexBar(d.index);
       })
       .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-
       .on("mouseover", mouseover)
       .on("mouseout", mouseout)
       .on("mousemove", mouseover)
-      .on("click", up)
-
       .attr("attrib-category", function(d) { return d.category; })
       .attr("target-pct", function(d) { return d.target_pct; })
       .attr("index", function(d) { return d.index; })
       ;
-
 
 
 	/* Add y labels to plot */
@@ -524,11 +510,6 @@ function hBarChart(attrName, indexDs) {
 		     .attr("class", "yAxis");
 
 
-  function up(d, i) {
-	   /* update all charts when user selects a single bar in this chart */
-     updateCharts(attrName, d.attrib_value);
-	}
-
   function mouseover(d) {
     tooltip.transition()
         .duration(200)
@@ -547,7 +528,7 @@ function hBarChart(attrName, indexDs) {
 
 
 /*******************************************************************************
-*** DRAW ALL CHARTS **********************************************************
+*** DRAW ALL CHARTS ************************************************************
 *******************************************************************************/
 function drawCharts() {
 
