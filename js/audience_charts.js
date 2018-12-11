@@ -111,7 +111,10 @@ function barChart(attrName, indexDs) {
 			.attr("fill", function(d) {
           return colorByIndexBar(d.index);
       })
+      .attr("cursor", "pointer")
       .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+      .attr("target-pct", function(d) { return d.target_pct; })
+      .attr("index", function(d) { return d.index; })
       .on("click", up);
 
 
@@ -208,12 +211,13 @@ function pieChart(attrName, indexDs){
                 .enter()              /* create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array */
                 .append("svg:g")      /* create a group to hold each slice (we will have a <path> and a <text> element associated with each slice) */
                 .attr("class", "slice")
-                .on("mouseover", mouseover)
-                .on("mouseout", mouseout)
                 .on("click", up);
 
   arcs.append("svg:path")
+      .attr("cursor", "pointer")
       .attr("attrib-value", function(d) { return d.data.attrib_value; })    /* storing the Acxiom attrib value on the element */
+      .attr("target-pct", function(d) { return d.data.target_pct; })
+      .attr("index", function(d) { return d.data.index; })
       .attr("fill", function(d) {
           return colorByIndexPie(d.data.index, indexDs, d.data.attrib_value);
       })
@@ -231,20 +235,6 @@ function pieChart(attrName, indexDs){
       .attr("text-anchor", "middle")
 	    .attr("transform", function(d) { return "translate(" + arcFinal.centroid(d) + ")"; })
 	    .text(function(d) { return d.data.attrib_value; });
-
-  function mouseover() {
-      d3.select(this).select("path").transition()
-        .duration(750)
-     // .attr("d", arcFinal3)
-        ;
-  }
-
-  function mouseout() {
-      d3.select(this).select("path").transition()
-        .duration(750)
-     // .attr("d", arcFinal)
-        ;
-  }
 
   function up(d, i) {
       /* update all charts when user selects piece of the pie chart */
@@ -271,27 +261,13 @@ function mapChart(attrName, indexDs) {
   let path = d3.geoPath()               // path generator that will convert GeoJSON to SVG paths
 		  	       .projection(projection);  // tell path generator to use albersUsa projection
 
-  // Define linear scale for output
-  let color = d3.scaleLinear()
-			          .range(["rgb(213,222,217)","rgb(69,173,168)","rgb(84,36,55)"]);
-
-  let legendText = ["High index", "Low index", "Target %"];
-
   //Create SVG element and append map to the SVG
   let svg = d3.select("#"+attrName+"Chart")
 			        .append("svg")
 			        .attr("width", width)
 			        .attr("height", height);
 
-  // Append Div for tooltip to SVG
-  let div = d3.select("#"+attrName+"Chart")
-		          .append("div")
-    		      .attr("class", "tooltip")
-    		      .style("opacity", 0);
-
-
   let data = indexDs;
-  color.domain([0,1,2]); // setting the range of the input data
 
   data.forEach(function(catEntryIndex) {
       // Find the corresponding state inside the GeoJSON
@@ -320,11 +296,10 @@ function mapChart(attrName, indexDs) {
   	.style("fill", function(d) {
         return colorByIndexBar(d.properties.index);
     })
-    //.style("opacity", function(d) {
-    //    return d.properties.target_pct / 100.0;
-    //})
     .attr("attrib-value", function(d) { return d.properties.code; })    /* storing the Acxiom attrib value on the element */
-    .on("click", up);
+    .attr("target-pct", function(d) { return d.properties.target_pct; })
+    .attr("index", function(d) { return d.properties.index; })
+    ;
 
 /*
 // Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
@@ -351,12 +326,6 @@ var legend = d3.select("body").append("svg")
       	  .text(function(d) { return d; });
 	});
 */
-
-  function up(d, i) {
-      /* update all charts when user selects piece of the map chart */
-      updateCharts(attrName, d.properties.code);
-      }
-
 };
 
 
@@ -413,7 +382,10 @@ function hBarChart(attrName, indexDs) {
           return colorByIndexBar(d.index);
       })
       .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-      .on("click", up);
+      .attr("attrib-category", function(d) { return d.category; })
+      .attr("target-pct", function(d) { return d.target_pct; })
+      .attr("index", function(d) { return d.index; })
+      ;
 
 
 	/* Add y labels to plot */
@@ -453,11 +425,6 @@ function hBarChart(attrName, indexDs) {
 				 })
 		     .attr("x", 0)
 		     .attr("class", "yAxis");
-
-  function up(d, i) {
-	   /* update all charts when user selects a single bar in this chart */
-     updateCharts(attrName, d.attrib_value);
-	}
 }
 
 
@@ -498,35 +465,18 @@ function updateCharts(attrName, attrValue) {
 
           if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
             let filteredData = [];
-            let filteredIds = [];
-            if (attrName == "interests"){
-              filteredIds = filterAttr(targetInterests, attrName, attrValue).map(function(d) { return d.temp_id; });
-            } else if (attrName == "retail") {
-              filteredIds = filterAttr(targetRetail, attrName, attrValue).map(function(d) { return d.temp_id; });
-            } else {
-              filteredIds = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
-            }
+            let filteredIds = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
 
             if (demogAttributeListName == "interests"){
               filteredData = targetInterests.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomInterests);
-            } else {
+            } else if (demogAttributeListName == "retail"){
               filteredData = targetRetail.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomRetail);
             }
             attrIndexTop = indexInterestsRetailTop5(attrIndex);
           } else {
-            let filteredData = [];
-            let filteredIds = [];
-            if (attrName == "interests"){
-              filteredIds = filterAttr(targetInterests, attrName, attrValue).map(function(d) { return d.temp_id; });
-              filteredData = targetDemog.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
-            } else if (attrName == "retail") {
-              filteredIds = filterAttr(targetRetail, attrName, attrValue).map(function(d) { return d.temp_id; });
-              filteredData = targetDemog.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
-            } else {
-              filteredData = filterAttr(targetDemog, attrName, attrValue);
-            }
+            let filteredData = filterAttr(targetDemog, attrName, attrValue);
             attrIndex = indexAttr(demogAttributeListName,
                                   indexCats[demogAttributeListName],
                                   filteredData,
@@ -536,7 +486,7 @@ function updateCharts(attrName, attrValue) {
           if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
             if (demogAttributeListName == "interests"){
               attrIndex = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
-            } else {
+            } else if (demogAttributeListName == "retail"){
               attrIndex = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
             }
             attrIndexTop = indexInterestsRetailTop5(attrIndex);
@@ -589,6 +539,10 @@ function updateCharts(attrName, attrValue) {
               .attr("height", function(d) {
                 return height-yScale(d.target_pct);
               })
+              .attr("cursor", "pointer")
+              .attr("attrib-value", function(d) { return d.attrib_value; })    /* updating the Acxiom attrib value on the element */
+              .attr("target-pct", function(d) { return d.target_pct; })
+              .attr("index", function(d) { return d.index; })
               .attr("fill", function(d) {
                 return colorByIndexBar(d.index);
               });
