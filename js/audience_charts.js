@@ -43,6 +43,12 @@ let formatAsPercentage = d3.format("%"),
     formatAsPercentage1Dec = d3.format(".1%"),
     formatAsInteger = d3.format(",");
 
+/* tooltips */
+const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
 
 /*******************************************************************************
 *** BAR CHART ******************************************************************
@@ -113,9 +119,15 @@ function barChart(attrName, indexDs) {
       })
       .attr("cursor", "pointer")
       .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+
+
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseup)
+      .on("mousemove", mouseover)
       .attr("target-pct", function(d) { return d.target_pct; })
       .attr("index", function(d) { return d.index; })
       .on("click", up);
+
 
 
 	/* Add y labels to plot */
@@ -166,6 +178,19 @@ function barChart(attrName, indexDs) {
        updateCharts(attrName, d.attrib_value);
      }
 	}
+
+  function mouseover(d) {
+    tooltip.transition()
+        .duration(200)
+        .style("opacity", .9);
+    tooltip.html(d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+        .style('left', `${(d3.event.pageX + 5)}px`)
+        .style('top', `${(d3.event.pageY - 50)}px`);
+  }
+
+  function mouseup(d) {
+    tooltip.transition(300).style('opacity', 0);
+  }
 }
 
 
@@ -217,6 +242,10 @@ function pieChart(attrName, indexDs){
                 .enter()              /* create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array */
                 .append("svg:g")      /* create a group to hold each slice (we will have a <path> and a <text> element associated with each slice) */
                 .attr("class", "slice")
+
+                .on("mouseover", mouseover)
+                .on("mouseout", mouseout)
+                .on("mousemove", mouseover)
                 .on("click", up);
 
   arcs.append("svg:path")
@@ -241,6 +270,26 @@ function pieChart(attrName, indexDs){
       .attr("text-anchor", "middle")
 	    .attr("transform", function(d) { return "translate(" + arcFinal.centroid(d) + ")"; })
 	    .text(function(d) { return d.data.attrib_value; });
+
+
+  function mouseover(d) {
+    let name = d.data.attrib_value;
+    if (attrName === 'gender') {
+      name = (d.data.attrib_value === 'F') ? 'Female' : 'Male';
+    }
+    tooltip.transition()
+        .duration(200)
+        .style("opacity", .9);
+    tooltip.html(name + "<br/>" + "Target Pct: " + d.data.target_pct + "% <br/>"  + "Index: " + d.data.index)
+        .style('left', `${(d3.event.pageX + 5)}px`)
+        .style('top', `${(d3.event.pageY - 50)}px`);
+  }
+
+  function mouseout() {
+      tooltip.transition(300).style('opacity', 0);
+  }
+
+
 
   function up(d, i) {
       /* update all charts when user selects piece of the pie chart */
@@ -310,9 +359,16 @@ function mapChart(attrName, indexDs) {
         return colorByIndexBar(d.properties.index);
     })
     .attr("attrib-value", function(d) { return d.properties.code; })    /* storing the Acxiom attrib value on the element */
+
+    .on("mouseover", mouseover)
+    .on("mouseout", mouseout)
+    .on("mousemove", mouseover)
+    .on("click", up)
+
     .attr("target-pct", function(d) { return d.properties.target_pct; })
     .attr("index", function(d) { return d.properties.index; })
     ;
+
 
 /*
 // Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
@@ -339,6 +395,27 @@ var legend = d3.select("body").append("svg")
       	  .text(function(d) { return d; });
 	});
 */
+
+
+  function up(d, i) {
+      /* update all charts when user selects piece of the map chart */
+      updateCharts(attrName, d.properties.code);
+      }
+
+  function mouseover(d) {
+    tooltip.transition()
+        .duration(200)
+        .style("opacity", .9);
+    tooltip.html(d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index)
+        .style('left', `${(d3.event.pageX + 5)}px`)
+        .style('top', `${(d3.event.pageY - 50)}px`);
+  }
+
+  function mouseout() {
+      tooltip.transition(300).style('opacity', 0);
+  }
+
+
 };
 
 
@@ -395,10 +472,17 @@ function hBarChart(attrName, indexDs) {
           return colorByIndexBar(d.index);
       })
       .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout)
+      .on("mousemove", mouseover)
+      .on("click", up)
+
       .attr("attrib-category", function(d) { return d.category; })
       .attr("target-pct", function(d) { return d.target_pct; })
       .attr("index", function(d) { return d.index; })
       ;
+
 
 
 	/* Add y labels to plot */
@@ -438,6 +522,26 @@ function hBarChart(attrName, indexDs) {
 				 })
 		     .attr("x", 0)
 		     .attr("class", "yAxis");
+
+
+  function up(d, i) {
+	   /* update all charts when user selects a single bar in this chart */
+     updateCharts(attrName, d.attrib_value);
+	}
+
+  function mouseover(d) {
+    tooltip.transition()
+        .duration(200)
+        .style("opacity", .9);
+    tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+        .style('left', `${(d3.event.pageX + 5)}px`)
+        .style('top', `${(d3.event.pageY - 50)}px`);
+  }
+
+  function mouseout() {
+      tooltip.transition(300).style('opacity', 0);
+  }
+
 }
 
 
