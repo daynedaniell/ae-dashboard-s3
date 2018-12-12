@@ -55,7 +55,7 @@ const tooltip = d3.select("body")
 *******************************************************************************/
 
 function barChartSetup(innerWidth=360) {
-	let margin = {top: 30, right: 5, bottom: 20, left: 10};
+	let margin = {top: 30, right: 5, bottom: 20, left: 30};
 	let width = innerWidth - margin.left - margin.right;
   let height = 360 - margin.top - margin.bottom;
 	let barPadding = 1;
@@ -168,6 +168,17 @@ function barChart(attrName, indexDs) {
 		     .attr("y", 15)
 		     .attr("class", "xAxis");
 
+  /* Add a y-axis */
+  let axis = d3.axisLeft(yScale)
+      .ticks(5)
+      .tickFormat(function (d) { return d + "%" })
+      .tickSizeOuter(0);
+
+  svg.append("g")
+      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+      .attr("class", "axis")
+      .call(axis);
+
   function up(d, i) {
 	   /* update all charts when user selects a single bar in this chart */
      /* if clicking on already selected item, then reset the charts */
@@ -176,6 +187,7 @@ function barChart(attrName, indexDs) {
        drawCharts();
      } else {
        updateCharts(attrName, d.attrib_value);
+       updateAxis(d);
      }
 	}
 
@@ -429,8 +441,12 @@ function hBarChart(attrName, indexDs) {
                  .domain([0, firstDatasetBarChart.length])
 					       .range([0, height]);
 
-	let xScale = d3.scaleLinear()
-		             .domain([0, d3.max(firstDatasetBarChart, function(d) { return d.target_pct; })])
+	// let xScale = d3.scaleLinear()
+	// 	             .domain([0, d3.max(firstDatasetBarChart, function(d) { return d.target_pct; })])
+	// 	             .range([0, width-maxAttrLength]);
+
+  let xScale = d3.scaleLinear()
+		             .domain([0, 100])
 		             .range([0, width-maxAttrLength]);
 
 	/* Create SVG element */
@@ -471,6 +487,10 @@ function hBarChart(attrName, indexDs) {
       ;
 
 
+  /* Will set x position and color dependent on size of bar */
+  function textInside(d) { return xScale(d.target_pct) > 30};
+
+
 	/* Add y labels to plot */
 	plot.selectAll("text")
 	    .data(firstDatasetBarChart)
@@ -484,13 +504,11 @@ function hBarChart(attrName, indexDs) {
 	    .attr("y", function(d, i) {
 			     return (i * (height / firstDatasetBarChart.length)) + ((height / firstDatasetBarChart.length - barPadding) / 2);
 	    })
-	    .attr("x", function(d) {
-			     return maxAttrLength + xScale(d.target_pct) - 20;
-	    })
+	    .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
 	    .attr("class", "xAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", "11px")
-	    .attr("fill", "white");
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
 
 	/* Add y labels to chart */
 	let yLabels = svg.append("g")
@@ -657,6 +675,18 @@ function updateCharts(attrName, attrValue) {
           let svg = d3.select("#"+demogAttributeListName+"Chart svg");
           let plot = d3.select("#"+demogAttributeListName+"ChartPlot")
                        .datum(currentDatasetBarChart);
+
+         let axis = d3.axisLeft(yScale)
+             .ticks(5)
+             .tickFormat(function (d) { return d + "%" })
+             .tickSizeOuter(0);
+
+         let t = d3.transition()
+               .duration(500)
+
+         svg.select(".axis")
+               .transition(t)
+               .call(axis)
 
           /* Select existing bars and update them */
           plot.selectAll("rect")

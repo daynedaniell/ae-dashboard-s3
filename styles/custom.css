@@ -47,6 +47,11 @@ main {
     font-size: 12px;
 }
 
+#incomeChart svg g.axis text {
+    font-size: 10px;
+}
+
+
 
 /* temp layout for nav etc */
 body {
