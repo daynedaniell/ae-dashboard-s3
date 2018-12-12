@@ -179,6 +179,21 @@ function barChart(attrName, indexDs) {
       .attr("class", "axis")
       .call(axis);
 
+  /* Add horizontal line on x-axis */
+  let xAxis = d3.axisBottom(xScale)
+      .tickSize(0);
+      //.tickSizeOuter(0)
+
+  let xAxisElement = svg.append("g")
+      .attr("class", "yAxis")
+      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top + height - 1) + ")")
+      .call(xAxis);
+
+  xAxisElement.selectAll("text").remove()
+
+
+
+
   function up(d, i) {
 	   /* update all charts when user selects a single bar in this chart */
      /* if clicking on already selected item, then reset the charts */
