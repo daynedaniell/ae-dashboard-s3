@@ -563,6 +563,7 @@ function drawCharts() {
   hBarChart("interests", interestsIndexTop0);
   hBarChart("retail", retailIndexTop0);
 
+  $( ".tile" ).removeClass("selected-tile");
 }
 
 
@@ -735,5 +736,4 @@ function updateCharts(attrName, attrValue) {
   /* Highlight the selected tile */
   $( ".tile" ).removeClass("selected-tile");
   $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
-
 }
