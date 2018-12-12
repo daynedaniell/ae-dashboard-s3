@@ -33,14 +33,20 @@ main {
 //    border: 4px solid #aeb4c3;
 }
 
+.chart-base {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
 
 /* temp fixes */
 #genderChart svg {
-    margin-left: 42px;
+    /* margin-left: 42px; */
     margin-top: 32px;
 }
 #maritalChart svg {
-    margin-left: 42px;
+    /* margin-left: 42px; */
     margin-top: 32px;
 }
 #incomeChart svg g text {

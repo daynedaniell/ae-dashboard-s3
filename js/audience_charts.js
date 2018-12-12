@@ -55,7 +55,7 @@ const tooltip = d3.select("body")
 *******************************************************************************/
 
 function barChartSetup(innerWidth=360) {
-	let margin = {top: 30, right: 5, bottom: 20, left: 30};
+	let margin = {top: 30, right: 0, bottom: 20, left: 30};
 	let width = innerWidth - margin.left - margin.right;
   let height = 360 - margin.top - margin.bottom;
 	let barPadding = 1;
@@ -69,7 +69,7 @@ function barChartSetup(innerWidth=360) {
 }
 
 function barChart(attrName, indexDs) {
-  let innerWidth = 360;
+  let innerWidth = 400;
   if (attrName == "income") {
   	  innerWidth = 610;
   }
@@ -94,7 +94,8 @@ function barChart(attrName, indexDs) {
               .append("svg")
 		          .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
-              .attr("id", attrName+"ChartPlot");
+              .attr("id", attrName+"ChartPlot")
+              .attr("class", "chart-base");
 
   /* Add horizontal grid lines */
   function make_y_gridlines() {
@@ -258,6 +259,7 @@ function pieChart(attrName, indexDs){
 
 	let vis = d3.select("#"+attrName+"Chart")
               .append("svg:svg")
+              .attr("class", "chart-base")
               .data([indexDs])          /* associate our data with the document */
               .attr("width", width)
               .attr("height", height)
@@ -375,7 +377,8 @@ function mapChart(attrName, indexDs) {
   let svg = d3.select("#"+attrName+"Chart")
 			        .append("svg")
 			        .attr("width", width)
-			        .attr("height", height);
+			        .attr("height", height)
+              .attr("class", "chart-base");
 
   let data = indexDs;
 
@@ -490,7 +493,8 @@ function hBarChart(attrName, indexDs) {
               .append("svg")
 		          .attr("width", width + margin.left + margin.right + 10) // Adjusted to fit axis
               .attr("height", height + margin.top + margin.bottom)
-              .attr("id", attrName+"ChartPlot");
+              .attr("id", attrName+"ChartPlot")
+              .attr("class", "chart-base");
 
 	let plot = svg.append("g")
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -700,7 +704,7 @@ function updateCharts(attrName, attrValue) {
       if ( barChartAttributesList.includes(demogAttributeListName) ) {
           // update bar chart
           var currentDatasetBarChart = attrIndex;
-          let innerWidth = 360;
+          let innerWidth = 400;
           if (demogAttributeListName == "income") {
           	  innerWidth = 610;
           }
