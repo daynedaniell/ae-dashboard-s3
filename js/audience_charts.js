@@ -99,6 +99,9 @@ function barChart(attrName, indexDs) {
 	let plot = svg.append("g")
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+  /* Will set y position and color dependent on size of bar */
+  function textInside(d) { return d.target_pct > 2 };
+
   /* Attach index data and add the chart elems */
 	plot.selectAll("rect")
       .data(firstDatasetBarChart)
@@ -136,7 +139,7 @@ function barChart(attrName, indexDs) {
 	    .enter()
 	    .append("text")
 	    .text(function(d) {
-			     return formatAsInteger(d3.format("d")(d.index));
+			     return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
 	    })
 	    .attr("text-anchor", "middle")
 	    /* Set x position to the left edge of each bar plus half the bar width */
@@ -144,12 +147,12 @@ function barChart(attrName, indexDs) {
 			     return (i * (width / firstDatasetBarChart.length)) + ((width / firstDatasetBarChart.length - barPadding) / 2);
 	    })
 	    .attr("y", function(d) {
-			     return yScale(d.target_pct) + 14;
+			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
 	    })
 	    .attr("class", "yAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", "11px")
-	    .attr("fill", "white");
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
 
 	/* Add x labels to chart */
 	let xLabels = svg.append("g")
