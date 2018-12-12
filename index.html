@@ -7,9 +7,11 @@
 
     <title>AE Dashboard</title>
 
-    <!-- Latest compiled and minified CSS -->
+    <!-- Bootstrap: Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
+    <!-- fontawesome icons, feel free to delete if/when not needed anymore -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
@@ -18,7 +20,7 @@
 
 </head>
 <body>
-    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <nav class="navbar navbar-dark navbar-fixed-top bg-dark flex-md-nowrap p-0 shadow">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">AE Insights</a>
     </nav>
 
@@ -29,25 +31,38 @@
         <nav class="col-sm-1">
             <ul class="nav">
               <li class="nav-item">
-                <a class="nav-link active" href="#">
-                  <span data-feather="home"></span>
+                <a class="nav-link active" id="dashboard-tab" data-toggle="tab" href="#dashboard">
+                  <i class="fas fa-columns"></i>
                   Dashboard <span class="sr-only">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file"></span>
+                <a class="nav-link" id="interests-tab" data-toggle="tab" href="#interests">
+                  <i class="fas fa-heart"></i>
                   Interests
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="shopping-cart"></span>
+                <a class="nav-link" id="retail-tab" data-toggle="tab" href="#retail">
+                  <i class="fas fa-shopping-cart"></i>
                   Retail
                 </a>
               </li>
             </ul>
         </nav>
+
+
+<!--
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#home">Home</a></li>
+    <li><a href="#menu1">Menu 1</a></li>
+    <li><a href="#menu2">Menu 2</a></li>
+    <li><a href="#menu3">Menu 3</a></li>
+  </ul>
+-->
+
+
+
 
         <main role="main" class="col-sm-10">
 
@@ -63,7 +78,10 @@
               -->
             </div>
         </div>
-          <div class="row">
+        <div class="tab-content relative">
+          <div class="tab-pane active" id="dashboard" role="tabpanel">
+            <div class="row">
+
             <div class="col-sm-4">
                 <div class="well tile">
                     <div class="tile-header">
@@ -90,7 +108,7 @@
             </div>
           </div>
 
-          <div class="row">
+            <div class="row">
             <div class="col-sm-4">
                 <div class="well tile">
                     <div class="tile-header">
@@ -117,7 +135,7 @@
             </div>
           </div>
 
-          <div class="row">
+            <div class="row">
             <div class="col-sm-6">
               <div class="well tile">
                   <div class="tile-header">
@@ -136,7 +154,7 @@
             </div>
           </div>
 
-          <div class="row">
+            <div class="row">
             <div class="col-sm-6">
               <div class="well tile">
                   <div class="tile-header">
@@ -154,7 +172,15 @@
               </div>
             </div>
           </div>
+          </div>
 
+          <div class="tab-pane" id="interests" role="tabpanel">
+            <h2>Interests</h2>
+          </div>
+          <div class="tab-pane" id="retail" role="tabpanel">
+            <h2>Retail</h2>
+          </div>
+        </div>
 
         </main>
       </div>
@@ -178,6 +204,7 @@
 
     <script src="https://d3js.org/d3.v5.min.js"></script>
 
+
     <!-- Data science viz functions -->
     <script src="js/audience_data_processing.js"></script>
     <script src="js/audience_charts.js"></script>
@@ -185,6 +212,12 @@
 
 
     <script>
+    /*
+        $('#dashboard a').on('click', function (e) {
+          e.preventDefault()
+          $(this).tab('show')
+        })
+*/
         async function f() {
             // setting these as globals for now
             targetDemog = await d3.tsv("data/demographics_target_1.tsv");
