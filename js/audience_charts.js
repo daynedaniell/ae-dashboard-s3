@@ -115,7 +115,7 @@ function barChart(attrName, indexDs) {
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   /* Will set y position and color dependent on size of bar */
-  function textInside(d) { return d.target_pct > 4 };
+  function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
 
 
 
@@ -775,6 +775,8 @@ function updateCharts(attrName, attrValue) {
               });
 
           /* Update the text labels on bars */
+          function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
+
           plot.selectAll("text.yAxis")
               .data(currentDatasetBarChart)
               .transition()
@@ -784,11 +786,12 @@ function updateCharts(attrName, attrValue) {
                  return (i * (width / currentDatasetBarChart.length)) + ((width / currentDatasetBarChart.length - barPadding) / 2);
               })
               .attr("y", function(d) {
-                 return yScale(d.target_pct) + 14;
+                 return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
               })
               .text(function(d) {
-               return formatAsInteger(d3.format("d")(d.index));
+               return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
               })
+              .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
               .attr("class", "yAxis");
       } else if ( pieChartAttributesList.includes(demogAttributeListName) ) {
           d3.select("#"+demogAttributeListName+"Chart svg").remove();
