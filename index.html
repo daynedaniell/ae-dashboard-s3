@@ -51,19 +51,6 @@
             </ul>
         </nav>
 
-
-<!--
-  <ul class="nav nav-tabs">
-    <li class="active"><a href="#home">Home</a></li>
-    <li><a href="#menu1">Menu 1</a></li>
-    <li><a href="#menu2">Menu 2</a></li>
-    <li><a href="#menu3">Menu 3</a></li>
-  </ul>
--->
-
-
-
-
         <main role="main" class="col-sm-10">
 
           <div class="row audience-header">
@@ -155,30 +142,44 @@
           </div>
 
             <div class="row">
-            <div class="col-sm-6">
+              <div class="col-sm-6">
+                <div class="well tile">
+                    <div class="tile-header">
+                        <h4>Interests</h4>
+                    </div>
+                    <div id="interestsChart"></div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="well tile">
+                    <div class="tile-header">
+                        <h4>Retail</h4>
+                    </div>
+                    <div id="retailChart"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="interests" role="tabpanel">
+            <div class="col-sm-12">
               <div class="well tile">
                   <div class="tile-header">
                       <h4>Interests</h4>
                   </div>
-                  <div id="interestsChart"></div>
+                  <div id="interestsDetailChart"></div>
               </div>
             </div>
-            <div class="col-sm-6">
+          </div>
+          <div class="tab-pane" id="retail" role="tabpanel">
+            <div class="col-sm-12">
               <div class="well tile">
                   <div class="tile-header">
                       <h4>Retail</h4>
                   </div>
-                  <div id="retailChart"></div>
+                  <div id="retailDetailChart"></div>
               </div>
             </div>
-          </div>
-          </div>
-
-          <div class="tab-pane" id="interests" role="tabpanel">
-            <h2>Interests</h2>
-          </div>
-          <div class="tab-pane" id="retail" role="tabpanel">
-            <h2>Retail</h2>
           </div>
         </div>
 
