@@ -467,7 +467,7 @@ function hBarChart(attrName, indexDs) {
 	/* Create SVG element */
   let svg = d3.select("#"+attrName+"Chart")
               .append("svg")
-		          .attr("width", width + margin.left + margin.right)
+		          .attr("width", width + margin.left + margin.right + 10) // Adjusted to fit axis
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot");
 
@@ -542,6 +542,16 @@ function hBarChart(attrName, indexDs) {
 		     .attr("x", 0)
 		     .attr("class", "yAxis");
 
+  /* Add x-axis */
+  let xAxis = d3.axisBottom(xScale)
+      .tickSize(0)
+      .ticks(5);
+      //.tickSizeOuter(0)
+
+  let xAxisElement = svg.append("g")
+      .attr("class", "yAxis")
+      .attr("transform", "translate(" + (margin.left - 1 + maxAttrLength) + "," + (margin.top + height - 1) + ")")
+      .call(xAxis);
 
   function mouseover(d) {
     tooltip.transition()
