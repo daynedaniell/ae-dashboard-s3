@@ -96,11 +96,28 @@ function barChart(attrName, indexDs) {
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot");
 
+  /* Add horizontal grid lines */
+  function make_y_gridlines() {
+      return d3.axisLeft(yScale)
+          .ticks(5)
+  }
+
+  svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+      .call(make_y_gridlines()
+          .tickSize(-width)
+          .tickFormat("")
+      )
+
+
 	let plot = svg.append("g")
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   /* Will set y position and color dependent on size of bar */
-  function textInside(d) { return d.target_pct > 2 };
+  function textInside(d) { return d.target_pct > 4 };
+
+
 
   /* Attach index data and add the chart elems */
 	plot.selectAll("rect")
@@ -175,7 +192,7 @@ function barChart(attrName, indexDs) {
   let axis = d3.axisLeft(yScale)
       .ticks(5)
       .tickFormat(function (d) { return d + "%" })
-      .tickSizeOuter(0);
+      .tickSize(0);
 
   svg.append("g")
       .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
@@ -194,7 +211,8 @@ function barChart(attrName, indexDs) {
 
   xAxisElement.selectAll("text").remove()
 
-
+  /* Remove vertical and extra horizontal gridlines */
+  svg.selectAll(".domain").remove()
 
 
   function up(d, i) {
@@ -701,20 +719,37 @@ function updateCharts(attrName, attrValue) {
                          .range([height,0]);
 
           let svg = d3.select("#"+demogAttributeListName+"Chart svg");
-          let plot = d3.select("#"+demogAttributeListName+"ChartPlot")
-                       .datum(currentDatasetBarChart);
+
+          /* Transition grid lines */
+          let t = d3.transition()
+                .duration(500)
+
+          function make_y_gridlines() {
+              return d3.axisLeft(yScale)
+                  .ticks(5)
+          }
+
+          svg.select(".grid")
+              .transition(t)
+              .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+              .call(make_y_gridlines()
+                  .tickSize(-width)
+                  .tickFormat("")
+              )
 
          let axis = d3.axisLeft(yScale)
              .ticks(5)
              .tickFormat(function (d) { return d + "%" })
-             .tickSizeOuter(0);
-
-         let t = d3.transition()
-               .duration(500)
+             .tickSize(0);
 
          svg.select(".axis")
                .transition(t)
                .call(axis)
+
+          svg.selectAll(".domain").remove()
+
+          let plot = d3.select("#"+demogAttributeListName+"ChartPlot")
+                       .datum(currentDatasetBarChart);
 
           /* Select existing bars and update them */
           plot.selectAll("rect")
