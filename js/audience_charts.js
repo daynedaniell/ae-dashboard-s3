@@ -51,7 +51,7 @@ const tooltip = d3.select("body")
 
 /* Wrap labels for name, index, and pct
   source: https://bl.ocks.org/mbostock/7555321 (with modifications) */
-function wrap(text, width, sep = " ") {
+function wrap(text, width, sep = " ", type = "pie") {
     text.each(function() {
       var text = d3.select(this),
           words = text.text().split(sep).reverse(),
@@ -62,15 +62,37 @@ function wrap(text, width, sep = " ") {
           y = text.attr("y"),
           dy = parseFloat(text.attr("dy")),
           tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+
+      /* Split horizontal bar text on last dash */
+      if (type === "hbar") {
+        //console.log(words)
+        words = words.map(function (word) { return word.trim() })
+
+        //console.log(words)
+        let numWords = words.length
+        let firstLine = words.slice(0, -1).join(" - ");
+        let secondLine = (numWords > 1) ? "- " + words.slice(-1)[0] : words.slice(-1)[0];
+        //console.log([firstLine, secondLine ]);
+        words = (numWords > 1) ? [secondLine, firstLine] : [secondLine];
+      }
+
+
+      let ct = 0;
       while (word = words.pop()) {
+        console.log(ct)
         line.push(word);
         tspan.text(line.join(" "));
         if (tspan.node().getComputedTextLength() > width) {
           line.pop();
           tspan.text(line.join(" "));
           line = [word];
-          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", lineHeight + dy + "em").text(word);
+          if (type === 'pie') {
+            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", lineHeight + dy + "em").text(word);
+          } else {
+            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ct > 0 ? ++lineNumber * lineHeight + dy + "em" : 0).attr("dx", ct > 0 ? 20 : 0).text(word);
+          }
         }
+        ct ++;
       }
     });
 }
@@ -250,7 +272,7 @@ function barChart(attrName, indexDs) {
        drawCharts();
      } else {
        updateCharts(attrName, d.attrib_value);
-       updateAxis(d);
+       //updateAxis(d);
      }
 	}
 
@@ -350,7 +372,7 @@ function pieChart(attrName, indexDs){
       .text(function(d) { return d.data.attrib_value + "|" + d.data.index + "|" + d.data.target_pct + "%" })
       .attr("dy", 0)
       .attr("class", "arc-name")
-      .call(wrap, 1, "|");
+      .call(wrap, 1, "|", type = 'pie');
 
 
 
@@ -636,6 +658,7 @@ function hBarChart(attrName, indexDs) {
 		     .data(firstDatasetBarChart)
 		     .enter()
 		     .append("text")
+         .attr("dy", "0")
 		     .text(function(d) { return d.attrib_value;})
 		     .attr("text-anchor", "start")
 			   /* Set y position to the top edge of each bar plus half the bar width */
@@ -643,7 +666,8 @@ function hBarChart(attrName, indexDs) {
 				       return (i * (height / firstDatasetBarChart.length)) + ((height / firstDatasetBarChart.length - barPadding) / 2);
 				 })
 		     .attr("x", 0)
-		     .attr("class", "yAxis");
+		     .attr("class", "yAxis")
+         .call(wrap, 200, '-', type = 'hbar');
 
   /* Add x-axis */
   let xAxis = d3.axisBottom(xScale)
