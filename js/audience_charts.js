@@ -276,6 +276,10 @@ function barChart(attrName, indexDs) {
      }
 	}
 
+  // const tooltip = svg.append("div")
+  //     .attr("class", "tooltip")
+  //     .style("opacity", 0);
+
   function mouseover(d) {
     tooltip.transition()
         .duration(200)
@@ -317,6 +321,13 @@ function pieChart(attrName, indexDs){
                 "translate(" + outerRadius + "," + outerRadius + ")"
               ) /* move the center of the pie chart from 0, 0 to radius, radius */
               ;
+
+  // const tooltip = vis.append("div")
+  //     .attr("class", "tooltip")
+  //     .style("opacity", 0);
+
+
+
 
   /* Create an arc generator, and configure its inner and outer radii */
   let arc = d3.arc() /* Generates path data for an arc */
@@ -368,7 +379,7 @@ function pieChart(attrName, indexDs){
       .attr("text-anchor", "middle")
 	    .attr("transform", function(d) { console.log(arcFinal.centroid(d)[1]); return "translate(" + arcFinal.centroid(d)[0] + ',' + (arcFinal.centroid(d)[1] - 20) + ")"; });
 
-	labeledArcs//.append("tspan")
+	labeledArcs
       .text(function(d) { return d.data.attrib_value + "|" + d.data.index + "|" + d.data.target_pct + "%" })
       .attr("dy", 0)
       .attr("class", "arc-name")
@@ -408,6 +419,7 @@ function pieChart(attrName, indexDs){
 
 
 
+
   function mouseover(d) {
     let name = d.data.attrib_value;
     if (attrName === 'gender') {
@@ -417,7 +429,7 @@ function pieChart(attrName, indexDs){
         .duration(200)
         .style("opacity", .9);
     tooltip.html(name + "<br/>" + "Target Pct: " + d.data.target_pct + "% <br/>"  + "Index: " + d.data.index)
-        .style('left', `${(d3.event.pageX + 5)}px`)
+        .style('left', `${(d3.event.pageX - 10)}px`)
         .style('top', `${(d3.event.pageY - 50)}px`);
   }
 
@@ -529,6 +541,9 @@ var legend = d3.select("body").append("svg")
       	  .text(function(d) { return d; });
 	});
 */
+  // const tooltip = svg.append("div")
+  //   .attr("class", "tooltip")
+  //   .style("opacity", 0);
 
   function mouseover(d) {
     tooltip.transition()
@@ -686,6 +701,10 @@ function hBarChart(attrName, indexDs) {
 
   /* Remove vertical and extra horizontal gridlines */
   svg.selectAll(".domain").remove()
+
+  // const tooltip = svg.append("div")
+  //     .attr("class", "tooltip")
+  //     .style("opacity", 0);
 
   function mouseover(d) {
     tooltip.transition()
