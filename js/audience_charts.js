@@ -323,6 +323,7 @@ function mapChart(attrName, indexDs) {
   //Width and height of map
   let width = 600;
   let height = 360;
+  let noDataStateColor = 'rgba(53, 128, 224, 0.07)';
 
   // D3 Projection
   let projection = d3.geoAlbersUsa()
@@ -366,7 +367,11 @@ function mapChart(attrName, indexDs) {
   	.style("stroke", "#fff")
   	.style("stroke-width", "1")
   	.style("fill", function(d) {
-        return colorByIndexBar(d.properties.index);
+        let stateColor = colorByIndexBar(d.properties.index);
+        if (d.properties.target_pct == 0) {
+          stateColor = noDataStateColor;
+        }
+        return stateColor;
     })
     .attr("attrib-value", function(d) { return d.properties.code; })    /* storing the Acxiom attrib value on the element */
     .on("mouseover", mouseover)
