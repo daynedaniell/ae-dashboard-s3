@@ -314,42 +314,73 @@ function pieChart(attrName, indexDs){
 
   /* Add a label to the larger arcs, translated to the arc centroid and rotated.
   // source: http://bl.ocks.org/1305337#index.html */
-  arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; })
+  let labeledArcs = arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; })
       .append("svg:text")
-	    .attr("dy", ".35em")
+	    .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
-	    .attr("transform", function(d) { return "translate(" + arcFinal.centroid(d) + ")"; })
-	    .text(function(d) { return d.data.attrib_value; });
+	    .attr("transform", function(d) { console.log(arcFinal.centroid(d)[1]); return "translate(" + arcFinal.centroid(d)[0] + ',' + (arcFinal.centroid(d)[1] - 20) + ")"; });
 
-  let legend = vis.append("g")
-      .attr("class", "legend")
+	labeledArcs//.append("tspan")
+      .text(function(d) { return d.data.attrib_value + " " + d.data.index + " " + d.data.target_pct + "%" })
+      .attr("dy", 0)
+      .attr("class", "arc-name")
+      .call(wrap, 1);
 
-  legend.selectAll("g")
-      .data(indexDs)
-      .enter()
-      .append("g")
-      .each(function(d, i) {
-          console.log(d)
-          let g = d3.select(this);
-          let name = d.attrib_value;
-          if (attrName === "gender") {
-              name = (d.attrib_value === "F" ? "Female" : "Male");
-          };
-          g.append("rect")
-              .style("fill", function(d) {
-                  console.log(d)
-                  return colorByIndexPie(d.index, indexDs, d.attrib_value);
-              })
-              .attr("width", 10)
-              .attr("height", 10)
-              .attr("x", -30)
-              .attr("y", i * 20 - 10);
+  /* Wrap labels for name, index, and pct
+    source: https://bl.ocks.org/mbostock/7555321 */
+  function wrap(text, width) {
+      text.each(function() {
+        var text = d3.select(this),
+            words = text.text().split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.1, // ems
+            y = text.attr("y"),
+            dy = parseFloat(text.attr("dy")),
+            tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+        while (word = words.pop()) {
+          line.push(word);
+          tspan.text(line.join(" "));
+          if (tspan.node().getComputedTextLength() > width) {
+            line.pop();
+            tspan.text(line.join(" "));
+            line = [word];
+            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", lineHeight + dy + "em").text(word);
+          }
+        }
+      });
+  }
 
-          g.append("text")
-              .attr("x", -10)
-              .attr("y", i * 20)
-              .text(name);
-      })
+  // let legend = vis.append("g")
+  //     .attr("class", "legend")
+  //
+  // legend.selectAll("g")
+  //     .data(indexDs)
+  //     .enter()
+  //     .append("g")
+  //     .each(function(d, i) {
+  //         console.log(d)
+  //         let g = d3.select(this);
+  //         let name = d.attrib_value;
+  //         if (attrName === "gender") {
+  //             name = (d.attrib_value === "F" ? "Female" : "Male");
+  //         };
+  //         g.append("rect")
+  //             .style("fill", function(d) {
+  //                 console.log(d)
+  //                 return colorByIndexPie(d.index, indexDs, d.attrib_value);
+  //             })
+  //             .attr("width", 10)
+  //             .attr("height", 10)
+  //             .attr("x", -30)
+  //             .attr("y", i * 20 - 10);
+  //
+  //         g.append("text")
+  //             .attr("x", -10)
+  //             .attr("y", i * 20)
+  //             .text(name);
+  //     });
 
 
 
