@@ -119,8 +119,6 @@ function barChart(attrName, indexDs) {
       })
       .attr("cursor", "pointer")
       .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-
-
       .on("mouseover", mouseover)
       .on("mouseout", mouseup)
       .on("mousemove", mouseover)
@@ -325,6 +323,7 @@ function mapChart(attrName, indexDs) {
   //Width and height of map
   let width = 600;
   let height = 360;
+  let noDataStateColor = 'rgba(53, 128, 224, 0.07)';
 
   // D3 Projection
   let projection = d3.geoAlbersUsa()
@@ -368,7 +367,11 @@ function mapChart(attrName, indexDs) {
   	.style("stroke", "#fff")
   	.style("stroke-width", "1")
   	.style("fill", function(d) {
-        return colorByIndexBar(d.properties.index);
+        let stateColor = colorByIndexBar(d.properties.index);
+        if (d.properties.target_pct == 0) {
+          stateColor = noDataStateColor;
+        }
+        return stateColor;
     })
     .attr("attrib-value", function(d) { return d.properties.code; })    /* storing the Acxiom attrib value on the element */
     .on("mouseover", mouseover)
@@ -518,7 +521,13 @@ function hBarChart(attrName, indexDs) {
 		     .data(firstDatasetBarChart)
 		     .enter()
 		     .append("text")
-		     .text(function(d) { return d.attrib_value;})
+		     .text(function(d) {
+           let yLabel = d.attrib_value;
+           if (d.attrib_value.length > 36) {
+             yLabel = yLabel.slice(0, 36) + "...";
+           }
+           return yLabel;
+         })
 		     .attr("text-anchor", "start")
 			   /* Set y position to the top edge of each bar plus half the bar width */
 				 .attr("y", function(d, i) {
@@ -543,6 +552,128 @@ function hBarChart(attrName, indexDs) {
 
 }
 
+
+/*******************************************************************************
+*** MIKEJ CHART ****************************************************************
+*******************************************************************************/
+function mikeJChart(attrName, indexDs) {
+
+/*
+  // this code is for the index = 120 line, if needed
+  let repeated120Array = Array(indexDs1.length + 2).fill(120);
+  let lineAt120 = {
+    x: repeated120Array,
+    y: paddedCategories,
+    mode: 'lines',
+    type: 'scatter',
+    line: {
+      dash: 'dot',
+      color: colorNeutralIndex1,
+      width: 2
+    },
+    opacity: 0.4
+  };
+*/
+
+
+  // sort data alphabetically by category
+  indexDs.sort((a, b) => b.category.localeCompare(a.category));
+
+  // tooltip values
+  let toolTipValues = indexDs.map(function(row) {
+    let toolTipBoxLength = Math.max(
+      row['attrib_value'].length,
+      row['target_pct'].toString().length + 12,
+      row['index'].toString().length + 7
+    );
+    // the white spaces are needed here to create padding, b/c plotly
+    // doesn't seem to have padding options, and allows only inline html tags
+    // in the tooltip text string
+    return "<br>    " + "  ".repeat(toolTipBoxLength) +"    <br>    "
+      + row['attrib_value']
+      + "    <br>    Target Pct: "
+      + row['target_pct'].toString()
+      + "%<br>    Index: "
+      + row['index'].toString()
+      + "<br>   ";
+  });
+
+  let trace = {
+    x: unpack(indexDs, 'index'),
+    y: unpack(indexDs, 'category'),
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+      size: unpack(indexDs, 'target_pct').map(x => Math.sqrt(x)*5),
+      color: unpack(indexDs, 'index').map(x => colorByIndexBar(x)),
+      opacity: 0.5,
+      line: {width: 0}
+    },
+    hovertext: toolTipValues,
+    hoverinfo: 'text',
+    hoverlabel: {
+      bgcolor: '#fff',
+      bordercolor: 'lightgrey',
+      font: {
+        family: "Open Sans",
+        size: 15,
+        color: '#333'
+      }
+    }
+  };
+
+
+  // calculate chart height based on the number of distinct categories
+  let allCats = [...new Set( unpack(indexDs, 'category') )];
+  let height = allCats.length * 58;
+	let width = 1260;
+  let margin = 40;
+
+  // update the tile height to fit in the chart
+  $("#"+attrName+"DetailChart").parent().css("height", height + margin);
+
+
+  let layout = {
+    hovermode:'closest',
+    height: height,
+    width: width,
+    xaxis: {
+      range: [ 80, 520 ],
+      title: 'index'
+    },
+    yaxis: {
+      type: 'category'
+    },
+    margin: {
+      l: 120,
+      r: 40,
+      b: 100,
+      t: 20,
+      pad: 4
+    },
+    paper_bgcolor: '#fafafa',
+    plot_bgcolor: '#fafafa'
+  };
+
+  let chartName = attrName+"DetailChart";
+  Plotly.newPlot(chartName, [trace], layout, {responsive: true});
+}
+
+
+/*******************************************************************************
+*** 2-SERIES BAR CHART *********************************************************
+*******************************************************************************/
+function bar2SeriesChart(attrName, indexDs) {
+
+}
+
+
+/*******************************************************************************
+*** STACKED BAR CHART **********************************************************
+*******************************************************************************/
+function stackBarChart(attrName, indexDs) {
+
+}
 
 
 /*******************************************************************************
@@ -582,6 +713,9 @@ function drawCharts() {
   hBarChart("retail", retailIndexTop0);
 
   $( ".tile" ).removeClass("selected-tile");
+
+  mikeJChart('interests', interestsIndex0);
+  mikeJChart('retail', retailIndex0);
 }
 
 
