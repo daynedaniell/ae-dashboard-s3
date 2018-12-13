@@ -49,6 +49,32 @@ const tooltip = d3.select("body")
     .attr("class", "tooltip")
     .style("opacity", 0);
 
+/* Wrap labels for name, index, and pct
+  source: https://bl.ocks.org/mbostock/7555321 (with modifications) */
+function wrap(text, width, sep = " ") {
+    text.each(function() {
+      var text = d3.select(this),
+          words = text.text().split(sep).reverse(),
+          word,
+          line = [],
+          lineNumber = 0,
+          lineHeight = 1.1, // ems
+          y = text.attr("y"),
+          dy = parseFloat(text.attr("dy")),
+          tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+      while (word = words.pop()) {
+        line.push(word);
+        tspan.text(line.join(" "));
+        if (tspan.node().getComputedTextLength() > width) {
+          line.pop();
+          tspan.text(line.join(" "));
+          line = [word];
+          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", lineHeight + dy + "em").text(word);
+        }
+      }
+    });
+}
+
 
 /*******************************************************************************
 *** BAR CHART ******************************************************************
@@ -321,36 +347,12 @@ function pieChart(attrName, indexDs){
 	    .attr("transform", function(d) { console.log(arcFinal.centroid(d)[1]); return "translate(" + arcFinal.centroid(d)[0] + ',' + (arcFinal.centroid(d)[1] - 20) + ")"; });
 
 	labeledArcs//.append("tspan")
-      .text(function(d) { return d.data.attrib_value + " " + d.data.index + " " + d.data.target_pct + "%" })
+      .text(function(d) { return d.data.attrib_value + "|" + d.data.index + "|" + d.data.target_pct + "%" })
       .attr("dy", 0)
       .attr("class", "arc-name")
-      .call(wrap, 1);
+      .call(wrap, 1, "|");
 
-  /* Wrap labels for name, index, and pct
-    source: https://bl.ocks.org/mbostock/7555321 */
-  function wrap(text, width) {
-      text.each(function() {
-        var text = d3.select(this),
-            words = text.text().split(/\s+/).reverse(),
-            word,
-            line = [],
-            lineNumber = 0,
-            lineHeight = 1.1, // ems
-            y = text.attr("y"),
-            dy = parseFloat(text.attr("dy")),
-            tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-        while (word = words.pop()) {
-          line.push(word);
-          tspan.text(line.join(" "));
-          if (tspan.node().getComputedTextLength() > width) {
-            line.pop();
-            tspan.text(line.join(" "));
-            line = [word];
-            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", lineHeight + dy + "em").text(word);
-          }
-        }
-      });
-  }
+
 
   // let legend = vis.append("g")
   //     .attr("class", "legend")
@@ -558,6 +560,20 @@ function hBarChart(attrName, indexDs) {
               .attr("id", attrName+"ChartPlot")
               .attr("class", "chart-base");
 
+  /* Add horizontal grid lines */
+  function make_x_gridlines() {
+      return d3.axisBottom(xScale)
+          .ticks(5)
+  }
+
+  svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", "translate(" + (margin.left + maxAttrLength - 1) + "," + (margin.top + height - 1) + ")")
+      .call(make_x_gridlines()
+          .tickSize(-height)
+          .tickFormat("")
+      )
+
 	let plot = svg.append("g")
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -632,13 +648,20 @@ function hBarChart(attrName, indexDs) {
   /* Add x-axis */
   let xAxis = d3.axisBottom(xScale)
       .tickSize(0)
-      .ticks(5);
-      //.tickSizeOuter(0)
+      .ticks(5)
+      .tickFormat(function (d) { return d + "%" });
 
   let xAxisElement = svg.append("g")
-      .attr("class", "yAxis")
+      .attr("class", "xAxis")
       .attr("transform", "translate(" + (margin.left - 1 + maxAttrLength) + "," + (margin.top + height - 1) + ")")
       .call(xAxis);
+
+
+
+  //xAxisElement.selectAll("text").remove()
+
+  /* Remove vertical and extra horizontal gridlines */
+  svg.selectAll(".domain").remove()
 
   function mouseover(d) {
     tooltip.transition()
