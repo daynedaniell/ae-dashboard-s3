@@ -321,6 +321,37 @@ function pieChart(attrName, indexDs){
 	    .attr("transform", function(d) { return "translate(" + arcFinal.centroid(d) + ")"; })
 	    .text(function(d) { return d.data.attrib_value; });
 
+  let legend = vis.append("g")
+      .attr("class", "legend")
+
+  legend.selectAll("g")
+      .data(indexDs)
+      .enter()
+      .append("g")
+      .each(function(d, i) {
+          console.log(d)
+          let g = d3.select(this);
+          let name = d.attrib_value;
+          if (attrName === "gender") {
+              name = (d.attrib_value === "F" ? "Female" : "Male");
+          };
+          g.append("rect")
+              .style("fill", function(d) {
+                  console.log(d)
+                  return colorByIndexPie(d.index, indexDs, d.attrib_value);
+              })
+              .attr("width", 10)
+              .attr("height", 10)
+              .attr("x", -30)
+              .attr("y", i * 20 - 10);
+
+          g.append("text")
+              .attr("x", -10)
+              .attr("y", i * 20)
+              .text(name);
+      })
+
+
 
   function mouseover(d) {
     let name = d.data.attrib_value;
