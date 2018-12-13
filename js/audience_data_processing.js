@@ -281,7 +281,10 @@ function indexInterestsRetailTop5(indexDs) {
     return a;
 }
 
-
+/* extract an array of values for the specified attribute */
+function unpack(rows, key) {
+  return rows.map(function(row) { return row[key]; });
+}
 
 
 
