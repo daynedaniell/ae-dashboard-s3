@@ -49,13 +49,61 @@ const tooltip = d3.select("body")
     .attr("class", "tooltip")
     .style("opacity", 0);
 
+/* Wrap labels for name, index, and pct
+  source: https://bl.ocks.org/mbostock/7555321 (with modifications) */
+function wrap(text, width, sep = " ", type = "pie") {
+    text.each(function() {
+      var text = d3.select(this),
+          words = text.text().split(sep).reverse(),
+          word,
+          line = [],
+          lineNumber = 0,
+          lineHeight = 1.1, // ems
+          y = text.attr("y"),
+          dy = parseFloat(text.attr("dy")),
+          tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+
+      /* Split horizontal bar text on last dash */
+      if (type === "hbar") {
+        //console.log(words)
+        words = words.map(function (word) { return word.trim() })
+
+        //console.log(words)
+        let numWords = words.length
+        let firstLine = words.slice(0, -1).join(" - ");
+        let secondLine = (numWords > 1) ? "- " + words.slice(-1)[0] : words.slice(-1)[0];
+        //console.log([firstLine, secondLine ]);
+        words = (numWords > 1) ? [secondLine, firstLine] : [secondLine];
+      }
+
+
+      let ct = 0;
+      while (word = words.pop()) {
+        console.log(ct)
+        line.push(word);
+        tspan.text(line.join(" "));
+        if (tspan.node().getComputedTextLength() > width) {
+          line.pop();
+          tspan.text(line.join(" "));
+          line = [word];
+          if (type === 'pie') {
+            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", lineHeight + dy + "em").text(word);
+          } else {
+            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ct > 0 ? ++lineNumber * lineHeight + dy + "em" : 0).attr("dx", ct > 0 ? 20 : 0).text(word);
+          }
+        }
+        ct ++;
+      }
+    });
+}
+
 
 /*******************************************************************************
 *** BAR CHART ******************************************************************
 *******************************************************************************/
 
 function barChartSetup(innerWidth=360) {
-	let margin = {top: 30, right: 5, bottom: 20, left: 30};
+	let margin = {top: 30, right: 0, bottom: 20, left: 30};
 	let width = innerWidth - margin.left - margin.right;
   let height = 360 - margin.top - margin.bottom;
 	let barPadding = 1;
@@ -69,7 +117,7 @@ function barChartSetup(innerWidth=360) {
 }
 
 function barChart(attrName, indexDs) {
-  let innerWidth = 360;
+  let innerWidth = 400;
   if (attrName == "income") {
   	  innerWidth = 610;
   }
@@ -94,10 +142,31 @@ function barChart(attrName, indexDs) {
               .append("svg")
 		          .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
-              .attr("id", attrName+"ChartPlot");
+              .attr("id", attrName+"ChartPlot")
+              .attr("class", "chart-base");
+
+  /* Add horizontal grid lines */
+  function make_y_gridlines() {
+      return d3.axisLeft(yScale)
+          .ticks(5)
+  }
+
+  svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+      .call(make_y_gridlines()
+          .tickSize(-width)
+          .tickFormat("")
+      )
+
 
 	let plot = svg.append("g")
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  /* Will set y position and color dependent on size of bar */
+  function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
+
+
 
   /* Attach index data and add the chart elems */
 	plot.selectAll("rect")
@@ -134,7 +203,7 @@ function barChart(attrName, indexDs) {
 	    .enter()
 	    .append("text")
 	    .text(function(d) {
-			     return formatAsInteger(d3.format("d")(d.index));
+			     return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
 	    })
 	    .attr("text-anchor", "middle")
 	    /* Set x position to the left edge of each bar plus half the bar width */
@@ -142,12 +211,12 @@ function barChart(attrName, indexDs) {
 			     return (i * (width / firstDatasetBarChart.length)) + ((width / firstDatasetBarChart.length - barPadding) / 2);
 	    })
 	    .attr("y", function(d) {
-			     return yScale(d.target_pct) + 14;
+			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
 	    })
 	    .attr("class", "yAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", "11px")
-	    .attr("fill", "white");
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
 
 	/* Add x labels to chart */
 	let xLabels = svg.append("g")
@@ -170,12 +239,28 @@ function barChart(attrName, indexDs) {
   let axis = d3.axisLeft(yScale)
       .ticks(5)
       .tickFormat(function (d) { return d + "%" })
-      .tickSizeOuter(0);
+      .tickSize(0);
 
   svg.append("g")
       .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
       .attr("class", "axis")
       .call(axis);
+
+  /* Add horizontal line on x-axis */
+  let xAxis = d3.axisBottom(xScale)
+      .tickSize(0);
+      //.tickSizeOuter(0)
+
+  let xAxisElement = svg.append("g")
+      .attr("class", "yAxis")
+      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top + height - 1) + ")")
+      .call(xAxis);
+
+  xAxisElement.selectAll("text").remove()
+
+  /* Remove vertical and extra horizontal gridlines */
+  svg.selectAll(".domain").remove()
+
 
   function up(d, i) {
 	   /* update all charts when user selects a single bar in this chart */
@@ -185,9 +270,13 @@ function barChart(attrName, indexDs) {
        drawCharts();
      } else {
        updateCharts(attrName, d.attrib_value);
-       updateAxis(d);
+       //updateAxis(d);
      }
 	}
+
+  // const tooltip = svg.append("div")
+  //     .attr("class", "tooltip")
+  //     .style("opacity", 0);
 
   function mouseover(d) {
     tooltip.transition()
@@ -220,6 +309,7 @@ function pieChart(attrName, indexDs){
 
 	let vis = d3.select("#"+attrName+"Chart")
               .append("svg:svg")
+              .attr("class", "chart-base")
               .data([indexDs])          /* associate our data with the document */
               .attr("width", width)
               .attr("height", height)
@@ -229,6 +319,13 @@ function pieChart(attrName, indexDs){
                 "translate(" + outerRadius + "," + outerRadius + ")"
               ) /* move the center of the pie chart from 0, 0 to radius, radius */
               ;
+
+  // const tooltip = vis.append("div")
+  //     .attr("class", "tooltip")
+  //     .style("opacity", 0);
+
+
+
 
   /* Create an arc generator, and configure its inner and outer radii */
   let arc = d3.arc() /* Generates path data for an arc */
@@ -274,12 +371,51 @@ function pieChart(attrName, indexDs){
 
   /* Add a label to the larger arcs, translated to the arc centroid and rotated.
   // source: http://bl.ocks.org/1305337#index.html */
-  arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; })
+  let labeledArcs = arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; })
       .append("svg:text")
-	    .attr("dy", ".35em")
+	    .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
-	    .attr("transform", function(d) { return "translate(" + arcFinal.centroid(d) + ")"; })
-	    .text(function(d) { return d.data.attrib_value; });
+	    .attr("transform", function(d) { console.log(arcFinal.centroid(d)[1]); return "translate(" + arcFinal.centroid(d)[0] + ',' + (arcFinal.centroid(d)[1] - 20) + ")"; });
+
+	labeledArcs
+      .text(function(d) { return d.data.attrib_value + "|" + d.data.index + "|" + d.data.target_pct + "%" })
+      .attr("dy", 0)
+      .attr("class", "arc-name")
+      .call(wrap, 1, "|", type = 'pie');
+
+
+
+  // let legend = vis.append("g")
+  //     .attr("class", "legend")
+  //
+  // legend.selectAll("g")
+  //     .data(indexDs)
+  //     .enter()
+  //     .append("g")
+  //     .each(function(d, i) {
+  //         console.log(d)
+  //         let g = d3.select(this);
+  //         let name = d.attrib_value;
+  //         if (attrName === "gender") {
+  //             name = (d.attrib_value === "F" ? "Female" : "Male");
+  //         };
+  //         g.append("rect")
+  //             .style("fill", function(d) {
+  //                 console.log(d)
+  //                 return colorByIndexPie(d.index, indexDs, d.attrib_value);
+  //             })
+  //             .attr("width", 10)
+  //             .attr("height", 10)
+  //             .attr("x", -30)
+  //             .attr("y", i * 20 - 10);
+  //
+  //         g.append("text")
+  //             .attr("x", -10)
+  //             .attr("y", i * 20)
+  //             .text(name);
+  //     });
+
+
 
 
   function mouseover(d) {
@@ -291,7 +427,7 @@ function pieChart(attrName, indexDs){
         .duration(200)
         .style("opacity", .9);
     tooltip.html(name + "<br/>" + "Target Pct: " + d.data.target_pct + "% <br/>"  + "Index: " + d.data.index)
-        .style('left', `${(d3.event.pageX + 5)}px`)
+        .style('left', `${(d3.event.pageX - 10)}px`)
         .style('top', `${(d3.event.pageY - 50)}px`);
   }
 
@@ -338,7 +474,8 @@ function mapChart(attrName, indexDs) {
   let svg = d3.select("#"+attrName+"Chart")
 			        .append("svg")
 			        .attr("width", width)
-			        .attr("height", height);
+			        .attr("height", height)
+              .attr("class", "chart-base");
 
   let data = indexDs;
 
@@ -407,6 +544,9 @@ var legend = d3.select("body").append("svg")
       	  .text(function(d) { return d; });
 	});
 */
+  // const tooltip = svg.append("div")
+  //   .attr("class", "tooltip")
+  //   .style("opacity", 0);
 
   function mouseover(d) {
     tooltip.transition()
@@ -455,9 +595,24 @@ function hBarChart(attrName, indexDs) {
 	/* Create SVG element */
   let svg = d3.select("#"+attrName+"Chart")
               .append("svg")
-		          .attr("width", width + margin.left + margin.right)
+		          .attr("width", width + margin.left + margin.right + 10) // Adjusted to fit axis
               .attr("height", height + margin.top + margin.bottom)
-              .attr("id", attrName+"ChartPlot");
+              .attr("id", attrName+"ChartPlot")
+              .attr("class", "chart-base");
+
+  /* Add horizontal grid lines */
+  function make_x_gridlines() {
+      return d3.axisBottom(xScale)
+          .ticks(5)
+  }
+
+  svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", "translate(" + (margin.left + maxAttrLength - 1) + "," + (margin.top + height - 1) + ")")
+      .call(make_x_gridlines()
+          .tickSize(-height)
+          .tickFormat("")
+      )
 
 	let plot = svg.append("g")
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -521,6 +676,10 @@ function hBarChart(attrName, indexDs) {
 		     .data(firstDatasetBarChart)
 		     .enter()
 		     .append("text")
+
+         //.attr("dy", "0")
+
+
 		     .text(function(d) {
            let yLabel = d.attrib_value;
            if (d.attrib_value.length > 36) {
@@ -528,14 +687,37 @@ function hBarChart(attrName, indexDs) {
            }
            return yLabel;
          })
+
 		     .attr("text-anchor", "start")
 			   /* Set y position to the top edge of each bar plus half the bar width */
 				 .attr("y", function(d, i) {
 				       return (i * (height / firstDatasetBarChart.length)) + ((height / firstDatasetBarChart.length - barPadding) / 2);
 				 })
 		     .attr("x", 0)
-		     .attr("class", "yAxis");
+		     .attr("class", "yAxis")
+         .call(wrap, 200, '-', type = 'hbar');
 
+  /* Add x-axis */
+  let xAxis = d3.axisBottom(xScale)
+      .tickSize(0)
+      .ticks(5)
+      .tickFormat(function (d) { return d + "%" });
+
+  let xAxisElement = svg.append("g")
+      .attr("class", "xAxis")
+      .attr("transform", "translate(" + (margin.left - 1 + maxAttrLength) + "," + (margin.top + height - 1) + ")")
+      .call(xAxis);
+
+
+
+  //xAxisElement.selectAll("text").remove()
+
+  /* Remove vertical and extra horizontal gridlines */
+  svg.selectAll(".domain").remove()
+
+  // const tooltip = svg.append("div")
+  //     .attr("class", "tooltip")
+  //     .style("opacity", 0);
 
   function mouseover(d) {
     tooltip.transition()
@@ -788,7 +970,7 @@ function updateCharts(attrName, attrValue) {
       if ( barChartAttributesList.includes(demogAttributeListName) ) {
           // update bar chart
           var currentDatasetBarChart = attrIndex;
-          let innerWidth = 360;
+          let innerWidth = 400;
           if (demogAttributeListName == "income") {
           	  innerWidth = 610;
           }
@@ -807,20 +989,37 @@ function updateCharts(attrName, attrValue) {
                          .range([height,0]);
 
           let svg = d3.select("#"+demogAttributeListName+"Chart svg");
-          let plot = d3.select("#"+demogAttributeListName+"ChartPlot")
-                       .datum(currentDatasetBarChart);
+
+          /* Transition grid lines */
+          let t = d3.transition()
+                .duration(500)
+
+          function make_y_gridlines() {
+              return d3.axisLeft(yScale)
+                  .ticks(5)
+          }
+
+          svg.select(".grid")
+              .transition(t)
+              .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+              .call(make_y_gridlines()
+                  .tickSize(-width)
+                  .tickFormat("")
+              )
 
          let axis = d3.axisLeft(yScale)
              .ticks(5)
              .tickFormat(function (d) { return d + "%" })
-             .tickSizeOuter(0);
-
-         let t = d3.transition()
-               .duration(500)
+             .tickSize(0);
 
          svg.select(".axis")
                .transition(t)
                .call(axis)
+
+          svg.selectAll(".domain").remove()
+
+          let plot = d3.select("#"+demogAttributeListName+"ChartPlot")
+                       .datum(currentDatasetBarChart);
 
           /* Select existing bars and update them */
           plot.selectAll("rect")
@@ -846,6 +1045,8 @@ function updateCharts(attrName, attrValue) {
               });
 
           /* Update the text labels on bars */
+          function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
+
           plot.selectAll("text.yAxis")
               .data(currentDatasetBarChart)
               .transition()
@@ -855,11 +1056,12 @@ function updateCharts(attrName, attrValue) {
                  return (i * (width / currentDatasetBarChart.length)) + ((width / currentDatasetBarChart.length - barPadding) / 2);
               })
               .attr("y", function(d) {
-                 return yScale(d.target_pct) + 14;
+                 return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
               })
               .text(function(d) {
-               return formatAsInteger(d3.format("d")(d.index));
+               return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
               })
+              .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
               .attr("class", "yAxis");
       } else if ( pieChartAttributesList.includes(demogAttributeListName) ) {
           d3.select("#"+demogAttributeListName+"Chart svg").remove();
