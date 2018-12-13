@@ -521,7 +521,13 @@ function hBarChart(attrName, indexDs) {
 		     .data(firstDatasetBarChart)
 		     .enter()
 		     .append("text")
-		     .text(function(d) { return d.attrib_value;})
+		     .text(function(d) {
+           let yLabel = d.attrib_value;
+           if (d.attrib_value.length > 36) {
+             yLabel = yLabel.slice(0, 36) + "...";
+           }
+           return yLabel;
+         })
 		     .attr("text-anchor", "start")
 			   /* Set y position to the top edge of each bar plus half the bar width */
 				 .attr("y", function(d, i) {
