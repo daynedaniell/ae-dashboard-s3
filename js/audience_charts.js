@@ -694,8 +694,8 @@ function hBarChart(attrName, indexDs) {
 				       return (i * (height / firstDatasetBarChart.length)) + ((height / firstDatasetBarChart.length - barPadding) / 2);
 				 })
 		     .attr("x", 0)
-		     .attr("class", "yAxis")
-         .call(wrap, 200, '-', type = 'hbar');
+		     .attr("class", "yAxis");
+         //.call(wrap, 200, '-', type = 'hbar');
 
   /* Add x-axis */
   let xAxis = d3.axisBottom(xScale)
