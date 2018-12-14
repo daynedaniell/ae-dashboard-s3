@@ -43,12 +43,6 @@ let formatAsPercentage = d3.format("%"),
     formatAsPercentage1Dec = d3.format(".1%"),
     formatAsInteger = d3.format(",");
 
-/* tooltips */
-const tooltip = d3.select("body")
-    .append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
 /* Wrap labels for name, index, and pct
   source: https://bl.ocks.org/mbostock/7555321 (with modifications) */
 function wrap(text, width, sep = " ", type = "pie") {
@@ -79,7 +73,6 @@ function wrap(text, width, sep = " ", type = "pie") {
 
       let ct = 0;
       while (word = words.pop()) {
-        console.log(ct)
         line.push(word);
         tspan.text(line.join(" "));
         if (tspan.node().getComputedTextLength() > width) {
@@ -145,6 +138,10 @@ function barChart(attrName, indexDs) {
               .attr("id", attrName+"ChartPlot")
               .attr("class", "chart-base");
 
+  const tooltip = d3.select("#"+attrName+"Chart").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
   /* Add horizontal grid lines */
   function make_y_gridlines() {
       return d3.axisLeft(yScale)
@@ -158,7 +155,6 @@ function barChart(attrName, indexDs) {
           .tickSize(-width)
           .tickFormat("")
       )
-
 
 	let plot = svg.append("g")
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -274,21 +270,25 @@ function barChart(attrName, indexDs) {
      }
 	}
 
-  // const tooltip = svg.append("div")
-  //     .attr("class", "tooltip")
-  //     .style("opacity", 0);
 
   function mouseover(d) {
+    let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.event.clientX - bound.x + 30;
+    let tipY = d3.event.clientY - bound.y - 30;
+    if (width - tipX < 50) {
+      tipX = d3.event.clientX - bound.x - 100;
+    }
     tooltip.transition()
         .duration(200)
-        .style("opacity", .9);
-    tooltip.html(d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-        .style('left', `${(d3.event.pageX + 5)}px`)
-        .style('top', `${(d3.event.pageY - 50)}px`);
+    tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+        .style("opacity", .9)
+        .style('left', `${(tipX)}px`)
+        .style('top', `${(tipY)}px`);
   }
 
   function mouseup(d) {
-    tooltip.transition(300).style('opacity', 0);
+    tooltip.style('opacity', 0);
   }
 }
 
@@ -310,6 +310,7 @@ function pieChart(attrName, indexDs){
 	let vis = d3.select("#"+attrName+"Chart")
               .append("svg:svg")
               .attr("class", "chart-base")
+              .attr("id", attrName+"ChartPlot")
               .data([indexDs])          /* associate our data with the document */
               .attr("width", width)
               .attr("height", height)
@@ -320,9 +321,6 @@ function pieChart(attrName, indexDs){
               ) /* move the center of the pie chart from 0, 0 to radius, radius */
               ;
 
-  // const tooltip = vis.append("div")
-  //     .attr("class", "tooltip")
-  //     .style("opacity", 0);
 
 
 
@@ -349,10 +347,6 @@ function pieChart(attrName, indexDs){
                 .enter()              /* create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array */
                 .append("svg:g")      /* create a group to hold each slice (we will have a <path> and a <text> element associated with each slice) */
                 .attr("class", "slice")
-
-                .on("mouseover", mouseover)
-                .on("mouseout", mouseout)
-                .on("mousemove", mouseover)
                 .on("click", up);
 
   arcs.append("svg:path")
@@ -375,66 +369,13 @@ function pieChart(attrName, indexDs){
       .append("svg:text")
 	    .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
-	    .attr("transform", function(d) { console.log(arcFinal.centroid(d)[1]); return "translate(" + arcFinal.centroid(d)[0] + ',' + (arcFinal.centroid(d)[1] - 20) + ")"; });
+	    .attr("transform", function(d) { return "translate(" + arcFinal.centroid(d)[0] + ',' + (arcFinal.centroid(d)[1] - 20) + ")"; });
 
 	labeledArcs
       .text(function(d) { return d.data.attrib_value + "|" + d.data.index + "|" + d.data.target_pct + "%" })
       .attr("dy", 0)
       .attr("class", "arc-name")
       .call(wrap, 1, "|", type = 'pie');
-
-
-
-  // let legend = vis.append("g")
-  //     .attr("class", "legend")
-  //
-  // legend.selectAll("g")
-  //     .data(indexDs)
-  //     .enter()
-  //     .append("g")
-  //     .each(function(d, i) {
-  //         console.log(d)
-  //         let g = d3.select(this);
-  //         let name = d.attrib_value;
-  //         if (attrName === "gender") {
-  //             name = (d.attrib_value === "F" ? "Female" : "Male");
-  //         };
-  //         g.append("rect")
-  //             .style("fill", function(d) {
-  //                 console.log(d)
-  //                 return colorByIndexPie(d.index, indexDs, d.attrib_value);
-  //             })
-  //             .attr("width", 10)
-  //             .attr("height", 10)
-  //             .attr("x", -30)
-  //             .attr("y", i * 20 - 10);
-  //
-  //         g.append("text")
-  //             .attr("x", -10)
-  //             .attr("y", i * 20)
-  //             .text(name);
-  //     });
-
-
-
-
-  function mouseover(d) {
-    let name = d.data.attrib_value;
-    if (attrName === 'gender') {
-      name = (d.data.attrib_value === 'F') ? 'Female' : 'Male';
-    }
-    tooltip.transition()
-        .duration(200)
-        .style("opacity", .9);
-    tooltip.html(name + "<br/>" + "Target Pct: " + d.data.target_pct + "% <br/>"  + "Index: " + d.data.index)
-        .style('left', `${(d3.event.pageX - 10)}px`)
-        .style('top', `${(d3.event.pageY - 50)}px`);
-  }
-
-  function mouseout() {
-      tooltip.transition(300).style('opacity', 0);
-  }
-
 
 
   function up(d, i) {
@@ -476,6 +417,11 @@ function mapChart(attrName, indexDs) {
 			        .attr("width", width)
 			        .attr("height", height)
               .attr("class", "chart-base");
+
+  let tooltip = d3.select("#"+attrName+"Chart")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
   let data = indexDs;
 
@@ -544,21 +490,24 @@ var legend = d3.select("body").append("svg")
       	  .text(function(d) { return d; });
 	});
 */
-  // const tooltip = svg.append("div")
-  //   .attr("class", "tooltip")
-  //   .style("opacity", 0);
 
   function mouseover(d) {
-    tooltip.transition()
-        .duration(200)
-        .style("opacity", .9);
-    tooltip.html(d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index)
-        .style('left', `${(d3.event.pageX + 5)}px`)
-        .style('top', `${(d3.event.pageY - 50)}px`);
+      let ttipsvg = d3.select("#"+attrName+"Chart").node()
+      let bound = ttipsvg.getBoundingClientRect();
+      let tipX = d3.event.clientX - bound.x + 30;
+      let tipY = d3.event.clientY - bound.y - 20;
+      if (width - tipX < 50) {
+          tipX = d3.event.clientX - bound.x - 100;
+      }
+
+      tooltip.html(d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index)
+          .style("opacity", .9)
+          .style('left', `${(tipX)}px`)
+          .style('top', `${(tipY)}px`);
   }
 
   function mouseout() {
-      tooltip.transition(300).style('opacity', 0);
+      tooltip.style('opacity', 0);
   }
 
 };
@@ -599,6 +548,11 @@ function hBarChart(attrName, indexDs) {
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot")
               .attr("class", "chart-base");
+
+  const tooltip = d3.select("#"+attrName+"Chart")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
 
   /* Add horizontal grid lines */
   function make_x_gridlines() {
@@ -694,8 +648,8 @@ function hBarChart(attrName, indexDs) {
 				       return (i * (height / firstDatasetBarChart.length)) + ((height / firstDatasetBarChart.length - barPadding) / 2);
 				 })
 		     .attr("x", 0)
-		     .attr("class", "yAxis")
-         .call(wrap, 200, '-', type = 'hbar');
+		     .attr("class", "yAxis");
+         //.call(wrap, 200, '-', type = 'hbar');
 
   /* Add x-axis */
   let xAxis = d3.axisBottom(xScale)
@@ -715,21 +669,25 @@ function hBarChart(attrName, indexDs) {
   /* Remove vertical and extra horizontal gridlines */
   svg.selectAll(".domain").remove()
 
-  // const tooltip = svg.append("div")
-  //     .attr("class", "tooltip")
-  //     .style("opacity", 0);
+
 
   function mouseover(d) {
-    tooltip.transition()
-        .duration(200)
-        .style("opacity", .9);
+    let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.event.clientX - bound.x + 30;
+    let tipY = d3.event.clientY - bound.y - 60;
+    if (width - tipX < 100) {
+      tipX = d3.event.clientX - bound.x - 100;
+    }
+
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-        .style('left', `${(d3.event.pageX + 5)}px`)
-        .style('top', `${(d3.event.pageY - 50)}px`);
+        .style("opacity", .9)
+        .style('left', `${(tipX)}px`)
+        .style('top', `${(tipY)}px`);
   }
 
   function mouseout() {
-      tooltip.transition(300).style('opacity', 0);
+      tooltip.style('opacity', 0);
   }
 
 }
@@ -868,6 +826,7 @@ function drawCharts() {
 
   demogAttributesList.forEach(function(demogAttributeListName) {
     d3.select("#"+demogAttributeListName+"Chart svg").remove();
+    d3.selectAll('.tooltip').remove()
   });
 
   let ageIndex0 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
