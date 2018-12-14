@@ -275,7 +275,7 @@ function barChart(attrName, indexDs) {
     let ttipsvg = d3.select("#"+attrName+"Chart").node()
     let bound = ttipsvg.getBoundingClientRect();
     let tipX = d3.event.clientX - bound.x + 30;
-    let tipY = d3.event.clientY - bound.y - 30;
+    let tipY = d3.event.clientY - bound.y - 10;
     if (width - tipX < 50) {
       tipX = d3.event.clientX - bound.x - 100;
     }
@@ -527,7 +527,7 @@ function hBarChart(attrName, indexDs) {
 
   let firstDatasetBarChart = indexDs;
   //let maxAttrLength = d3.max(firstDatasetBarChart, function(d) { return d.attrib_value.length; }) * 9;
-  let maxAttrLength = width / 2;
+  let maxAttrLength = width / 2.5;
 
 	let yScale = d3.scaleLinear()
                  .domain([0, firstDatasetBarChart.length])
@@ -544,7 +544,7 @@ function hBarChart(attrName, indexDs) {
 	/* Create SVG element */
   let svg = d3.select("#"+attrName+"Chart")
               .append("svg")
-		          .attr("width", width + margin.left + margin.right + 10) // Adjusted to fit axis
+		          .attr("width", width + margin.left + margin.right + 15) // Adjusted to fit axis
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot")
               .attr("class", "chart-base");
@@ -636,8 +636,8 @@ function hBarChart(attrName, indexDs) {
 
 		     .text(function(d) {
            let yLabel = d.attrib_value;
-           if (d.attrib_value.length > 36) {
-             yLabel = yLabel.slice(0, 36) + "...";
+           if (d.attrib_value.length > 30) {
+             yLabel = yLabel.slice(0, 30) + "...";
            }
            return yLabel;
          })
@@ -826,7 +826,6 @@ function drawCharts() {
 
   demogAttributesList.forEach(function(demogAttributeListName) {
     d3.select("#"+demogAttributeListName+"Chart svg").remove();
-    d3.selectAll('.tooltip').remove()
   });
 
   let ageIndex0 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
