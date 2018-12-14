@@ -242,18 +242,6 @@ function barChart(attrName, indexDs) {
       .attr("class", "axis")
       .call(axis);
 
-  /* Add horizontal line on x-axis */
-  let xAxis = d3.axisBottom(xScale)
-      .tickSize(0);
-      //.tickSizeOuter(0)
-
-  let xAxisElement = svg.append("g")
-      .attr("class", "yAxis")
-      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top + height - 1) + ")")
-      .call(xAxis);
-
-  xAxisElement.selectAll("text").remove()
-
   /* Remove vertical and extra horizontal gridlines */
   svg.selectAll(".domain").remove()
 
@@ -266,7 +254,6 @@ function barChart(attrName, indexDs) {
        drawCharts();
      } else {
        updateCharts(attrName, d.attrib_value);
-       //updateAxis(d);
      }
 	}
 
@@ -533,10 +520,6 @@ function hBarChart(attrName, indexDs) {
                  .domain([0, firstDatasetBarChart.length])
 					       .range([0, height]);
 
-	// let xScale = d3.scaleLinear()
-	// 	             .domain([0, d3.max(firstDatasetBarChart, function(d) { return d.target_pct; })])
-	// 	             .range([0, width-maxAttrLength]);
-
   let xScale = d3.scaleLinear()
 		             .domain([0, 100])
 		             .range([0, width-maxAttrLength]);
@@ -631,7 +614,6 @@ function hBarChart(attrName, indexDs) {
 		     .enter()
 		     .append("text")
 
-         //.attr("dy", "0")
 
 
 		     .text(function(d) {
