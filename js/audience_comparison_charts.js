@@ -71,10 +71,6 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot");
 
-	let plot = svg.append("g")
-		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
   const tooltip = d3.select("#"+attrName+"Chart").append("div")
       .attr("class", "ds-tooltip")
       .style("opacity", 0);
@@ -92,6 +88,9 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
           .tickSize(-width)
           .tickFormat("")
       )
+
+  let plot = svg.append("g")
+		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   /* Will set y position and color dependent on size of bar */
   function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
@@ -1360,17 +1359,34 @@ function updateComparisonCharts(attrName, attrValue) {
                        //.datum(attrIndex1)
                        ;
 
+         /* Transition grid lines */
+         let t = d3.transition()
+               .duration(500)
+
+         function make_y_gridlines() {
+             return d3.axisLeft(yScale)
+                 .ticks(5)
+         }
+
+         svg.select(".grid")
+             .transition(t)
+             .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+             .call(make_y_gridlines()
+                 .tickSize(-width)
+                 .tickFormat("")
+             )
+
          let axis = d3.axisLeft(yScale)
              .ticks(5)
              .tickFormat(function (d) { return d + "%" })
-             .tickSizeOuter(0);
+             .tickSize(0);
 
-         let t = d3.transition()
-               .duration(500)
 
          svg.select(".axis")
                .transition(t)
                .call(axis)
+
+         svg.selectAll(".domain").remove()
 
           /* Select existing bars and update them */
           /* 1st series */
