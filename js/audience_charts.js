@@ -7,13 +7,7 @@
 let colorOverIndex = '#ffb14e',
     colorUnderIndex = '#4880da',
     colorNeutralIndex1 = 'grey',
-    colorNeutralIndex2 = 'rgb(192,192,192)',
-
-    colorAudience11 = colorOverIndex,
-    colorAudience12 = colorNeutralIndex1,
-
-    colorAudience21 = colorUnderIndex,
-    colorAudience22 = colorNeutralIndex2;
+    colorNeutralIndex2 = 'rgb(192,192,192)';
 
 
 /* color-by-index functions */
@@ -39,9 +33,7 @@ function colorByIndexPie(index, indexCats, attrValue) {
 }
 
 /* formats */
-let formatAsPercentage = d3.format("%"),
-    formatAsPercentage1Dec = d3.format(".1%"),
-    formatAsInteger = d3.format(",");
+let formatAsInteger = d3.format(",");
 
 /* Wrap labels for name, index, and pct
   source: https://bl.ocks.org/mbostock/7555321 (with modifications) */
@@ -286,12 +278,14 @@ function barChart(attrName, indexDs) {
 *******************************************************************************/
 
 function pieChart(attrName, indexDs){
-  let width = 300,
-		  height = 300,
-		  outerRadius = Math.min(width, height) / 2,
+  let width = 360,
+		  height = 360,
+		  outerRadius = Math.min(width - 60, height - 60) / 2,
       innerRadius = outerRadius * .999,
       innerRadiusFinal = outerRadius * .5,
-      innerRadiusFinal3 = outerRadius* .45;
+      innerRadiusFinal3 = outerRadius* .45,
+      marginShift = {top: outerRadius + 30, left: outerRadius + 30}
+      ;
 
 
 	let vis = d3.select("#"+attrName+"Chart")
@@ -304,12 +298,9 @@ function pieChart(attrName, indexDs){
               .append("svg:g")          /* make a group to hold our pie chart */
               .attr(
                 "transform",
-                "translate(" + outerRadius + "," + outerRadius + ")"
+                "translate(" + marginShift.top + "," + marginShift.left + ")"
               ) /* move the center of the pie chart from 0, 0 to radius, radius */
               ;
-
-
-
 
 
   /* Create an arc generator, and configure its inner and outer radii */
@@ -438,7 +429,7 @@ function mapChart(attrName, indexDs) {
   	.style("stroke-width", "1")
   	.style("fill", function(d) {
         let stateColor = colorByIndexBar(d.properties.index);
-        if (d.properties.target_pct == 0) {
+        if (d.properties.target_pct == 0 || d.properties.random_pct) {
           stateColor = noDataStateColor;
         }
         return stateColor;
@@ -613,9 +604,6 @@ function hBarChart(attrName, indexDs) {
 		     .data(firstDatasetBarChart)
 		     .enter()
 		     .append("text")
-
-
-
 		     .text(function(d) {
            let yLabel = d.attrib_value;
            if (d.attrib_value.length > 30) {
@@ -623,7 +611,6 @@ function hBarChart(attrName, indexDs) {
            }
            return yLabel;
          })
-
 		     .attr("text-anchor", "start")
 			   /* Set y position to the top edge of each bar plus half the bar width */
 				 .attr("y", function(d, i) {
@@ -676,27 +663,143 @@ function hBarChart(attrName, indexDs) {
 
 
 /*******************************************************************************
+*** WAVE CHART *****************************************************************
+*******************************************************************************/
+function waveChart(ds) {
+
+// tooltip values
+  function makeToolTips(indexDs, attrName) {
+    let attrFullName = {
+      age: "Age",
+      gender: "Gender",
+      ethnicity: "Ethnicity",
+      marital: "Marital status",
+      children: "Number of children",
+      education: "Education",
+      income: "Income",
+      state: "Location",
+      interests: "Interests",
+      retail: "Retail"
+    };
+    let t = indexDs.map(function(row) {
+      // the white spaces are needed here to create padding, b/c plotly
+      // doesn't seem to have padding options, and allows only inline html tags
+      // in the tooltip text string
+      return "<br>    " + "    <br>    "
+        + attrFullName[attrName]
+        + " = "
+        + row['attrib_value']
+        + "    <br>    Target Pct: "
+        + row['target_pct'].toString()
+        + "%    <br>    Index: "
+        + row['index'].toString()
+        + "    <br>    ";
+    });
+    return t;
+  }
+
+  let traces = [];
+  let attrNames = Object.keys(ds);
+
+  attrNames.forEach(function(attrName, i){
+    traces[i] = {
+      name: attrName,
+      x: unpack(ds[attrName], 'index'),
+      y: unpack(ds[attrName], 'target_pct'),
+      base: unpack(ds[attrName], 'target_pct').map(x => -x/2),
+      width: 8,
+      type: 'bar',
+      marker: {
+        color: unpack(ds[attrName], 'index').map(x => colorByIndexBar(x)),
+        opacity: 0.5
+      },
+     hovertext: makeToolTips(ds[attrName], attrName),
+     hoverinfo: 'text',
+      hoverlabel: {
+        bgcolor: '#fff',
+        bordercolor: 'lightgrey',
+        font: {
+          family: "Open Sans",
+          size: 15,
+          color: '#333'
+        }
+      }
+    };
+
+  });
+
+  let height = 150;
+	let width = 1260;
+
+  let layout = {
+    hovermode:'closest',
+    height: height,
+    width: width,
+    xaxis: {
+      range: [0, 500],
+      showgrid: false,
+      zeroline: false,
+      showline: false,
+      autotick: true,
+      ticks: '',
+      showticklabels: false
+    },
+    yaxis: {
+      autorange: true,
+      showgrid: false,
+      zeroline: false,
+      showline: false,
+      autotick: true,
+      ticks: '',
+      showticklabels: false
+    },
+    margin: {
+      l: 10,
+      r: 10,
+      b: 0,
+      t: 0,
+      pad: 1
+    },
+    paper_bgcolor: '#fafafa',
+    plot_bgcolor: '#fafafa',
+    showlegend: false,
+    shapes: [{
+      type: 'line',
+      x0: 120,
+      y0: 0,
+      x1: 120,
+      yref: 'paper',
+      y1: 1,
+      line: {
+        color: 'grey',
+        width: 1.5,
+        dash: 'dot'
+      }
+    },
+    {
+      type: 'line',
+      x0: 80,
+      y0: 0,
+      x1: 80,
+      yref: 'paper',
+      y1: 1,
+      line: {
+        color: 'grey',
+        width: 1.5,
+        dash: 'dot'
+      }
+    }]
+  };
+
+  Plotly.newPlot("waveChart", traces, layout, {responsive: true});
+
+}
+
+
+/*******************************************************************************
 *** MIKEJ CHART ****************************************************************
 *******************************************************************************/
 function mikeJChart(attrName, indexDs) {
-
-/*
-  // this code is for the index = 120 line, if needed
-  let repeated120Array = Array(indexDs1.length + 2).fill(120);
-  let lineAt120 = {
-    x: repeated120Array,
-    y: paddedCategories,
-    mode: 'lines',
-    type: 'scatter',
-    line: {
-      dash: 'dot',
-      color: colorNeutralIndex1,
-      width: 2
-    },
-    opacity: 0.4
-  };
-*/
-
 
   // sort data alphabetically by category
   indexDs.sort((a, b) => b.category.localeCompare(a.category));
@@ -767,41 +870,66 @@ function mikeJChart(attrName, indexDs) {
       type: 'category'
     },
     margin: {
-      l: 120,
+      l: 140,
       r: 40,
       b: 100,
       t: 20,
       pad: 4
     },
     paper_bgcolor: '#fafafa',
-    plot_bgcolor: '#fafafa'
+    plot_bgcolor: '#fafafa',
+    shapes: [{
+      type: 'line',
+      x0: 120,
+      y0: 0,
+      x1: 120,
+      yref: 'paper',
+      y1: 1,
+      line: {
+        color: 'grey',
+        width: 1.5,
+        dash: 'dot'
+      }
+    }]
   };
 
   let chartName = attrName+"DetailChart";
   Plotly.newPlot(chartName, [trace], layout, {responsive: true});
 }
 
-
 /*******************************************************************************
-*** 2-SERIES BAR CHART *********************************************************
+*** ADD STATS ******************************************************************
 *******************************************************************************/
-function bar2SeriesChart(attrName, indexDs) {
-
+function addStat(attrName, stat, prefix='', suffix='') {
+  // remove existing stats, if any
+  $( "#" + attrName + "Chart" )
+    .prev(".tile-header")
+    .find(".ds-stats")
+    .remove();
+  $( "#" + attrName + "Chart" )
+    .prev(".tile-header")
+    .append("<div class='ds-stats'>" + prefix + stat + suffix + "</div>");
 }
 
 
 /*******************************************************************************
-*** STACKED BAR CHART **********************************************************
+*** ADD AUDIENCE TITLE *********************************************************
 *******************************************************************************/
-function stackBarChart(attrName, indexDs) {
+function addAudienceTitle(targetAud) {
+  // remove existing title, if any
+  $( ".ds-audience-title h1" ).remove();
 
+  // add audience title
+  $( ".ds-audience-title" ).append("<h1>" + targetAud.name + "</h1>");
 }
-
 
 /*******************************************************************************
 *** DRAW ALL CHARTS ************************************************************
 *******************************************************************************/
 function drawCharts() {
+
+  // add the audience title
+  addAudienceTitle(targetAud);
 
   let indexCats = makeIndexCats();
   let demogAttributesList = Object.keys(indexCats);
@@ -811,23 +939,44 @@ function drawCharts() {
   });
 
   let ageIndex0 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
+  let ageMedianCat = getMedianCategory(ageIndex0);
   let genderIndex0 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
   let ethnicityIndex0 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
   let maritalIndex0 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
   let childrenIndex0 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
+  let childrenNonZeroPct = getNonZeroPct(childrenIndex0);
   let educationIndex0 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
   let incomeIndex0 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
+  let incomeMedianCat = getMedianCategory(incomeIndex0);
   let stateIndex0 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
   let interestsIndex0 = indexInterestsRetail("interests", targetInterests, randomInterests);
   let interestsIndexTop0 = indexInterestsRetailTop5(interestsIndex0);
   let retailIndex0 = indexInterestsRetail("retail", targetRetail, randomRetail);
   let retailIndexTop0 = indexInterestsRetailTop5(retailIndex0);
 
+  let indexes = {
+    age: ageIndex0,
+    gender: genderIndex0,
+    ethnicity: ethnicityIndex0,
+    marital: maritalIndex0,
+    children: childrenIndex0,
+    education: educationIndex0,
+    income: incomeIndex0,
+    state: stateIndex0,
+    interests: interestsIndexTop0,
+    retail: retailIndexTop0
+  };
+
+  waveChart(indexes);
+
   barChart("age", ageIndex0);
+  addStat("age", ageMedianCat, prefix = "<strong>Median: </strong>", suffix = " years");
   barChart("ethnicity", ethnicityIndex0);
   barChart("children", childrenIndex0);
+  addStat("children", childrenNonZeroPct, prefix = "<strong>Child present: </strong>", suffix = "%");
   barChart("education", educationIndex0);
   barChart("income", incomeIndex0);
+  addStat("income", incomeMedianCat, prefix = "<strong>Median: </strong>");
   pieChart("gender", genderIndex0);
   pieChart("marital", maritalIndex0);
   mapChart("state", stateIndex0);
@@ -851,6 +1000,7 @@ function updateCharts(attrName, attrValue) {
 //  console.log(attrValue);
   let attrIndex = [];
   let indexCats = makeIndexCats();
+  let indexes = {};
 
   let demogAttributesList = Object.keys(indexCats);
   let barChartAttributesList = ["age", "ethnicity", "children", "education", "income"]
@@ -906,7 +1056,33 @@ function updateCharts(attrName, attrValue) {
           }
       }
 
+      // update the wave chart data
+      if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+        indexes[demogAttributeListName] = attrIndexTop;
+      } else {
+        indexes[demogAttributeListName] = attrIndex;
+      }
 
+      // update stats
+      $( "#" + demogAttributeListName + "Chart" )
+        .prev(".tile-header")
+        .find(".ds-stats")
+        .remove();
+      if (attrName != demogAttributeListName) {
+        if (demogAttributeListName == "age") {
+            let ageMedianCat = getMedianCategory(attrIndex);
+            addStat("age", ageMedianCat, prefix = "<strong>Median: </strong>", suffix = " years");
+        } else if (demogAttributeListName == "children") {
+            let childrenNonZeroPct = getNonZeroPct(attrIndex);
+            addStat("children", childrenNonZeroPct, prefix = "<strong>Child present: </strong>", suffix = "%");
+        } else if (demogAttributeListName == "income") {
+            let incomeMedianCat = getMedianCategory(attrIndex);
+            addStat("income", incomeMedianCat, prefix = "<strong>Median: </strong>");
+        }
+      }
+
+
+      // update charts
       if ( barChartAttributesList.includes(demogAttributeListName) ) {
           // update bar chart
           var currentDatasetBarChart = attrIndex;
@@ -958,8 +1134,8 @@ function updateCharts(attrName, attrValue) {
 
           svg.selectAll(".domain").remove()
 
-          let plot = d3.select("#"+demogAttributeListName+"ChartPlot")
-                       .datum(currentDatasetBarChart);
+
+          let plot = d3.select("#"+demogAttributeListName+"ChartPlot");
 
           /* Select existing bars and update them */
           plot.selectAll("rect")
@@ -1016,6 +1192,8 @@ function updateCharts(attrName, attrValue) {
 
   });
 
+  // update the wave chart
+  waveChart(indexes);
 
 
   /* Make the elems in selected chart opaque, except for the clicked chart elem */
