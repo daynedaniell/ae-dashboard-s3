@@ -145,3 +145,7 @@ body {
 .ds-grid path {
   stroke-width: 0;
 }
+
+.ds-stats {
+  font-weight: 700;
+}

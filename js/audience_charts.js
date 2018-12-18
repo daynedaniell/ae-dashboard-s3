@@ -708,7 +708,7 @@ function waveChart(ds) {
       x: unpack(ds[attrName], 'index'),
       y: unpack(ds[attrName], 'target_pct'),
       base: unpack(ds[attrName], 'target_pct').map(x => -x/2),
-      width: 8,
+      width: 6,
       type: 'bar',
       marker: {
         color: unpack(ds[attrName], 'index').map(x => colorByIndexBar(x)),
@@ -999,7 +999,7 @@ function drawCharts() {
   waveChart(indexes);
 
   barChart("age", ageIndex0);
-  addStat("age", ageMedianCat, prefix = "<strong>Median: </strong>", suffix = " years");
+  addStat("age", ageMedianCat, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
   barChart("ethnicity", ethnicityIndex0);
   barChart("children", childrenIndex0);
   addStat("children", childrenNonZeroPct, prefix = "<strong>Child present: </strong>", suffix = "%");

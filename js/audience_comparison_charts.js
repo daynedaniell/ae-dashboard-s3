@@ -1181,13 +1181,13 @@ function drawComparisonCharts() {
   wave2SeriesChart(indexes1, indexes2);
 
   bar2SeriesChart("age", ageIndex1, ageIndex2);
-  add2SeriesStat("age", ageMedianCat1, ageMedianCat2, prefix = "<strong>Median: </strong>", suffix = " years");
+  add2SeriesStat("age", ageMedianCat1, ageMedianCat2, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
   bar2SeriesChart("ethnicity", ethnicityIndex1, ethnicityIndex2);
   bar2SeriesChart("children", childrenIndex1, childrenIndex2);
-  add2SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, prefix = "<strong>Child present: </strong>", suffix = "%");
+  add2SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, prefix = "<span style='color: #000;'><strong>Child present: </strong></span>", suffix = "%");
   bar2SeriesChart("education", educationIndex1, educationIndex2);
   bar2SeriesChart("income", incomeIndex1, incomeIndex2);
-  add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "<strong>Median: </strong>");
+  add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "<span style='color: #000;'><strong>Median: </strong></span>");
   stackedBar2SeriesChart("gender", audName1, genderIndex1, audName2, genderIndex2);
   stackedBar2SeriesChart("marital", audName1, maritalIndex1, audName2, maritalIndex2);
   hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2);
@@ -1311,15 +1311,15 @@ function updateComparisonCharts(attrName, attrValue) {
         if (demogAttributeListName == "age") {
             let ageMedianCat1 = getMedianCategory(attrIndex1);
             let ageMedianCat2 = getMedianCategory(attrIndex2);
-            add2SeriesStat("age", ageMedianCat1, ageMedianCat2, prefix = "<strong>Median: </strong>", suffix = " years");
+            add2SeriesStat("age", ageMedianCat1, ageMedianCat2, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
         } else if (demogAttributeListName == "children") {
             let childrenNonZeroPct1 = getNonZeroPct(attrIndex1);
             let childrenNonZeroPct2 = getNonZeroPct(attrIndex2);
-            add2SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, prefix = "<strong>Child present: </strong>", suffix = "%");
+            add2SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, prefix = "<span style='color: #000;'><strong>Child present: </strong></span>", suffix = "%");
         } else if (demogAttributeListName == "income") {
             let incomeMedianCat1 = getMedianCategory(attrIndex1);
             let incomeMedianCat2 = getMedianCategory(attrIndex2);
-            add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "<strong>Median: </strong>");
+            add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "<span style='color: #000;'><strong>Median: </strong></span>");
         }
       }
 
