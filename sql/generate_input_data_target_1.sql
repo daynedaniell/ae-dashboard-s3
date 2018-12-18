@@ -27,7 +27,7 @@ SELECT distinct idl_id
 from acxiom.audience_attributes__2018_03
 where attribute_name = '6244' and attribute_value = '1'
 order by random()
-limit 2000;
+limit 5000;
 
 -- output to tsv, if needed
 -- \pset footer OFF

@@ -11,7 +11,7 @@ insert into #random_aud_ids_xwalk
 SELECT distinct idl_id
 from acxiom.audience_attributes__2018_03
 order by random()
-limit 2000;
+limit 5000;
 
 -- output to tsv, if needed
 -- \pset footer OFF

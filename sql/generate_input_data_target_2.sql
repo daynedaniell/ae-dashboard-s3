@@ -68,7 +68,7 @@ insert into #target_aud_ids_xwalk
 SELECT distinct idl_id
 from #comp
 order by random()
-limit 2000;
+limit 5000;
 
 -- output to tsv, if needed
 -- \pset footer OFF
