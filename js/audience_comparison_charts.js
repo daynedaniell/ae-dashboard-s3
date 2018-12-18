@@ -1108,6 +1108,7 @@ function add2AudienceTitles(targetAud1, targetAud2) {
 function drawComparisonCharts() {
   d3.selectAll(".ds-tooltip").remove()
   // add the audience titles
+  addAudienceLegend(compare=true);
   add2AudienceTitles(targetAud, targetAud2);
 
   let indexCats = makeIndexCats();

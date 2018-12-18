@@ -912,6 +912,32 @@ function addStat(attrName, stat, prefix='', suffix='') {
     .append("<div class='ds-stats'>" + prefix + stat + suffix + "</div>");
 }
 
+/*******************************************************************************
+*** ADD AUDIENCE LEGEND ********************************************************
+*******************************************************************************/
+function addAudienceLegend(compare=false) {
+  // remove existing title, if any
+  // $( ".ds-audience-legend div" ).remove();
+  if (compare === false) {
+    $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorOverIndex)
+    $("#dsAudienceLegend1 .ds-audience-legend-label span").text("Over-Index")
+    $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorUnderIndex)
+    $("#dsAudienceLegend2 .ds-audience-legend-label span").text("Under-Index")
+  } else {
+    $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorSeries1)
+    $("#dsAudienceLegend1 .ds-audience-legend-label span").text(targetAud.name)
+    $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorSeries2)
+    $("#dsAudienceLegend2 .ds-audience-legend-label span").text(targetAud2.name)
+  }
+
+  // add audience title
+  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-row'></div>")
+  // $( ".ds-audience-legend-row" ).append("<div class='ds-audience-legend-color col-sm-4' style='background-color:" + colorOverIndex + "'></div>");
+  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-l1 col-sm-8'>Over-Index</div>");
+  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-color col-sm-4' style='background-color:" + colorUnderIndex + "'></div>");
+  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-l2 col-sm-8'>Under-Index</div>");
+}
+
 
 /*******************************************************************************
 *** ADD AUDIENCE TITLE *********************************************************
@@ -928,9 +954,11 @@ function addAudienceTitle(targetAud) {
 *** DRAW ALL CHARTS ************************************************************
 *******************************************************************************/
 function drawCharts() {
+  console.log(targetAud)
   d3.selectAll('.ds-tooltip').remove()
   // add the audience title
   addAudienceTitle(targetAud);
+  addAudienceLegend();
 
   let indexCats = makeIndexCats();
   let demogAttributesList = Object.keys(indexCats);
