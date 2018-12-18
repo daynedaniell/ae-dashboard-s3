@@ -1,4 +1,7 @@
 .ipynb_checkpoints/*
 py/*
-data/*
+data/random_audience/*.tsv
+data/random_audience/*.csv
+data/temp/*
+data/target_aud_*/
 *_old.*
