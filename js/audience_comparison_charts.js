@@ -159,9 +159,9 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 	    .enter()
 	    .append("text")
       .attr("class", "series1")
-	    .text(function(d) {
-			     return formatAsInteger(d3.format("d")(d.index));
-	    })
+      .text(function(d) {
+       return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
+      })
 	    .attr("text-anchor", "middle")
 	    /* Set x position to the left edge of each bar plus half the bar width */
 	    .attr("x", function(d, i) {
@@ -183,7 +183,7 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
       .append("text")
       .attr("class", "series2")
       .text(function(d) {
-           return formatAsInteger(d3.format("d")(d.index));
+       return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
       })
       .attr("text-anchor", "middle")
       /* Set x position to the left edge of each bar plus half the bar width */
@@ -1432,6 +1432,7 @@ function updateComparisonCharts(attrName, attrValue) {
               .attr("fill", colorSeries2);
 
           /* Update the text labels on bars */
+          function textInside(d) { return (height - yScale(d.target_pct)) > 20 }; // Display text inside if bar is big enough
           /* 1st series */
           plot.selectAll("text.series1")
               .data(attrIndex1)
@@ -1443,11 +1444,12 @@ function updateComparisonCharts(attrName, attrValue) {
                    + ( (width / (attrIndex1.length * 2) - barPadding) / 2 );
         	    })
               .attr("y", function(d) {
-                 return yScale(d.target_pct) + 14;
+                 return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
               })
               .text(function(d) {
-               return formatAsInteger(d3.format("d")(d.index));
+               return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
               })
+              .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
               .attr("class", "yAxis")
               .attr("class", "series1")
               ;
@@ -1463,11 +1465,12 @@ function updateComparisonCharts(attrName, attrValue) {
                        + ( (width / (attrIndex1.length * 2) - barPadding) ) * 1.5 ;
               })
               .attr("y", function(d) {
-                 return yScale(d.target_pct) + 14;
+                 return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
               })
               .text(function(d) {
-               return formatAsInteger(d3.format("d")(d.index));
+               return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
               })
+              .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
               .attr("class", "yAxis")
               .attr("class", "series2");
 

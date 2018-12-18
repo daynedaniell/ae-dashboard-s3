@@ -1162,7 +1162,7 @@ function updateCharts(attrName, attrValue) {
               });
 
           /* Update the text labels on bars */
-          function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
+          function textInside(d) { return (height - yScale(d.target_pct)) > 20 }; // Display text inside if bar is big enough
 
           plot.selectAll("text.yAxis")
               .data(currentDatasetBarChart)
