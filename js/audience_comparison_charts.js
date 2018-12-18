@@ -76,7 +76,7 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 
 
   const tooltip = d3.select("#"+attrName+"Chart").append("div")
-      .attr("class", "tooltip")
+      .attr("class", "ds-tooltip")
       .style("opacity", 0);
 
   /* Add horizontal grid lines */
@@ -296,7 +296,7 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
               .attr("id", attrName+"ChartPlot");
 
   const tooltip = d3.select("#"+attrName+"Chart").append("div")
-      .attr("class", "tooltip")
+      .attr("class", "ds-tooltip")
       .style("opacity", 0);
 
   /* Add horizontal grid lines */
@@ -517,7 +517,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 
   const tooltip = d3.select("#"+attrName+"Chart")
       .append("div")
-      .attr("class", "tooltip")
+      .attr("class", "ds-tooltip")
       .style("opacity", 0);
 
   /* Add horizontal grid lines */
@@ -1107,7 +1107,7 @@ function add2AudienceTitles(targetAud1, targetAud2) {
 *** DRAW ALL COMPARISON CHARTS *************************************************
 *******************************************************************************/
 function drawComparisonCharts() {
-
+  d3.selectAll(".ds-tooltip").remove()
   // add the audience titles
   add2AudienceTitles(targetAud, targetAud2);
 
@@ -1355,6 +1355,7 @@ function updateComparisonCharts(attrName, attrValue) {
                          .range([height,0]);
 
           let svg = d3.select("#"+demogAttributeListName+"Chart svg");
+
           let plot = d3.select("#"+demogAttributeListName+"ChartPlot")
                        //.datum(attrIndex1)
                        ;

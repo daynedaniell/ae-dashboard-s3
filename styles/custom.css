@@ -103,7 +103,7 @@ body {
 
 
 /* Tooltips */
-.tooltip {
+.ds-tooltip {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;

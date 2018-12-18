@@ -131,7 +131,7 @@ function barChart(attrName, indexDs) {
               .attr("class", "chart-base");
 
   const tooltip = d3.select("#"+attrName+"Chart").append("div")
-      .attr("class", "tooltip")
+      .attr("class", "ds-tooltip")
       .style("opacity", 0);
 
   /* Add horizontal grid lines */
@@ -243,6 +243,7 @@ function barChart(attrName, indexDs) {
      /* if clicking on already selected item, then reset the charts */
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
+       //tooltip.style('opacity', 0);
        drawCharts();
      } else {
        updateCharts(attrName, d.attrib_value);
@@ -398,7 +399,7 @@ function mapChart(attrName, indexDs) {
 
   let tooltip = d3.select("#"+attrName+"Chart")
     .append("div")
-    .attr("class", "tooltip")
+    .attr("class", "ds-tooltip")
     .style("opacity", 0);
 
   let data = indexDs;
@@ -525,7 +526,7 @@ function hBarChart(attrName, indexDs) {
 
   const tooltip = d3.select("#"+attrName+"Chart")
       .append("div")
-      .attr("class", "tooltip")
+      .attr("class", "ds-tooltip")
       .style("opacity", 0);
 
   /* Add horizontal grid lines */
@@ -927,7 +928,7 @@ function addAudienceTitle(targetAud) {
 *** DRAW ALL CHARTS ************************************************************
 *******************************************************************************/
 function drawCharts() {
-
+  d3.selectAll('.ds-tooltip').remove()
   // add the audience title
   addAudienceTitle(targetAud);
 
