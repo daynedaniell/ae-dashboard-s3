@@ -221,7 +221,6 @@
     <script src="js/audience_data_processing.js"></script>
     <script src="js/audience_charts.js"></script>
     <script src="js/audience_comparison_charts.js"></script>
-    <script src="js/analyze.js"></script>
 
 
     <script>
@@ -269,15 +268,9 @@
 
             if (selectedAudiences.length > 0 & selectedAudiences.length <= 2) {
               f(selectedAudiences);
-              console.log(selectedAudiences);
             } else {
               alert("Please select 1 or 2 audiences for visualization.");
             }
-
-
-            //console.log(selectedAudiences);
-
-
           }).change(); // fires on load and on form change
         });
 

@@ -74,6 +74,29 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 	let plot = svg.append("g")
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
+  const tooltip = d3.select("#"+attrName+"Chart").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+  /* Add horizontal grid lines */
+  function make_y_gridlines() {
+      return d3.axisLeft(yScale)
+          .ticks(5)
+  }
+
+  svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+      .call(make_y_gridlines()
+          .tickSize(-width)
+          .tickFormat("")
+      )
+
+  /* Will set y position and color dependent on size of bar */
+  function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
+
+
   /* Attach index data and add the chart elems */
   /* 1st series */
 	plot.selectAll("rect.series1")
@@ -147,12 +170,12 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
              + ( (width / (indexDs1.length * 2) - barPadding) / 2 );
 	    })
 	    .attr("y", function(d) {
-			     return yScale(d.target_pct) + 14;
+			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
 	    })
 	  //  .attr("class", "yAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", fontSize)
-	    .attr("fill", "white");
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
 
   /* 2nd series */
   plot.selectAll("text.series2")
@@ -170,12 +193,13 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
              + ( (width / (indexDs1.length * 2) - barPadding) ) * 1.5 ;
       })
       .attr("y", function(d) {
-           return yScale(d.target_pct) + 14;
-      })
+           return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
+	    })
   //    .attr("class", "yAxis")
       .attr("font-family", "sans-serif")
       .attr("font-size", fontSize)
-      .attr("fill", "white");
+      .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+
 
 
 	/* Add x labels to chart */
@@ -199,12 +223,16 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
   let axis = d3.axisLeft(yScale)
       .ticks(5)
       .tickFormat(function (d) { return d + "%" })
-      .tickSizeOuter(0);
+      .tickSize(0);
 
   svg.append("g")
       .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
       .attr("class", "axis")
       .call(axis);
+
+  /* Remove vertical and extra horizontal gridlines */
+  svg.selectAll(".domain").remove()
+
 
   function up(d, i) {
 	   /* update all charts when user selects a single bar in this chart */
@@ -214,21 +242,28 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
        drawComparisonCharts();
      } else {
        updateComparisonCharts(attrName, d.attrib_value);
-       updateAxis(d);
      }
 	}
 
+
   function mouseover(d) {
+    let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.event.clientX - bound.x + 30;
+    let tipY = d3.event.clientY - bound.y - 10;
+    if (width - tipX < 50) {
+      tipX = d3.event.clientX - bound.x - 100;
+    }
     tooltip.transition()
         .duration(200)
-        .style("opacity", .9);
-    tooltip.html(d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-        .style('left', `${(d3.event.pageX + 5)}px`)
-        .style('top', `${(d3.event.pageY - 50)}px`);
+    tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+        .style("opacity", .9)
+        .style('left', `${(tipX)}px`)
+        .style('top', `${(tipY)}px`);
   }
 
   function mouseup(d) {
-    tooltip.transition(300).style('opacity', 0);
+    tooltip.style('opacity', 0);
   }
 }
 
@@ -259,6 +294,24 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot");
+
+  const tooltip = d3.select("#"+attrName+"Chart").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+  /* Add horizontal grid lines */
+  function make_y_gridlines() {
+      return d3.axisLeft(yScale)
+          .ticks(5)
+  }
+
+  svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+      .call(make_y_gridlines()
+          .tickSize(-width)
+          .tickFormat("")
+      )
 
   let plot = svg.append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -376,14 +429,21 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
   let axis = d3.axisLeft(yScale)
       .ticks(5)
       .tickFormat(function (d) { return d + "%" })
-      .tickSizeOuter(0);
+      .tickSize(0);
 
   svg.append("g")
       .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
       .attr("class", "axis")
       .call(axis);
 
+  /* Remove vertical and extra horizontal gridlines */
+  svg.selectAll(".domain").remove()
+
+
   function up(d, i) {
+
+    tooltip.style('opacity', 0);
+
      /* update all charts when user selects a single bar in this chart */
      /* if clicking on already selected item, then reset the charts */
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
@@ -391,21 +451,28 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
        drawComparisonCharts();
      } else {
        updateComparisonCharts(attrName, d.attrib_value);
-       updateAxis(d);
      }
   }
 
+
   function mouseover(d) {
+    let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.event.clientX - bound.x + 30;
+    let tipY = d3.event.clientY - bound.y - 10;
+    if (width - tipX < 50) {
+      tipX = d3.event.clientX - bound.x - 100;
+    }
     tooltip.transition()
         .duration(200)
-        .style("opacity", .9);
-    tooltip.html(d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-        .style('left', `${(d3.event.pageX + 5)}px`)
-        .style('top', `${(d3.event.pageY - 50)}px`);
+    tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+        .style("opacity", .9)
+        .style('left', `${(tipX)}px`)
+        .style('top', `${(tipY)}px`);
   }
 
   function mouseup(d) {
-    tooltip.transition(300).style('opacity', 0);
+    tooltip.style('opacity', 0);
   }
 }
 
@@ -447,6 +514,26 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 		          .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot");
+
+  const tooltip = d3.select("#"+attrName+"Chart")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+  /* Add horizontal grid lines */
+  function make_x_gridlines() {
+      return d3.axisBottom(xScale)
+          .ticks(5)
+  }
+
+  svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", "translate(" + (margin.left + maxAttrLength - 1) + "," + (margin.top + height - 1) + ")")
+      .call(make_x_gridlines()
+          .tickSize(-height)
+          .tickFormat("")
+      )
+
 
 	let plot = svg.append("g")
 		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -636,17 +723,38 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 		     .attr("class", "yAxis");
 
 
+  /* Add x-axis */
+  let xAxis = d3.axisBottom(xScale)
+      .tickSize(0)
+      .ticks(5)
+      .tickFormat(function (d) { return d + "%" });
+
+  let xAxisElement = svg.append("g")
+      .attr("class", "xAxis")
+      .attr("transform", "translate(" + (margin.left - 1 + maxAttrLength) + "," + (margin.top + height - 1) + ")")
+      .call(xAxis);
+
+  /* Remove vertical and extra horizontal gridlines */
+  svg.selectAll(".domain").remove()
+
+
   function mouseover(d) {
-    tooltip.transition()
-        .duration(200)
-        .style("opacity", .9);
+    let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.event.clientX - bound.x + 30;
+    let tipY = d3.event.clientY - bound.y - 60;
+    if (width - tipX < 100) {
+      tipX = d3.event.clientX - bound.x - 100;
+    }
+
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-        .style('left', `${(d3.event.pageX + 5)}px`)
-        .style('top', `${(d3.event.pageY - 50)}px`);
+        .style("opacity", .9)
+        .style('left', `${(tipX)}px`)
+        .style('top', `${(tipY)}px`);
   }
 
   function mouseout() {
-      tooltip.transition(300).style('opacity', 0);
+      tooltip.style('opacity', 0);
   }
 
 }
@@ -1277,7 +1385,6 @@ function updateComparisonCharts(attrName, attrValue) {
                 return yScale(d.target_pct);
               })
               .attr("height", function(d) {
-                console.log(height);
                 return height - yScale(d.target_pct);
               })
               .attr("cursor", "pointer")

@@ -604,9 +604,6 @@ function hBarChart(attrName, indexDs) {
 		     .data(firstDatasetBarChart)
 		     .enter()
 		     .append("text")
-
-
-
 		     .text(function(d) {
            let yLabel = d.attrib_value;
            if (d.attrib_value.length > 30) {
@@ -614,7 +611,6 @@ function hBarChart(attrName, indexDs) {
            }
            return yLabel;
          })
-
 		     .attr("text-anchor", "start")
 			   /* Set y position to the top edge of each bar plus half the bar width */
 				 .attr("y", function(d, i) {
@@ -1109,7 +1105,6 @@ function updateCharts(attrName, attrValue) {
                          .range([height,0]);
 
           let svg = d3.select("#"+demogAttributeListName+"Chart svg");
-          let plot = d3.select("#"+demogAttributeListName+"ChartPlot");
 
           /* Transition grid lines */
           let t = d3.transition()
@@ -1139,8 +1134,8 @@ function updateCharts(attrName, attrValue) {
 
           svg.selectAll(".domain").remove()
 
-          let plot = d3.select("#"+demogAttributeListName+"ChartPlot")
-                       .datum(currentDatasetBarChart);
+
+          let plot = d3.select("#"+demogAttributeListName+"ChartPlot");
 
           /* Select existing bars and update them */
           plot.selectAll("rect")
