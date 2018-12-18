@@ -24,7 +24,7 @@ allColors.forEach(function(color, i){
 // colorSeries2 = omniousColors[3],
 
 let colorSeries1 = allColors[5],
-    colorSeries2 = allColors[7],
+    colorSeries2 = "#0fbbc1",//allColors[7],
 
     colorAudience11 = colorSeries1,
     colorAudience12 = colorSeries2,
@@ -82,7 +82,7 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
   }
 
   svg.append("g")
-      .attr("class", "grid")
+      .attr("class", "ds-grid")
       .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
       .call(make_y_gridlines()
           .tickSize(-width)
@@ -305,7 +305,7 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
   }
 
   svg.append("g")
-      .attr("class", "grid")
+      .attr("class", "ds-grid")
       .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
       .call(make_y_gridlines()
           .tickSize(-width)
@@ -526,7 +526,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   }
 
   svg.append("g")
-      .attr("class", "grid")
+      .attr("class", "ds-grid")
       .attr("transform", "translate(" + (margin.left + maxAttrLength - 1) + "," + (margin.top + height - 1) + ")")
       .call(make_x_gridlines()
           .tickSize(-height)
@@ -1369,7 +1369,7 @@ function updateComparisonCharts(attrName, attrValue) {
                  .ticks(5)
          }
 
-         svg.select(".grid")
+         svg.select(".ds-grid")
              .transition(t)
              .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
              .call(make_y_gridlines()

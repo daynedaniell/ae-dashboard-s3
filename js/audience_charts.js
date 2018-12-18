@@ -128,7 +128,7 @@ function barChart(attrName, indexDs) {
 		          .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot")
-              .attr("class", "chart-base");
+              .attr("class", "ds-chart-base");
 
   const tooltip = d3.select("#"+attrName+"Chart").append("div")
       .attr("class", "ds-tooltip")
@@ -141,7 +141,7 @@ function barChart(attrName, indexDs) {
   }
 
   svg.append("g")
-      .attr("class", "grid")
+      .attr("class", "ds-grid")
       .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
       .call(make_y_gridlines()
           .tickSize(-width)
@@ -291,7 +291,7 @@ function pieChart(attrName, indexDs){
 
 	let vis = d3.select("#"+attrName+"Chart")
               .append("svg:svg")
-              .attr("class", "chart-base")
+              .attr("class", "ds-chart-base")
               .attr("id", attrName+"ChartPlot")
               .data([indexDs])          /* associate our data with the document */
               .attr("width", width)
@@ -395,7 +395,7 @@ function mapChart(attrName, indexDs) {
 			        .append("svg")
 			        .attr("width", width)
 			        .attr("height", height)
-              .attr("class", "chart-base");
+              .attr("class", "ds-chart-base");
 
   let tooltip = d3.select("#"+attrName+"Chart")
     .append("div")
@@ -522,7 +522,7 @@ function hBarChart(attrName, indexDs) {
 		          .attr("width", width + margin.left + margin.right + 15) // Adjusted to fit axis
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot")
-              .attr("class", "chart-base");
+              .attr("class", "ds-chart-base");
 
   const tooltip = d3.select("#"+attrName+"Chart")
       .append("div")
@@ -536,7 +536,7 @@ function hBarChart(attrName, indexDs) {
   }
 
   svg.append("g")
-      .attr("class", "grid")
+      .attr("class", "ds-grid")
       .attr("transform", "translate(" + (margin.left + maxAttrLength - 1) + "," + (margin.top + height - 1) + ")")
       .call(make_x_gridlines()
           .tickSize(-height)
