@@ -1,4 +1,21 @@
 /*** Target audience: Nissan Altima competitive set ***/
+
+
+/*
+In addition to the sql outputs below, the viz app
+also needs a json file for each audience, containing
+audience id and audience display name.
+
+For now, to create this file for this audience, copy and paste
+the following into a txt file, and then save it as
+audience.json in the data/target_aud_2 folder:
+{
+  "id": 2,
+  "name": "Nissan Competitive Set"
+}
+
+*/
+
 -- Nissan Altima audience
 drop table if exists #competitive;
 select distinct idl_id
@@ -53,15 +70,15 @@ from #comp
 order by random()
 limit 2000;
 
--- output to tsv
-\pset footer OFF
-\f '\t'
-\a
-\o '~/work/ae_dashboard/data/target_2_aud_ids_xwalk.tsv'
-select * from #target_aud_ids_xwalk order by temp_id;
-\o
-\a
-\pset footer on
+-- output to tsv, if needed
+-- \pset footer OFF
+-- \f '\t'
+-- \a
+-- \o '../data/target_aud_2/target_aud_ids_xwalk.tsv'
+-- select * from #target_aud_ids_xwalk order by temp_id;
+-- \o
+-- \a
+-- \pset footer on
 
 -- audience attributes
 create table #aud (
@@ -532,7 +549,7 @@ left join #income using(temp_id)
 \pset footer OFF
 \f '\t'
 \a
-\o '~/work/ae_dashboard/data/demographics_target_2.tsv'
+\o '../data/target_aud_2/demographics_target.tsv'
 select * from #aud_demographics order by temp_id;
 \o
 \a
@@ -563,7 +580,7 @@ where category = 'Interest' and clean_attribute_value_description = 'TRUE'
 \pset footer OFF
 \f '\t'
 \a
-\o '~/work/ae_dashboard/data/interests_target_2.tsv'
+\o '../data/target_aud_2/interests_target.tsv'
 select * from #interests order by temp_id;
 \o
 \a
@@ -592,7 +609,7 @@ where category = 'Retail' and clean_attribute_value_description = 'TRUE'
 \pset footer OFF
 \f '\t'
 \a
-\o '~/work/ae_dashboard/data/retail_target_2.tsv'
+\o '../data/target_aud_2/retail_target.tsv'
 select * from #retail order by temp_id;
 \o
 \a

@@ -13,15 +13,15 @@ from acxiom.audience_attributes__2018_03
 order by random()
 limit 2000;
 
--- output to tsv
-\pset footer OFF
-\f '\t'
-\a
-\o '~/work/ae_dashboard/data/random_aud_ids_xwalk.tsv'
-select * from #random_aud_ids_xwalk order by temp_id;
-\o
-\a
-\pset footer on
+-- output to tsv, if needed
+-- \pset footer OFF
+-- \f '\t'
+-- \a
+-- \o '../data/random_audience/random_aud_ids_xwalk.tsv'
+-- select * from #random_aud_ids_xwalk order by temp_id;
+-- \o
+-- \a
+-- \pset footer on
 
 -- audience attributes
 create table #aud (
@@ -492,7 +492,7 @@ left join #income using(temp_id)
 \pset footer OFF
 \f '\t'
 \a
-\o '~/work/ae_dashboard/data/demographics_random.tsv'
+\o '../data/random_audience/demographics_random.tsv'
 select * from #aud_demographics order by temp_id;
 \o
 \a
@@ -523,7 +523,7 @@ where category = 'Interest' and clean_attribute_value_description = 'TRUE'
 \pset footer OFF
 \f '\t'
 \a
-\o '~/work/ae_dashboard/data/interests_random.tsv'
+\o '../data/random_audience/interests_random.tsv'
 select * from #interests order by temp_id;
 \o
 \a
@@ -552,7 +552,7 @@ where category = 'Retail' and clean_attribute_value_description = 'TRUE'
 \pset footer OFF
 \f '\t'
 \a
-\o '~/work/ae_dashboard/data/retail_random.tsv'
+\o '../data/random_audience/retail_random.tsv'
 select * from #retail order by temp_id;
 \o
 \a
