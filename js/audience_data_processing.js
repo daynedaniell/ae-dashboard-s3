@@ -274,11 +274,37 @@ function indexInterestsRetailTop5(indexDs) {
           index: d.value.index
         }
     })
-    .sort(function(a,b) { return b.index - a.index; })
-    .slice(0, 5)
-    ;
+    .sort(function(a,b){
+      if ( b.index != a.index ){
+        return b.index - a.index;
+      } else {
+        return b.target_pct - a.target_pct;
+      }
+    })
+    .slice(0, 5);
 
     return a;
+}
+
+function indexStatesTop5(indexDs) {
+  let a = [...indexDs].filter( d => ( d["random_pct"] > 0 ) )
+                      .sort(function(a,b){
+                        if ( b.index != a.index ){
+                          return b.index - a.index;
+                        } else {
+                          return b.target_pct - a.target_pct;
+                        }
+                      })
+                      .slice(0, 5)
+                      .map(function(d){
+                        return {
+                          attrib_value: getStateName(d.attrib_value),
+                          target_pct: d.target_pct,
+                          random_pct: d.random_pct,
+                          index: d.index
+                       }
+                     });
+  return a;
 }
 
 /* extract an array of values for the specified attribute */
@@ -286,7 +312,30 @@ function unpack(rows, key) {
   return rows.map(function(row) { return row[key]; });
 }
 
+/* get state name from state code */
+function getStateName(stateCode) {
+  return statesPaths.features.filter(d => ( d.properties.code == stateCode ) ).map(function(d){return d.properties.name;})[0];
+}
 
+/* get median category */
+function getMedianCategory(indexDs) {
+  let medianCat = '';
+  let sum = 0;
+  let i = 0;
+  while (sum < 50) {
+    medianCat = indexDs[i].attrib_value;
+    sum += indexDs[i].target_pct;
+    i++;
+  }
+  return medianCat;
+}
+
+/* get percentage of non-zero category values */
+function getNonZeroPct(indexDs) {
+  let zeroPct = indexDs
+    .filter(function(d) { return d["attrib_value"] == "0"; })[0].target_pct;
+  return 100 - zeroPct;
+}
 
 
 
