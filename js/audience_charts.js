@@ -252,12 +252,12 @@ function barChart(attrName, indexDs) {
 
 
   function mouseover(d) {
-    let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.event.clientX - bound.x + 30;
-    let tipY = d3.event.clientY - bound.y - 10;
+    //let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    //let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.mouse(this)[0] + 70;//d3.event.clientX - bound.x + 30;
+    let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
     if (width - tipX < 50) {
-      tipX = d3.event.clientX - bound.x - 100;
+        tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
     }
     tooltip.transition()
         .duration(200)
@@ -471,12 +471,12 @@ var legend = d3.select("body").append("svg")
 */
 
   function mouseover(d) {
-      let ttipsvg = d3.select("#"+attrName+"Chart").node()
-      let bound = ttipsvg.getBoundingClientRect();
-      let tipX = d3.event.clientX - bound.x + 30;
-      let tipY = d3.event.clientY - bound.y - 20;
+      //let ttipsvg = d3.select("#"+attrName+"Chart").node()
+      //let bound = ttipsvg.getBoundingClientRect();
+      let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
+      let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
       if (width - tipX < 50) {
-          tipX = d3.event.clientX - bound.x - 100;
+          tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
       }
 
       tooltip.html(d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index)
@@ -642,12 +642,12 @@ function hBarChart(attrName, indexDs) {
 
 
   function mouseover(d) {
-    let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.event.clientX - bound.x + 30;
-    let tipY = d3.event.clientY - bound.y - 60;
-    if (width - tipX < 100) {
-      tipX = d3.event.clientX - bound.x - 100;
+    //let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    //let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
+    let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
+    if (width - tipX < 50) {
+        tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
     }
 
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)

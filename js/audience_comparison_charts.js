@@ -1,4 +1,9 @@
-let store = {}
+let store = {
+    activeFilter: null,
+    stateActive: [1,2],
+    interestsActive: [1,2],
+    retailActive: [1,2],
+}
 
 /*******************************************************************************
 *** COLORS AND FORMATS *********************************************************
@@ -32,6 +37,19 @@ let colorSeries1 = allColors[5],
 
     colorAudience21 = colorSeries1,
     colorAudience22 = colorSeries2;
+
+store.stateColors = [colorSeries1,colorSeries2]; //Set colors to be indexable to active audience in toggle
+store.interestsColors = [colorSeries1,colorSeries2]
+store.retailColors = [colorSeries1,colorSeries2]
+/*******************************************************************************
+*** Main Toggle Function *******************************************************
+*******************************************************************************/
+function toggleFromStore(store, key) {
+    tmp1 = store[key][0]
+    tmp2 = store[key][1]
+    store[key][0] = tmp2
+    store[key][1] = tmp1
+}
 
 
 /*******************************************************************************
@@ -239,6 +257,7 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
      /* if clicking on already selected item, then reset the charts */
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
+       store["activeFilter"] = null;
        drawComparisonCharts();
      } else {
        updateComparisonCharts(attrName, d.attrib_value);
@@ -448,6 +467,7 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
      /* if clicking on already selected item, then reset the charts */
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
+       store["activeFilter"] = null;
        drawComparisonCharts();
      } else {
        updateComparisonCharts(attrName, d.attrib_value);
@@ -489,8 +509,11 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   aud2_compare = indexDs2[1];
 
 
-  indexDs2 = indexDs1[1],
+  indexDs2 = indexDs1[1];
   indexDs1 = indexDs1[0];
+
+  // target = store[attrName+"Active"][0] === 1 ? indexDs1 : indexDs2;
+  // compare = store[attrName+"Active"][1] === 2 ? indexDs2 : indexDs1;
   // if (attrName === "state") {
   //   console.log('si')
   //    indexDs2 = indexDs1[1],
@@ -498,8 +521,8 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   // }
   // let test = indexDs1[1]
   //console.log("idx2: " + JSON.stringify(indexDs2))
-  let localColor1 = colorSeries1,
-      localColor2 = colorSeries2;
+  let localColor1 = store[attrName+"Colors"][0],
+      localColor2 = store[attrName+"Colors"][1];
 
   if ((attrName === "state" && activeState === 2)
       || (attrName === "interests" && activeInterests === 2)
@@ -509,18 +532,19 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   }
 
   let toggleText;
+  console.log(store.stateActive)
 
-  if (attrName === "state" && activeState === 1) {
+  if (attrName === "state" && store.stateActive[0] === 1) {
       toggleText = "Show " + targetAud2.name
-  } else if (attrName === "state" && activeState === 2) {
+  } else if (attrName === "state" && store.stateActive[0] === 2) {
       toggleText = "Show " + targetAud.name
-  } else if (attrName === "interests" && activeInterests === 1) {
+  } else if (attrName === "interests" && store.interestsActive[0] === 1) {
       toggleText = "Show " + targetAud2.name
-  } else if (attrName === "interests" && activeInterests === 2) {
+  } else if (attrName === "interests" && store.interestsActive[0] === 2) {
       toggleText = "Show " + targetAud.name
-  } else if (attrName === "retail" && activeRetail === 1) {
+  } else if (attrName === "retail" && store.retailActive[0] === 1) {
       toggleText = "Show " + targetAud2.name
-  } else if (attrName === "retail" && activeRetail === 2) {
+  } else if (attrName === "retail" && store.retailActive[0] === 2) {
       toggleText = "Show " + targetAud.name
   }
 
@@ -715,33 +739,6 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 		     .attr("x", width * 0.125)
 		     .attr("class", "yAxis");
 
-  /* Series 2 */
-	// yLabels.selectAll("text.yAxis.series2")
-	// 	     .data(indexDs2)
-	// 	     .enter()
-	// 	     .append("text")
-  //        .attr("class", "series2")
-	// 	     .text(function(d) {
-  //          let yLabel = d.attrib_value;
-  //          if (d.attrib_value.length > 26) {
-  //            yLabel = yLabel.slice(0, 26) + "...";
-  //          }
-  //          return yLabel;
-  //        })
-  //        .attr("fill", function(d) {
-  //            return localColor2;
-  //        })
-	// 	     .attr("text-anchor", "start")
-	// 		   /* Set y position to the top edge of each bar plus half the bar width */
-	// 			 .attr("y", function(d, i) {
-  //             return (i * 2 * (barHeight + barPadding) + barHeight * 1.5 + barPadding);
-	// 			 })
-	// 	     .attr("x", width * 0.125)
-	// 	     .attr("class", "yAxis");
-
-
-
-
 	/* Add ranking y labels to chart */
 
 	yLabels.selectAll("text.ranking")
@@ -793,13 +790,23 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
       .style("margin-bottom", "10px")
       .on("click", function() {
         if (attrName === 'state') {
+            toggleFromStore(store, 'stateActive')//store.activeState = (store.activeState === 1) ? 2 : 1;
+            toggleFromStore(store, 'stateColors')
             activeState = (activeState === 1) ? 2 : 1;
+
             //console.log(activeState)
         } else if (attrName === 'interests') {
+            toggleFromStore(store, 'interestsActive')//store.activeInterests = (store.activeInterests === 1) ? 2 : 1;
+            toggleFromStore(store, 'interestsColors')
             activeInterests = (activeInterests === 1) ? 2 : 1;
         } else {
+            toggleFromStore(store, 'retailActive')//store.activeRetail = (store.activeRetail === 1) ? 2 : 1;
+            toggleFromStore(store, 'retailColors')
             activeRetail = (activeRetail === 1) ? 2 : 1;
         }
+
+
+        console.log(JSON.stringify(store))
 
         //drawComparisonChartsHbar(attrName)
         toggleComparisonCharts(attrName)
@@ -819,14 +826,14 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   function toggleComparisonCharts(demogAttributeListName) {
     let indexCats = makeIndexCats();
     let toggleTo;
-    let color1, color2, target, compare;
+    let target, compare;
 
-    if (activeFilter != null) {
+    if (store["activeFilter"] != null) {
       let filteredData1 = [];
-      let filteredIds1 = filterAttr(targetDemog, activeFilter[0], activeFilter[1]).map(function(d) { return d.temp_id; });
+      let filteredIds1 = filterAttr(targetDemog, store["activeFilter"][0], store["activeFilter"][1]).map(function(d) { return d.temp_id; });
 
       let filteredData2 = [];
-      let filteredIds2 = filterAttr(targetDemog2, activeFilter[0], activeFilter[1]).map(function(d) { return d.temp_id; });
+      let filteredIds2 = filterAttr(targetDemog2, store["activeFilter"][0], store["activeFilter"][1]).map(function(d) { return d.temp_id; });
 
       if (demogAttributeListName == "interests"){
         filteredData1 = targetInterests.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
@@ -835,6 +842,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
         filteredData2 = targetInterests2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
         attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomInterests);
         toggleTo = (activeInterests === 1) ? 1 : 2;
+
       } else if (demogAttributeListName == "retail"){
         filteredData1 = targetRetail.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
         attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomRetail);
@@ -842,13 +850,14 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
         filteredData2 = targetRetail2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
         attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomRetail);
         toggleTo = (activeRetail === 1) ? 1 : 2;
+
       }
 
         attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2);
         attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1);
       if (demogAttributeListName == "state") {
-        let filteredData1 = filterAttr(targetDemog, activeFilter[0], activeFilter[1]);
-        let filteredData2 = filterAttr(targetDemog2, activeFilter[0], activeFilter[1]);
+        let filteredData1 = filterAttr(targetDemog, store["activeFilter"][0], store["activeFilter"][1]);
+        let filteredData2 = filterAttr(targetDemog2, store["activeFilter"][0], store["activeFilter"][1]);
         attrIndex1 = indexAttr(demogAttributeListName,
                               indexCats[demogAttributeListName],
                               filteredData1,
@@ -865,14 +874,43 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 
       }
       console.log('toggleTo: ' + toggleTo)
-      target = (toggleTo === 1) ? attrIndexTop1[0] : attrIndexTop2[0];
 
-      compare = (toggleTo === 1) ? attrIndexTop1[1] : attrIndexTop2[1];
 
-      color1 = (toggleTo === 1) ? localColor1 : localColor2;
-      color2 = (toggleTo === 1) ? localColor2 : localColor1;
+    } else if (demogAttributeListName != "state") {
+        if (demogAttributeListName == "interests"){
+          attrIndex1 = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
+          attrIndex2 = indexInterestsRetail(demogAttributeListName, targetInterests2, randomInterests);
+          toggleTo = (activeInterests === 1) ? 1 : 2;
+        } else if (demogAttributeListName == "retail"){
+          attrIndex1 = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
+          attrIndex2 = indexInterestsRetail(demogAttributeListName, targetRetail2, randomRetail);
+          toggleTo = (activeRetail === 1) ? 1 : 2;
+        }
+        attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2);
+        attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1);
+    } else if (demogAttributeListName == "state") {
+      attrIndex1 = indexAttr(demogAttributeListName,
+                            indexCats[demogAttributeListName],
+                            targetDemog,
+                            randomDemog);
+      attrIndex2 = indexAttr(demogAttributeListName,
+                            indexCats[demogAttributeListName],
+                            targetDemog2,
+                            randomDemog);
+      attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2);
+      attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1);
+      toggleTo = (activeState === 1) ? 1 : 2;
 
     }
+
+    target = (toggleTo === 1) ? attrIndexTop1[0] : attrIndexTop2[0];
+
+    compare = (toggleTo === 1) ? attrIndexTop1[1] : attrIndexTop2[1];
+
+    color1 = store[demogAttributeListName+"Colors"][0];
+    color2 = store[demogAttributeListName+"Colors"][1];
+
+
     console.log("#"+attrName+"Plot");
     console.log(JSON.stringify(target))
     plot = d3.select("#"+attrName+"Chart");
@@ -1372,7 +1410,7 @@ function add2AudienceTitles(targetAud1, targetAud2) {
 /*******************************************************************************
 *** DRAW ALL COMPARISON CHARTS *************************************************
 *******************************************************************************/
-let activeState = 1, activeInterests = 1, activeRetail = 1, activeFilter = null;
+let activeState = 1, activeInterests = 1, activeRetail = 1 //activeFilter = null;
 
 function drawComparisonCharts() {
   d3.selectAll(".ds-tooltip").remove()
@@ -1466,9 +1504,9 @@ function drawComparisonCharts() {
   add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "<span style='color: #000;'><strong>Median: </strong></span>");
   stackedBar2SeriesChart("gender", audName1, genderIndex1, audName2, genderIndex2);
   stackedBar2SeriesChart("marital", audName1, maritalIndex1, audName2, maritalIndex2);
-  (activeState === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
-  (activeInterests === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
-  (activeRetail === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
+  (store["stateActive"][0] === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
+  (store["interestsActive"][0] === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
+  (store["retailActive"][0] === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
 
   $( ".tile" ).removeClass("selected-tile");
 
@@ -1511,11 +1549,11 @@ function drawComparisonChartsHbar(hbarAttr) {
 
 
   if (hbarAttr === "state") {
-    (activeState === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
+    (store["stateActive"][0] === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
   } else if (hbarAttr === "interests") {
-    (activeInterests === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
+    (store["interestsActive"][0] === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
   } else if (hbarAttr === "retail") {
-    (activeRetail === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
+    (store["retailActive"][0] === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
   }
 }
 
@@ -1526,8 +1564,9 @@ function drawComparisonChartsHbar(hbarAttr) {
 
 /* updates bar charts when a value element is clicked on a chart */
 function updateComparisonCharts(attrName, attrValue) {
-  activeFilter = [attrName, attrValue];
-  console.log("FILTER: " + JSON.stringify(activeFilter))
+  //activeFilter = [attrName, attrValue];
+  store.activeFilter = [attrName, attrValue];
+  //console.log("FILTER: " + JSON.stringify(activeFilter))
 //  console.log(attrName);
 //  console.log(attrValue);
   let attrIndex = [];
@@ -1554,6 +1593,8 @@ function updateComparisonCharts(attrName, attrValue) {
             let filteredIds2 = filterAttr(targetDemog2, attrName, attrValue).map(function(d) { return d.temp_id; });
 
             if (demogAttributeListName == "interests"){
+              // target = store["interestsActive"][0] === 1 ? targetInterests : targetInterests2;
+              // compare = store["interestsActive"][1] === 1 ? targetInterests : targetInterests2;
               filteredData1 = targetInterests.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
               attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomInterests);
 
@@ -1845,7 +1886,9 @@ function updateComparisonCharts(attrName, attrValue) {
       } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
           d3.select("#"+demogAttributeListName+"Chart svg").remove();
           //hBarChart(demogAttributeListName, attrIndexTop);
-          hBar2SeriesChart(demogAttributeListName, attrIndexTop1, attrIndexTop2);
+          target = store[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop1 : attrIndexTop2;
+          compare = store[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop2 : attrIndexTop1;
+          hBar2SeriesChart(demogAttributeListName, target, compare);
 
       }
 
