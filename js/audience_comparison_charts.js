@@ -502,6 +502,11 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
 *** 2-SERIES HORIZONTAL BAR CHART **********************************************
 *******************************************************************************/
 function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
+    console.log('here')
+  //addToggleButton(attrName, store);
+  // $("#"+attrName+"Chart .ds-toggle-button").css("display", "block")
+  // $("#"+attrName+"Chart .ds-toggle-button-aud.ds-toggle-button-aud1").css("background-color", colorSeries1)
+  // $("#"+attrName+"Chart .ds-toggle-button-aud.ds-toggle-button-aud2").css("background-color", colorSeries2)
   aud1_target = indexDs1[0];
   aud1_compare = indexDs1[1];
 
@@ -512,15 +517,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   indexDs2 = indexDs1[1];
   indexDs1 = indexDs1[0];
 
-  // target = store[attrName+"Active"][0] === 1 ? indexDs1 : indexDs2;
-  // compare = store[attrName+"Active"][1] === 2 ? indexDs2 : indexDs1;
-  // if (attrName === "state") {
-  //   console.log('si')
-  //    indexDs2 = indexDs1[1],
-  //    indexDs1 = indexDs1[0];
-  // }
-  // let test = indexDs1[1]
-  //console.log("idx2: " + JSON.stringify(indexDs2))
+
   let localColor1 = store[attrName+"Colors"][0],
       localColor2 = store[attrName+"Colors"][1];
 
@@ -532,7 +529,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   }
 
   let toggleText;
-  console.log(store.stateActive)
+  //console.log(store.stateActive)
 
   if (attrName === "state" && store.stateActive[0] === 1) {
       toggleText = "Show " + targetAud2.name
@@ -776,54 +773,124 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   /* Remove vertical and extra horizontal gridlines */
   svg.selectAll(".domain").remove()
 
-  let toggle = svg.append("g")
-      .attr("transform", "translate(" + (margin.left + width - margin.right) + "," + (margin.top) + ")")
-      .append("text")
-      .text(toggleText)
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("fill", "#81838c")
-      .attr("font-size", "14px")
-      .attr("text-anchor", "end")
-      .attr("class", "ds-hbar-toggle")
-      .style("cursor", "pointer")
-      .style("margin-bottom", "10px")
-      .on("click", function() {
-        if (attrName === 'state') {
-            toggleFromStore(store, 'stateActive')//store.activeState = (store.activeState === 1) ? 2 : 1;
-            toggleFromStore(store, 'stateColors')
-            activeState = (activeState === 1) ? 2 : 1;
+  $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
+  $("#"+attrName+"Chart .ds-hbar-status").text(function() {
+      //let cat = attrName.charAt(0).toUpperCase() + attrName.slice(1);
+      let aud = store[attrName+"Active"][0] === 1 ? targetAud.name : targetAud2.name;
+      if (attrName === "interests") {
+          return "Top 5 for " + aud + " (by Index)";
+      } else if (attrName === "state") {
+          return "Top 5 for " + aud + " (by Index)";
+      } else {
+          return "Top 5 for " + aud + " (by Index)";
+      }
 
-            //console.log(activeState)
-        } else if (attrName === 'interests') {
-            toggleFromStore(store, 'interestsActive')//store.activeInterests = (store.activeInterests === 1) ? 2 : 1;
-            toggleFromStore(store, 'interestsColors')
-            activeInterests = (activeInterests === 1) ? 2 : 1;
+  });
+  $("#"+attrName+"Chart .ds-toggle-after").css("background-color", store[attrName+"Colors"][0]);
+  $("#"+attrName+"Chart .ds-toggle-button .ds-toggle-main").unbind().click(function() {
+    $("#"+attrName+"Chart .ds-hbar-status").text(function() {
+        //let cat = attrName.charAt(0).toUpperCase() + attrName.slice(1);
+        let aud = store[attrName+"Active"][0] === 2 ? targetAud.name : targetAud2.name;
+        if (attrName === "interests") {
+            return "Top 5 for " + aud + " (by Index)";
+        } else if (attrName === "state") {
+            return "Top 5 for " + aud + " (by Index)";
         } else {
-            toggleFromStore(store, 'retailActive')//store.activeRetail = (store.activeRetail === 1) ? 2 : 1;
-            toggleFromStore(store, 'retailColors')
-            activeRetail = (activeRetail === 1) ? 2 : 1;
+            return "Top 5 for " + aud + " (by Index)";
         }
 
+    });
 
-        console.log(JSON.stringify(store))
+    if (attrName === 'state') {
+        toggleFromStore(store, 'stateActive')//store.activeState = (store.activeState === 1) ? 2 : 1;
+        toggleFromStore(store, 'stateColors')
+        //d3.select(this).style("fill", store['stateColors'][0]);
+        activeState = (activeState === 1) ? 2 : 1;
 
-        //drawComparisonChartsHbar(attrName)
-        toggleComparisonCharts(attrName)
-        tmp_target = aud2_target;
-        tmp_compare = aud2_compare;
-        tmp_color = localColor2;
-        aud2_target = aud1_target;
-        aud2_compare = aud1_compare;
-        // localColor2 = localColor1;
-        aud1_target = tmp_target;
-        aud1_compare = tmp_compare;
-        // localColor1 = tmp_color;
+        //console.log(activeState)
+    } else if (attrName === 'interests') {
+        toggleFromStore(store, 'interestsActive')//store.activeInterests = (store.activeInterests === 1) ? 2 : 1;
+        toggleFromStore(store, 'interestsColors')
+        //d3.select(this).style("background-color",store['interestsColors'][0]);
+        activeInterests = (activeInterests === 1) ? 2 : 1;
+    } else {
+        toggleFromStore(store, 'retailActive')//store.activeRetail = (store.activeRetail === 1) ? 2 : 1;
+        toggleFromStore(store, 'retailColors')
+        //d3.select(this).style("fill", store['retailColors'][0]);
+        activeRetail = (activeRetail === 1) ? 2 : 1;
+    }
 
 
-      });
+    console.log(JSON.stringify(store))
+
+    changeToggleColor(attrName, store[attrName+"Colors"][0])
+    toggleComparisonCharts(attrName)
+
+  });
+
+  // let toggle = d3.select("#"+attrName+"Chart .ds-toggle-button").append("g")
+  //     .attr("transform", "translate(" + (margin.left + width - margin.right) + "," + (margin.top) + ")")
+  //
+  // toggle
+  //     .append("div")
+  //     .attr("class", "ds-toggle-main")
+      // .html("Test")
+      // .attr("x", 0)
+      // .attr("y", 0)
+      // .attr("fill", "#81838c")
+      // .attr("font-size", "14px")
+      // .attr("text-anchor", "end")
+      // .attr("class", "ds-hbar-toggle")
+      // .style("background-color", localColor1)
+      // .style("cursor", "pointer")
+      // .style("width", "100%")
+      // .style("height", "100%")
+      // .style("margin-bottom", "10px")
+      // .on("click", function() {
+      //     //d3.select(this).append("div").attr("class", "ds-toggle-after")
+      //   if (attrName === 'state') {
+      //       toggleFromStore(store, 'stateActive')//store.activeState = (store.activeState === 1) ? 2 : 1;
+      //       toggleFromStore(store, 'stateColors')
+      //       //d3.select(this).style("fill", store['stateColors'][0]);
+      //       activeState = (activeState === 1) ? 2 : 1;
+      //
+      //       //console.log(activeState)
+      //   } else if (attrName === 'interests') {
+      //       toggleFromStore(store, 'interestsActive')//store.activeInterests = (store.activeInterests === 1) ? 2 : 1;
+      //       toggleFromStore(store, 'interestsColors')
+      //       //d3.select(this).style("background-color",store['interestsColors'][0]);
+      //       activeInterests = (activeInterests === 1) ? 2 : 1;
+      //   } else {
+      //       toggleFromStore(store, 'retailActive')//store.activeRetail = (store.activeRetail === 1) ? 2 : 1;
+      //       toggleFromStore(store, 'retailColors')
+      //       //d3.select(this).style("fill", store['retailColors'][0]);
+      //       activeRetail = (activeRetail === 1) ? 2 : 1;
+      //   }
+      //
+      //
+      //   console.log(JSON.stringify(store))
+      //
+      //   //drawComparisonChartsHbar(attrName)
+      //   changeToggleColor(attrName, store[attrName+"Colors"][0])
+      //   toggleComparisonCharts(attrName)
+      //   tmp_target = aud2_target;
+      //   tmp_compare = aud2_compare;
+      //   tmp_color = localColor2;
+      //   aud2_target = aud1_target;
+      //   aud2_compare = aud1_compare;
+      //   // localColor2 = localColor1;
+      //   aud1_target = tmp_target;
+      //   aud1_compare = tmp_compare;
+      //   // localColor1 = tmp_color;
+      //
+      //
+      // })
+      // .append("div")
+      // .attr("class", "ds-toggle-after")
+      // .style("background-color", store[attrName+"Colors"][0]);
 
   function toggleComparisonCharts(demogAttributeListName) {
+      console.log('inner')
     let indexCats = makeIndexCats();
     let toggleTo;
     let target, compare;
@@ -873,7 +940,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
         toggleTo = (activeState === 1) ? 1 : 2;
 
       }
-      console.log('toggleTo: ' + toggleTo)
+      //console.log('toggleTo: ' + toggleTo)
 
 
     } else if (demogAttributeListName != "state") {
@@ -911,8 +978,11 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
     color2 = store[demogAttributeListName+"Colors"][1];
 
 
-    console.log("#"+attrName+"Plot");
-    console.log(JSON.stringify(target))
+
+
+
+    //console.log("#"+attrName+"Plot");
+    // console.log(JSON.stringify(target))
     plot = d3.select("#"+attrName+"Chart");
 
 
@@ -1038,7 +1108,6 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
        			     return (i * 2 * (barHeight + barPadding) + barHeight + barPadding);
     				 })
     		     .attr("x", width * 0.125);
-
   }
 
 
@@ -1913,3 +1982,46 @@ function updateComparisonCharts(attrName, attrValue) {
   $( ".tile" ).removeClass("selected-tile");
   $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
 }
+
+
+
+/*******************************************************************************
+*** Toggle Button **************************************************************
+*******************************************************************************/
+// function addToggleButton(attrName, store) {
+//     // console.log('hi')
+//     // console.log(store);
+//     // $("#"+attrName+"Chart .ds-toggle-after").css("background-color", store[attrName+"Colors"][0]);
+//     // $("#"+attrName+"Chart .ds-toggle-button").css("display", "block");
+//     //
+//     // $("#"+attrName+"Chart .ds-toggle-after").css("background-color", store[attrName+"Colors"][0]);
+//     //$("#"+attrName+"Chart .ds-toggle-button-aud.ds-toggle-button-aud1").css("background-color", colorSeries1)
+//     //$("#"+attrName+"Chart .ds-toggle-button-aud.ds-toggle-button-aud2").css("background-color", colorSeries2)
+// }
+
+$(function(){
+  $('.ds-toggle-button').on('click', function(event){
+    //event.preventDefault();
+    $(this).toggleClass('active');
+  });
+});
+
+function changeToggleColor(attrName, color) {
+    $("#"+attrName+"Chart .ds-toggle-after").css("background-color", color)
+}
+
+// $("#interestsChart .ds-toggle-button-aud.ds-toggle-button-aud1").click(function() {
+//       if (store['interestsActive'][0] != 1) {
+//           console.log('nope')
+//           toggleFromStore(store, 'interestsActive')
+//           console.log(JSON.stringify(store));
+//           toggleComparisonCharts('interests');
+//           $( this ).css({"box-shadow": "none"})
+//       } else {
+//           console.log('yep')
+//       }
+// });
+
+// $("#interestsChart .ds-toggle-button-aud.ds-toggle-button-aud2").click(function() {
+//       $( this ).css({"box-shadow": "none"})
+// });

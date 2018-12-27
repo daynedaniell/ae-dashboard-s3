@@ -496,6 +496,8 @@ var legend = d3.select("body").append("svg")
 *** HORIZONTAL BAR CHART *******************************************************
 *******************************************************************************/
 function hBarChart(attrName, indexDs) {
+    $("#"+attrName+"Chart .ds-toggle-button").css("display", "none");
+    $("#"+attrName+"Chart .ds-hbar-status").text("Top 5 By Index");
   let innerWidth = 610;
 
 	let basics = barChartSetup(innerWidth);
@@ -955,6 +957,7 @@ function addAudienceTitle(targetAud) {
 *******************************************************************************/
 function drawCharts() {
   console.log(targetAud)
+
   d3.selectAll('.ds-tooltip').remove()
   // add the audience title
   addAudienceTitle(targetAud);
