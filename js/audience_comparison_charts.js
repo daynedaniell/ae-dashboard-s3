@@ -50,7 +50,7 @@ function toggleFromStore(store, key) {
 *******************************************************************************/
 
 function bar2SeriesChart(attrName, indexDs1, indexDs2) {
-  let innerWidth = 360;
+  let innerWidth = 400;
   if (attrName == "income") {
   	  innerWidth = 610;
   }
@@ -81,7 +81,8 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
               .append("svg")
 		          .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
-              .attr("id", attrName+"ChartPlot");
+              .attr("id", attrName+"ChartPlot")
+              .attr("class", "ds-chart-base");
 
   const tooltip = d3.select("#"+attrName+"Chart").append("div")
       .attr("class", "ds-tooltip")
@@ -304,7 +305,8 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
               .append("svg")
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
-              .attr("id", attrName+"ChartPlot");
+              .attr("id", attrName+"ChartPlot")
+              .attr("class", "ds-chart-base");;
 
   const tooltip = d3.select("#"+attrName+"Chart").append("div")
       .attr("class", "ds-tooltip")
@@ -501,7 +503,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   let localColor1 = DS_VIS_STORE[attrName+"Colors"][0],
       localColor2 = DS_VIS_STORE[attrName+"Colors"][1];
 
-  let innerWidth = 610;
+  let innerWidth = 630;
 
   let basics = barChartSetup(innerWidth);
   let margin = basics.margin,
@@ -512,7 +514,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
     margin.left = 0;
 
   let firstDatasetBarChart = indexDs1;
-  let maxAttrLength = width / 2;
+  let maxAttrLength = width / 2.25;
 
 	let yScale = d3.scaleLinear()
                  .domain([0, indexDs1.length])
@@ -529,9 +531,10 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 	/* Create SVG element */
   let svg = d3.select("#"+attrName+"Chart")
               .append("svg")
-		          .attr("width", width + margin.left + margin.right)
+		          .attr("width", width + margin.left + margin.right + 15) // Adjusted to fit axis
               .attr("height", height + margin.top + margin.bottom)
-              .attr("id", attrName+"ChartPlot");
+              .attr("id", attrName+"ChartPlot")
+              .attr("class", "ds-chart-base");;
 
   const tooltip = d3.select("#"+attrName+"Chart")
       .append("div")
@@ -689,7 +692,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 				 .attr("y", function(d, i) {
    			     return (i * 2 * (barHeight + barPadding) + barHeight + barPadding);
 				 })
-		     .attr("x", width * 0.125)
+		     .attr("x", 66)
 		     .attr("class", "yAxis");
 
 	/* Add ranking y labels to chart */
@@ -703,7 +706,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
            return "#" + d;
          })
          .attr("fill", "#81838c")
-   	     .attr("font-size", "44px")
+   	     .attr("font-size", "36px")
 		     .attr("text-anchor", "start")
 			   /* Set y position to the top edge of each bar plus half the bar width */
 				 .attr("y", function(d, i) {
