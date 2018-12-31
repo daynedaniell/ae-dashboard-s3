@@ -1010,7 +1010,7 @@ function wave2SeriesChart(ds1, ds2) {
       x: unpack(ds1[attrName], 'index'),
       y: unpack(ds1[attrName], 'target_pct'),
       base: unpack(ds1[attrName], 'target_pct').map(x => -x/2),
-      width: 8,
+      width: 6,
       type: 'bar',
       marker: {
         color: colorSeries1,

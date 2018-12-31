@@ -393,8 +393,8 @@ distkey(temp_id);
 insert into #children
 SELECT distinct
   temp_id,
-  case clean_attribute_value_description
-    when '8' then '8+'
+  case 
+    when clean_attribute_value_description::int >= 5 then '5+'
     else clean_attribute_value_description
   end as children
 from #aud_attributes
