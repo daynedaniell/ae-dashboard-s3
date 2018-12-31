@@ -1,4 +1,4 @@
-let store = {
+let DS_VIS_STORE = {
     activeFilter: null,
     stateActive: [1,2],
     interestsActive: [1,2],
@@ -12,25 +12,16 @@ let store = {
 /* colors */
 
 // colors that we could use ?
-let omniBubblesColors = [
-      '#b11f61', '#2a60aa', '#6f8695', '#a3b6bd', '#fde449', '#4d3c96',
-      '#252937', '#e57eb1', '#2e7d61', '#fbb116', '#8d7fba', '#ee4154'],
-    meriColors = ['#37acc3']
-  ;
-let allColors = omniBubblesColors.concat(meriColors);
+// let omniBubblesColors = [
+//       '#b11f61', '#2a60aa', '#6f8695', '#a3b6bd', '#fde449', '#4d3c96',
+//       '#252937', '#e57eb1', '#2e7d61', '#fbb116', '#8d7fba', '#ee4154'],
+//     meriColors = ['#37acc3']
+//   ;
+// let allColors = omniBubblesColors.concat(meriColors);
 
-// testing out colors in console
-// console.log("Omni colors test: ");
-// allColors.forEach(function(color, i){
-//   console.log('%c this is color number ' + i , 'background: '+ color +'; color: #333');
-// });
 
-// greys
-// omniousColors[2],
-// colorSeries2 = omniousColors[3],
-
-let colorSeries1 = allColors[5],
-    colorSeries2 = "#0fbbc1",//allColors[7],
+let colorSeries1 = "#4d3c96",
+    colorSeries2 = "#0fbbc1",
 
     colorAudience11 = colorSeries1,
     colorAudience12 = colorSeries2,
@@ -38,13 +29,15 @@ let colorSeries1 = allColors[5],
     colorAudience21 = colorSeries1,
     colorAudience22 = colorSeries2;
 
-store.stateColors = [colorSeries1,colorSeries2]; //Set colors to be indexable to active audience in toggle
-store.interestsColors = [colorSeries1,colorSeries2]
-store.retailColors = [colorSeries1,colorSeries2]
+DS_VIS_STORE.stateColors = [colorSeries1,colorSeries2]; //Set colors to be indexable to active audience in toggle
+DS_VIS_STORE.interestsColors = [colorSeries1,colorSeries2]
+DS_VIS_STORE.retailColors = [colorSeries1,colorSeries2]
+
 /*******************************************************************************
 *** Main Toggle Function *******************************************************
 *******************************************************************************/
 function toggleFromStore(store, key) {
+    /* Takes in the store and a key and switches position of elements in an array */
     tmp1 = store[key][0]
     tmp2 = store[key][1]
     store[key][0] = tmp2
@@ -117,33 +110,33 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 
   /* Attach index data and add the chart elems */
   /* 1st series */
-	plot.selectAll("rect.series1")
-      .data(indexDs1)
-		  .enter()
-		  .append("rect")
-      .attr("class", "series1")
-			.attr("x", function(d, i) {
-			     return xScale(i);
-			})
-		  .attr("width", width / (indexDs1.length * 2) - barPadding)
-			.attr("y", function(d) {
-			     return yScale(d.target_pct);
-			})
-			.attr("height", function(d) {
-			    return height-yScale(d.target_pct);
-			})
-			.attr("fill", colorSeries1)
-      .attr("cursor", "pointer")
-      .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-      .on("mouseover", mouseover)
-      .on("mouseout", mouseup)
-      .on("mousemove", mouseover)
-      .attr("target-pct", function(d) { return d.target_pct; })
-      .attr("index", function(d) { return d.index; })
-      .on("click", up);
+    plot.selectAll("rect.series1")
+        .data(indexDs1)
+          .enter()
+          .append("rect")
+        .attr("class", "series1")
+        	.attr("x", function(d, i) {
+        	     return xScale(i);
+        	})
+          .attr("width", width / (indexDs1.length * 2) - barPadding)
+        	.attr("y", function(d) {
+        	     return yScale(d.target_pct);
+        	})
+        	.attr("height", function(d) {
+        	    return height-yScale(d.target_pct);
+        	})
+        	.attr("fill", colorSeries1)
+        .attr("cursor", "pointer")
+        .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseup)
+        .on("mousemove", mouseover)
+        .attr("target-pct", function(d) { return d.target_pct; })
+        .attr("index", function(d) { return d.index; })
+        .on("click", up);
 
   /* 2nd series */
-	plot.selectAll("rect.series2")
+    plot.selectAll("rect.series2")
       .data(indexDs2)
 		  .enter()
 		  .append("rect")
@@ -167,7 +160,6 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
       .attr("target-pct", function(d) { return d.target_pct; })
       .attr("index", function(d) { return d.index; })
       .on("click", up);
-
 
 	/* Add y labels to plot */
   let fontSize = "12px";
@@ -257,7 +249,7 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
      /* if clicking on already selected item, then reset the charts */
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
-       store["activeFilter"] = null;
+       DS_VIS_STORE["activeFilter"] = null;
        drawComparisonCharts();
      } else {
        updateComparisonCharts(attrName, d.attrib_value);
@@ -467,7 +459,7 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
      /* if clicking on already selected item, then reset the charts */
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
-       store["activeFilter"] = null;
+       DS_VIS_STORE["activeFilter"] = null;
        drawComparisonCharts();
      } else {
        updateComparisonCharts(attrName, d.attrib_value);
@@ -476,12 +468,12 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
 
 
   function mouseover(d) {
-    let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.event.clientX - bound.x + 30;
-    let tipY = d3.event.clientY - bound.y - 10;
+    // let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    // let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.mouse(this)[0] + 70;//d3.event.clientX - bound.x + 30;
+    let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
     if (width - tipX < 50) {
-      tipX = d3.event.clientX - bound.x - 100;
+        tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
     }
     tooltip.transition()
         .duration(200)
@@ -502,58 +494,22 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
 *** 2-SERIES HORIZONTAL BAR CHART **********************************************
 *******************************************************************************/
 function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
-    console.log('here')
-  //addToggleButton(attrName, store);
-  // $("#"+attrName+"Chart .ds-toggle-button").css("display", "block")
-  // $("#"+attrName+"Chart .ds-toggle-button-aud.ds-toggle-button-aud1").css("background-color", colorSeries1)
-  // $("#"+attrName+"Chart .ds-toggle-button-aud.ds-toggle-button-aud2").css("background-color", colorSeries2)
-  aud1_target = indexDs1[0];
-  aud1_compare = indexDs1[1];
-
-  aud2_target = indexDs2[0];
-  aud2_compare = indexDs2[1];
-
 
   indexDs2 = indexDs1[1];
   indexDs1 = indexDs1[0];
 
-
-  let localColor1 = store[attrName+"Colors"][0],
-      localColor2 = store[attrName+"Colors"][1];
-
-  if ((attrName === "state" && activeState === 2)
-      || (attrName === "interests" && activeInterests === 2)
-      || (attrName === "retail" && activeRetail === 2)) {
-    localColor1 = colorSeries2;
-    localColor2 = colorSeries1;
-  }
-
-  let toggleText;
-  //console.log(store.stateActive)
-
-  if (attrName === "state" && store.stateActive[0] === 1) {
-      toggleText = "Show " + targetAud2.name
-  } else if (attrName === "state" && store.stateActive[0] === 2) {
-      toggleText = "Show " + targetAud.name
-  } else if (attrName === "interests" && store.interestsActive[0] === 1) {
-      toggleText = "Show " + targetAud2.name
-  } else if (attrName === "interests" && store.interestsActive[0] === 2) {
-      toggleText = "Show " + targetAud.name
-  } else if (attrName === "retail" && store.retailActive[0] === 1) {
-      toggleText = "Show " + targetAud2.name
-  } else if (attrName === "retail" && store.retailActive[0] === 2) {
-      toggleText = "Show " + targetAud.name
-  }
+  let localColor1 = DS_VIS_STORE[attrName+"Colors"][0],
+      localColor2 = DS_VIS_STORE[attrName+"Colors"][1];
 
   let innerWidth = 610;
 
-	let basics = barChartSetup(innerWidth);
-	let margin = basics.margin,
-      width = basics.width,
-      height = basics.height,
+  let basics = barChartSetup(innerWidth);
+  let margin = basics.margin,
+    width = basics.width,
+    height = basics.height,
   		barPadding = basics.barPadding * 2;
 
-      margin.left = 0;
+    margin.left = 0;
 
   let firstDatasetBarChart = indexDs1;
   let maxAttrLength = width / 2;
@@ -773,351 +729,222 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   /* Remove vertical and extra horizontal gridlines */
   svg.selectAll(".domain").remove()
 
-  $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
-  $("#"+attrName+"Chart .ds-hbar-status").text(function() {
-      //let cat = attrName.charAt(0).toUpperCase() + attrName.slice(1);
-      let aud = store[attrName+"Active"][0] === 1 ? targetAud.name : targetAud2.name;
-      if (attrName === "interests") {
-          return "Top 5 for " + aud + " (by Index)";
-      } else if (attrName === "state") {
-          return "Top 5 for " + aud + " (by Index)";
-      } else {
-          return "Top 5 for " + aud + " (by Index)";
-      }
+  addCompareToggle(attrName);
 
-  });
-  $("#"+attrName+"Chart .ds-toggle-after").css("background-color", store[attrName+"Colors"][0]);
-  $("#"+attrName+"Chart .ds-toggle-button .ds-toggle-main").unbind().click(function() {
-    $("#"+attrName+"Chart .ds-hbar-status").text(function() {
-        //let cat = attrName.charAt(0).toUpperCase() + attrName.slice(1);
-        let aud = store[attrName+"Active"][0] === 2 ? targetAud.name : targetAud2.name;
-        if (attrName === "interests") {
-            return "Top 5 for " + aud + " (by Index)";
-        } else if (attrName === "state") {
-            return "Top 5 for " + aud + " (by Index)";
-        } else {
-            return "Top 5 for " + aud + " (by Index)";
-        }
+    /* Toggle Comparison Charts on click */
+    $("#"+attrName+"Chart .ds-toggle-button .ds-toggle-main").unbind().click(function() {
+          if (attrName === 'state') {
+              toggleFromStore(DS_VIS_STORE, 'stateActive')
+              toggleFromStore(DS_VIS_STORE, 'stateColors')
+          } else if (attrName === 'interests') {
+            console.log('yup')
+              toggleFromStore(DS_VIS_STORE, 'interestsActive')//store.activeInterests = (store.activeInterests === 1) ? 2 : 1;
+              toggleFromStore(DS_VIS_STORE, 'interestsColors')
+          } else {
+              toggleFromStore(DS_VIS_STORE, 'retailActive')//store.activeRetail = (store.activeRetail === 1) ? 2 : 1;
+              toggleFromStore(DS_VIS_STORE, 'retailColors')
+          }
+      $("#"+attrName+"Chart .ds-hbar-status").text(function() {
+          let aud = DS_VIS_STORE[attrName+"Active"][0] === 1 ? targetAud.name : targetAud2.name;
+          if (attrName === "interests") {
+              return "Top 5 for " + aud + " (by Index)";
+          } else if (attrName === "state") {
+              return "Top 5 for " + aud + " (by Index)";
+          } else {
+              return "Top 5 for " + aud + " (by Index)";
+          }
 
+      });
+      changeToggleColor(attrName, DS_VIS_STORE[attrName+"Colors"][0]);
+      toggleComparisonCharts(attrName);
+      console.log(attrName)
     });
 
-    if (attrName === 'state') {
-        toggleFromStore(store, 'stateActive')//store.activeState = (store.activeState === 1) ? 2 : 1;
-        toggleFromStore(store, 'stateColors')
-        //d3.select(this).style("fill", store['stateColors'][0]);
-        activeState = (activeState === 1) ? 2 : 1;
+      function toggleComparisonCharts(attrName) {
 
-        //console.log(activeState)
-    } else if (attrName === 'interests') {
-        toggleFromStore(store, 'interestsActive')//store.activeInterests = (store.activeInterests === 1) ? 2 : 1;
-        toggleFromStore(store, 'interestsColors')
-        //d3.select(this).style("background-color",store['interestsColors'][0]);
-        activeInterests = (activeInterests === 1) ? 2 : 1;
-    } else {
-        toggleFromStore(store, 'retailActive')//store.activeRetail = (store.activeRetail === 1) ? 2 : 1;
-        toggleFromStore(store, 'retailColors')
-        //d3.select(this).style("fill", store['retailColors'][0]);
-        activeRetail = (activeRetail === 1) ? 2 : 1;
-    }
+        let indexCats = makeIndexCats();
+        let toggleTo;
+        let target, compare;
 
+        if (DS_VIS_STORE["activeFilter"] != null) {
+          let filteredData1 = [];
+          let filteredIds1 = filterAttr(targetDemog, DS_VIS_STORE["activeFilter"][0], DS_VIS_STORE["activeFilter"][1]).map(function(d) { return d.temp_id; });
 
-    console.log(JSON.stringify(store))
+          let filteredData2 = [];
+          let filteredIds2 = filterAttr(targetDemog2, DS_VIS_STORE["activeFilter"][0], DS_VIS_STORE["activeFilter"][1]).map(function(d) { return d.temp_id; });
 
-    changeToggleColor(attrName, store[attrName+"Colors"][0])
-    toggleComparisonCharts(attrName)
+          if (attrName == "interests"){
+            filteredData1 = targetInterests.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+            attrIndex1 = indexInterestsRetail(attrName, filteredData1, randomInterests);
 
-  });
+            filteredData2 = targetInterests2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+            attrIndex2 = indexInterestsRetail(attrName, filteredData2, randomInterests);
+            toggleTo = (DS_VIS_STORE["interestsActive"][0] === 1) ? 1 : 2;
 
-  // let toggle = d3.select("#"+attrName+"Chart .ds-toggle-button").append("g")
-  //     .attr("transform", "translate(" + (margin.left + width - margin.right) + "," + (margin.top) + ")")
-  //
-  // toggle
-  //     .append("div")
-  //     .attr("class", "ds-toggle-main")
-      // .html("Test")
-      // .attr("x", 0)
-      // .attr("y", 0)
-      // .attr("fill", "#81838c")
-      // .attr("font-size", "14px")
-      // .attr("text-anchor", "end")
-      // .attr("class", "ds-hbar-toggle")
-      // .style("background-color", localColor1)
-      // .style("cursor", "pointer")
-      // .style("width", "100%")
-      // .style("height", "100%")
-      // .style("margin-bottom", "10px")
-      // .on("click", function() {
-      //     //d3.select(this).append("div").attr("class", "ds-toggle-after")
-      //   if (attrName === 'state') {
-      //       toggleFromStore(store, 'stateActive')//store.activeState = (store.activeState === 1) ? 2 : 1;
-      //       toggleFromStore(store, 'stateColors')
-      //       //d3.select(this).style("fill", store['stateColors'][0]);
-      //       activeState = (activeState === 1) ? 2 : 1;
-      //
-      //       //console.log(activeState)
-      //   } else if (attrName === 'interests') {
-      //       toggleFromStore(store, 'interestsActive')//store.activeInterests = (store.activeInterests === 1) ? 2 : 1;
-      //       toggleFromStore(store, 'interestsColors')
-      //       //d3.select(this).style("background-color",store['interestsColors'][0]);
-      //       activeInterests = (activeInterests === 1) ? 2 : 1;
-      //   } else {
-      //       toggleFromStore(store, 'retailActive')//store.activeRetail = (store.activeRetail === 1) ? 2 : 1;
-      //       toggleFromStore(store, 'retailColors')
-      //       //d3.select(this).style("fill", store['retailColors'][0]);
-      //       activeRetail = (activeRetail === 1) ? 2 : 1;
-      //   }
-      //
-      //
-      //   console.log(JSON.stringify(store))
-      //
-      //   //drawComparisonChartsHbar(attrName)
-      //   changeToggleColor(attrName, store[attrName+"Colors"][0])
-      //   toggleComparisonCharts(attrName)
-      //   tmp_target = aud2_target;
-      //   tmp_compare = aud2_compare;
-      //   tmp_color = localColor2;
-      //   aud2_target = aud1_target;
-      //   aud2_compare = aud1_compare;
-      //   // localColor2 = localColor1;
-      //   aud1_target = tmp_target;
-      //   aud1_compare = tmp_compare;
-      //   // localColor1 = tmp_color;
-      //
-      //
-      // })
-      // .append("div")
-      // .attr("class", "ds-toggle-after")
-      // .style("background-color", store[attrName+"Colors"][0]);
+          } else if (attrName == "retail"){
+            filteredData1 = targetRetail.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+            attrIndex1 = indexInterestsRetail(attrName, filteredData1, randomRetail);
 
-  function toggleComparisonCharts(demogAttributeListName) {
-      console.log('inner')
-    let indexCats = makeIndexCats();
-    let toggleTo;
-    let target, compare;
+            filteredData2 = targetRetail2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+            attrIndex2 = indexInterestsRetail(attrName, filteredData2, randomRetail);
+            toggleTo = (DS_VIS_STORE["retailActive"][0] === 1) ? 1 : 2;
 
-    if (store["activeFilter"] != null) {
-      let filteredData1 = [];
-      let filteredIds1 = filterAttr(targetDemog, store["activeFilter"][0], store["activeFilter"][1]).map(function(d) { return d.temp_id; });
+          }
 
-      let filteredData2 = [];
-      let filteredIds2 = filterAttr(targetDemog2, store["activeFilter"][0], store["activeFilter"][1]).map(function(d) { return d.temp_id; });
+            attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2);
+            attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1);
+          if (attrName == "state") {
+            let filteredData1 = filterAttr(targetDemog, DS_VIS_STORE["activeFilter"][0], DS_VIS_STORE["activeFilter"][1]);
+            let filteredData2 = filterAttr(targetDemog2, DS_VIS_STORE["activeFilter"][0], DS_VIS_STORE["activeFilter"][1]);
+            attrIndex1 = indexAttr(attrName,
+                                  indexCats[attrName],
+                                  filteredData1,
+                                  randomDemog);
+            attrIndex2 = indexAttr(attrName,
+                                  indexCats[attrName],
+                                  filteredData2,
+                                  randomDemog);
 
-      if (demogAttributeListName == "interests"){
-        filteredData1 = targetInterests.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
-        attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomInterests);
+                attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2);
+                attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1);
+            toggleTo = (DS_VIS_STORE["stateActive"][0] === 1) ? 1 : 2;
 
-        filteredData2 = targetInterests2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
-        attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomInterests);
-        toggleTo = (activeInterests === 1) ? 1 : 2;
-
-      } else if (demogAttributeListName == "retail"){
-        filteredData1 = targetRetail.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
-        attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomRetail);
-
-        filteredData2 = targetRetail2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
-        attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomRetail);
-        toggleTo = (activeRetail === 1) ? 1 : 2;
-
-      }
-
-        attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2);
-        attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1);
-      if (demogAttributeListName == "state") {
-        let filteredData1 = filterAttr(targetDemog, store["activeFilter"][0], store["activeFilter"][1]);
-        let filteredData2 = filterAttr(targetDemog2, store["activeFilter"][0], store["activeFilter"][1]);
-        attrIndex1 = indexAttr(demogAttributeListName,
-                              indexCats[demogAttributeListName],
-                              filteredData1,
-                              randomDemog);
-        attrIndex2 = indexAttr(demogAttributeListName,
-                              indexCats[demogAttributeListName],
-                              filteredData2,
-                              randomDemog);
-
-            //console.log('TEST: ' + JSON.stringify(indexStatesTop5(attrIndex1, attrIndex2)))
-            attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2);
-            attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1);
-        toggleTo = (activeState === 1) ? 1 : 2;
-
-      }
-      //console.log('toggleTo: ' + toggleTo)
+          }
 
 
-    } else if (demogAttributeListName != "state") {
-        if (demogAttributeListName == "interests"){
-          attrIndex1 = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
-          attrIndex2 = indexInterestsRetail(demogAttributeListName, targetInterests2, randomInterests);
-          toggleTo = (activeInterests === 1) ? 1 : 2;
-        } else if (demogAttributeListName == "retail"){
-          attrIndex1 = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
-          attrIndex2 = indexInterestsRetail(demogAttributeListName, targetRetail2, randomRetail);
-          toggleTo = (activeRetail === 1) ? 1 : 2;
+        } else if (attrName != "state") {
+            if (attrName == "interests"){
+              attrIndex1 = indexInterestsRetail(attrName, targetInterests, randomInterests);
+              attrIndex2 = indexInterestsRetail(attrName, targetInterests2, randomInterests);
+              toggleTo = (DS_VIS_STORE["interestsActive"][0] === 1) ? 1 : 2;
+            } else if (attrName == "retail"){
+              attrIndex1 = indexInterestsRetail(attrName, targetRetail, randomRetail);
+              attrIndex2 = indexInterestsRetail(attrName, targetRetail2, randomRetail);
+              toggleTo = (DS_VIS_STORE["retailActive"][0] === 1) ? 1 : 2;
+            }
+            attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2);
+            attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1);
+        } else if (attrName == "state") {
+          attrIndex1 = indexAttr(attrName,
+                                indexCats[attrName],
+                                targetDemog,
+                                randomDemog);
+          attrIndex2 = indexAttr(attrName,
+                                indexCats[attrName],
+                                targetDemog2,
+                                randomDemog);
+          attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2);
+          attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1);
+          toggleTo = (DS_VIS_STORE["stateActive"][0] === 1) ? 1 : 2;
+
         }
-        attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2);
-        attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1);
-    } else if (demogAttributeListName == "state") {
-      attrIndex1 = indexAttr(demogAttributeListName,
-                            indexCats[demogAttributeListName],
-                            targetDemog,
-                            randomDemog);
-      attrIndex2 = indexAttr(demogAttributeListName,
-                            indexCats[demogAttributeListName],
-                            targetDemog2,
-                            randomDemog);
-      attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2);
-      attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1);
-      toggleTo = (activeState === 1) ? 1 : 2;
 
-    }
+        console.log('toggling to: ' + toggleTo)
+        target = (toggleTo === 1) ? attrIndexTop1[0] : attrIndexTop2[0];
 
-    target = (toggleTo === 1) ? attrIndexTop1[0] : attrIndexTop2[0];
+        compare = (toggleTo === 1) ? attrIndexTop1[1] : attrIndexTop2[1];
+        console.log('hi there')
+        console.log(JSON.stringify(target))
+        console.log(JSON.stringify(DS_VIS_STORE))
 
-    compare = (toggleTo === 1) ? attrIndexTop1[1] : attrIndexTop2[1];
+        color1 = DS_VIS_STORE[attrName+"Colors"][0];
+        color2 = DS_VIS_STORE[attrName+"Colors"][1];
 
-    color1 = store[demogAttributeListName+"Colors"][0];
-    color2 = store[demogAttributeListName+"Colors"][1];
+        plot = d3.select("#"+attrName+"Chart");
 
+        addCompHbar(plot, "series1", target, maxAttrLength, barHeight, xScale, yScale, color1);
+        addCompHbar(plot, "series2", compare, maxAttrLength, barHeight, xScale, yScale, color2);
+        addCompHbarText(plot, "series1", target, barHeight, barPadding, maxAttrLength);
+        addCompHbarText(plot, "series2", compare, barHeight, barPadding, maxAttrLength);
 
+        function addCompHbar(plot, series, aud, maxAttrLength, barHeight, xScale, yScale, color) {
+          plot.selectAll("rect."+series)
+              .data(aud)
+              .transition()
+              .duration(600)
+              .attr("class", series)
+              .attr("x", function(d) {
+                   return maxAttrLength;
+              })
+              .attr("height", barHeight)
+              .attr("y", function(d, i) {
+                   return series == "series1" ? yScale(i) : yScale(i) + barHeight;
+              })
+              .attr("width", function(d) {
+                  return xScale(d.target_pct);
+              })
+              .attr("fill", function(d) {
+                  return color;
+              })
+              .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+              .attr("attrib-category", function(d) { return d.category; })
+              .attr("target-pct", function(d) { return d.target_pct; })
+              .attr("index", function(d) { return d.index; })
+              ;
 
+        }
 
+        function addCompHbarText(plot, series, aud, barHeight, barPadding, maxAttrLength) {
+          plot.selectAll("text."+series)
+              .data(aud)
+              .transition()
+              .duration(600)
+              .text(function(d) {
+                   return formatAsInteger(d3.format("d")(d.index));
+              })
+              .attr("class", series)
+              .attr("text-anchor", "middle")
+              /* Set y position to the top edge of each bar plus half the bar width */
+              .attr("y", function(d, i) {
+                  if (series == "series1") {
+                    return (i * 2 * (barHeight + barPadding) + barHeight / 2 + barPadding);
+                  } else {
+                    return (i * 2 * (barHeight + barPadding) + barHeight * 1.5 + barPadding);
+                  }
 
-    //console.log("#"+attrName+"Plot");
-    // console.log(JSON.stringify(target))
-    plot = d3.select("#"+attrName+"Chart");
+              })
+              .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
+              .attr("font-family", "sans-serif")
+              .attr("font-size", "11px")
+              .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+        }
 
-
-
-    plot.selectAll("rect.series1")
-        .data(target)
-        .transition()
-        .duration(600)
-        .attr("class", "series1")
-  			.attr("x", function(d) {
-             return maxAttrLength;
-  			})
-  		  .attr("height", barHeight)
-  			.attr("y", function(d, i) {
-  			     return yScale(i);
-  			})
-  			.attr("width", function(d) {
-  			    return xScale(d.target_pct);
-  			})
-  			.attr("fill", function(d) {
-            return color1;
-        })
-        .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-        // .on("mouseover", mouseover)
-        // .on("mouseout", mouseout)
-        // .on("mousemove", mouseover)
-        .attr("attrib-category", function(d) { return d.category; })
-        .attr("target-pct", function(d) { return d.target_pct; })
-        .attr("index", function(d) { return d.index; })
-        ;
-
-        /* 2nd series */
-      	plot.selectAll("rect.series2")
-            .data(compare)
-            .transition()
-            .duration(600)
-            .attr("class", "series2")
-      			.attr("x", function(d) {
-                 return maxAttrLength;
-      			})
-      		  .attr("height", barHeight)
-      			.attr("y", function(d, i) {
-      			     return yScale(i) + barHeight;
-      			})
-      			.attr("width", function(d) {
-      			    return xScale(d.target_pct);
-      			})
-      			.attr("fill", function(d) {
-                return color2;
-            })
-            .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-            .attr("attrib-category", function(d) { return d.category; })
-            .attr("target-pct", function(d) { return d.target_pct; })
-            .attr("index", function(d) { return d.index; })
-            ;
-
-
-
-      /* Will set x position and color dependent on size of bar */
-      function textInside(d) { return xScale(d.target_pct) > 30};
-
-
-    	/* Add y labels to plot */
-      /* Series 1 */
-    	plot.selectAll("text.series1")
-    	    .data(target)
-          .transition()
-          .duration(600)
-    	    .text(function(d) {
-    			     return formatAsInteger(d3.format("d")(d.index));
-    	    })
-          .attr("class", "series1")
-    	    .attr("text-anchor", "middle")
-    	    /* Set y position to the top edge of each bar plus half the bar width */
-    	    .attr("y", function(d, i) {
-    			     return (i * 2 * (barHeight + barPadding) + barHeight / 2 + barPadding);
-    	    })
-    	    .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
-    	    //.attr("class", "xAxis")
-    	    .attr("font-family", "sans-serif")
-    	    .attr("font-size", "11px")
-    	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
-
-      /* Series 2 */
-      plot.selectAll("text.series2")
-          .data(compare)
-
-          .text(function(d) {
-               return formatAsInteger(d3.format("d")(d.index));
-          })
-          .attr("class", "series2")
-          .transition()
-          .duration(600)
-          .attr("text-anchor", "middle")
-          /* Set y position to the top edge of each bar plus half the bar width */
-          .attr("y", function(d, i) {
-               return (i * 2 * (barHeight + barPadding) + barHeight * 1.5 + barPadding);
-          })
-          .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
-          //.attr("class", "xAxis")
-          .attr("font-family", "sans-serif")
-          .attr("font-size", "11px")
-          .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
-
-      plot.selectAll("text.yAxis")
-    		     .data(target)
-             .transition()
-             .duration(600)
-             .attr("class", "series1 yAxis")
-    		     .text(function(d) {
-               let yLabel = d.attrib_value;
-               if (d.attrib_value.length > 26) {
-                 yLabel = yLabel.slice(0, 26) + "...";
-               }
-               return yLabel;
-             })
-             .attr("fill", function(d) {
-                 return localColor1;
-             })
-    		     .attr("text-anchor", "start")
-    			   /* Set y position to the top edge of each bar plus half the bar width */
-    				 .attr("y", function(d, i) {
-       			     return (i * 2 * (barHeight + barPadding) + barHeight + barPadding);
-    				 })
-    		     .attr("x", width * 0.125);
-  }
-
+        plot.selectAll("text.yAxis")
+               .data(target)
+               .transition()
+               .duration(600)
+               .attr("class", "series1 yAxis")
+               .text(function(d) {
+                 let yLabel = d.attrib_value;
+                 if (d.attrib_value.length > 26) {
+                   yLabel = yLabel.slice(0, 26) + "...";
+                 }
+                 return yLabel;
+               })
+               .attr("fill", function(d) {
+                   return localColor1;
+               })
+               .attr("text-anchor", "start")
+               /* Set y position to the top edge of each bar plus half the bar width */
+               .attr("y", function(d, i) {
+                   return (i * 2 * (barHeight + barPadding) + barHeight + barPadding);
+               })
+               .attr("x", width * 0.125);
+    };
 
   function mouseover(d) {
-    let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.event.clientX - bound.x + 30;
-    let tipY = d3.event.clientY - bound.y - 60;
-    if (width - tipX < 100) {
-      tipX = d3.event.clientX - bound.x - 100;
+    // let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    // let bound = ttipsvg.getBoundingClientRect();
+
+    // let tipX = d3.event.clientX - bound.x + 30;
+    // let tipY = d3.event.clientY - bound.y - 60;
+    // if (width - tipX < 100) {
+    //   tipX = d3.event.clientX - bound.x - 100;
+    // }
+    let tipX = d3.mouse(this)[0] + 30;//d3.event.clientX - bound.x + 30;
+    let tipY = d3.mouse(this)[1] - 20;//d3.event.clientY - bound.y - 20;
+    if (width - tipX < 50) {
+        tipX = d3.mouse(this)[0] - 20;//d3.event.clientX - bound.x - 100;
     }
 
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
@@ -1479,8 +1306,6 @@ function add2AudienceTitles(targetAud1, targetAud2) {
 /*******************************************************************************
 *** DRAW ALL COMPARISON CHARTS *************************************************
 *******************************************************************************/
-let activeState = 1, activeInterests = 1, activeRetail = 1 //activeFilter = null;
-
 function drawComparisonCharts() {
   d3.selectAll(".ds-tooltip").remove()
   // add the audience titles
@@ -1573,9 +1398,9 @@ function drawComparisonCharts() {
   add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "<span style='color: #000;'><strong>Median: </strong></span>");
   stackedBar2SeriesChart("gender", audName1, genderIndex1, audName2, genderIndex2);
   stackedBar2SeriesChart("marital", audName1, maritalIndex1, audName2, maritalIndex2);
-  (store["stateActive"][0] === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
-  (store["interestsActive"][0] === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
-  (store["retailActive"][0] === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
+  (DS_VIS_STORE["stateActive"][0] === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
+  (DS_VIS_STORE["interestsActive"][0] === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
+  (DS_VIS_STORE["retailActive"][0] === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
 
   $( ".tile" ).removeClass("selected-tile");
 
@@ -1618,11 +1443,11 @@ function drawComparisonChartsHbar(hbarAttr) {
 
 
   if (hbarAttr === "state") {
-    (store["stateActive"][0] === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
+    (DS_VIS_STORE["stateActive"][0] === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
   } else if (hbarAttr === "interests") {
-    (store["interestsActive"][0] === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
+    (DS_VIS_STORE["interestsActive"][0] === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
   } else if (hbarAttr === "retail") {
-    (store["retailActive"][0] === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
+    (DS_VIS_STORE["retailActive"][0] === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
   }
 }
 
@@ -1634,7 +1459,7 @@ function drawComparisonChartsHbar(hbarAttr) {
 /* updates bar charts when a value element is clicked on a chart */
 function updateComparisonCharts(attrName, attrValue) {
   //activeFilter = [attrName, attrValue];
-  store.activeFilter = [attrName, attrValue];
+  DS_VIS_STORE.activeFilter = [attrName, attrValue];
   //console.log("FILTER: " + JSON.stringify(activeFilter))
 //  console.log(attrName);
 //  console.log(attrValue);
@@ -1662,8 +1487,8 @@ function updateComparisonCharts(attrName, attrValue) {
             let filteredIds2 = filterAttr(targetDemog2, attrName, attrValue).map(function(d) { return d.temp_id; });
 
             if (demogAttributeListName == "interests"){
-              // target = store["interestsActive"][0] === 1 ? targetInterests : targetInterests2;
-              // compare = store["interestsActive"][1] === 1 ? targetInterests : targetInterests2;
+              // target = DS_VIS_STORE["interestsActive"][0] === 1 ? targetInterests : targetInterests2;
+              // compare = DS_VIS_STORE["interestsActive"][1] === 1 ? targetInterests : targetInterests2;
               filteredData1 = targetInterests.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
               attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomInterests);
 
@@ -1843,27 +1668,6 @@ function updateComparisonCharts(attrName, attrValue) {
               .attr("index", function(d) { return d.index; })
               .attr("fill", colorSeries1);
 
-          /* 2nd series */
-          // plot.selectAll("rect.series2")
-          //     .data(attrIndex2)
-          //     .transition()
-          //     .duration(750)
-          //     .attr("x", function(d, i) {
-          //          return xScale(i) + width / (attrIndex2.length * 2) - barPadding;
-        	// 		})
-          //     .attr("width", width / (attrIndex2.length * 2) - barPadding)
-          //     .attr("y", function(d) {
-          //       return yScale(d.target_pct);
-          //     })
-          //     .attr("height", function(d) {
-          //       return height-yScale(d.target_pct);
-          //     })
-          //     .attr("cursor", "pointer")
-          //     .attr("attrib-value", function(d) { return d.attrib_value; })    /* updating the Acxiom attrib value on the element */
-          //     .attr("target-pct", function(d) { return d.target_pct; })
-          //     .attr("index", function(d) { return d.index; })
-          //     .attr("fill", colorSeries2);
-
           plot.selectAll("rect.series2")
               .data(attrIndex2)
               .transition()
@@ -1907,25 +1711,6 @@ function updateComparisonCharts(attrName, attrValue) {
               .attr("class", "series1")
               ;
 
-          /* 2nd series */
-          // plot.selectAll("text.series2")
-          //     .data(attrIndex2)
-          //     .transition()
-          //     .duration(750)
-          //     .attr("text-anchor", "middle")
-          //     .attr("x", function(d, i) {
-          //            return ( i * (width / attrIndex1.length) )
-          //              + ( (width / (attrIndex1.length * 2) - barPadding) ) * 1.5 ;
-          //     })
-          //     .attr("y", function(d) {
-          //        return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-          //     })
-          //     .text(function(d) {
-          //      return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
-          //     })
-          //     .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-          //     .attr("class", "yAxis")
-          //     .attr("class", "series2");
           plot.selectAll("text.series2")
               .data(attrIndex2)
               .transition()
@@ -1955,8 +1740,8 @@ function updateComparisonCharts(attrName, attrValue) {
       } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
           d3.select("#"+demogAttributeListName+"Chart svg").remove();
           //hBarChart(demogAttributeListName, attrIndexTop);
-          target = store[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop1 : attrIndexTop2;
-          compare = store[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop2 : attrIndexTop1;
+          target = DS_VIS_STORE[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop1 : attrIndexTop2;
+          compare = DS_VIS_STORE[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop2 : attrIndexTop1;
           hBar2SeriesChart(demogAttributeListName, target, compare);
 
       }
@@ -1988,16 +1773,7 @@ function updateComparisonCharts(attrName, attrValue) {
 /*******************************************************************************
 *** Toggle Button **************************************************************
 *******************************************************************************/
-// function addToggleButton(attrName, store) {
-//     // console.log('hi')
-//     // console.log(store);
-//     // $("#"+attrName+"Chart .ds-toggle-after").css("background-color", store[attrName+"Colors"][0]);
-//     // $("#"+attrName+"Chart .ds-toggle-button").css("display", "block");
-//     //
-//     // $("#"+attrName+"Chart .ds-toggle-after").css("background-color", store[attrName+"Colors"][0]);
-//     //$("#"+attrName+"Chart .ds-toggle-button-aud.ds-toggle-button-aud1").css("background-color", colorSeries1)
-//     //$("#"+attrName+"Chart .ds-toggle-button-aud.ds-toggle-button-aud2").css("background-color", colorSeries2)
-// }
+
 
 $(function(){
   $('.ds-toggle-button').on('click', function(event){
@@ -2010,18 +1786,21 @@ function changeToggleColor(attrName, color) {
     $("#"+attrName+"Chart .ds-toggle-after").css("background-color", color)
 }
 
-// $("#interestsChart .ds-toggle-button-aud.ds-toggle-button-aud1").click(function() {
-//       if (store['interestsActive'][0] != 1) {
-//           console.log('nope')
-//           toggleFromStore(store, 'interestsActive')
-//           console.log(JSON.stringify(store));
-//           toggleComparisonCharts('interests');
-//           $( this ).css({"box-shadow": "none"})
-//       } else {
-//           console.log('yep')
-//       }
-// });
+function addCompareToggle(attrName) {
+  $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
+  $("#"+attrName+"Chart .ds-hbar-status").text(function() {
+      //let cat = attrName.charAt(0).toUpperCase() + attrName.slice(1);
+      let aud = DS_VIS_STORE[attrName+"Active"][0] === 1 ? targetAud.name : targetAud2.name;
+      if (attrName === "interests") {
+          return "Top 5 for " + aud + " (by Index)";
+      } else if (attrName === "state") {
+          return "Top 5 for " + aud + " (by Index)";
+      } else {
+          return "Top 5 for " + aud + " (by Index)";
+      }
 
-// $("#interestsChart .ds-toggle-button-aud.ds-toggle-button-aud2").click(function() {
-//       $( this ).css({"box-shadow": "none"})
-// });
+  });
+  $("#"+attrName+"Chart .ds-toggle-after").css("background-color", DS_VIS_STORE[attrName+"Colors"][0]);
+
+
+}
