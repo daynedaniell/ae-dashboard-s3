@@ -24,22 +24,39 @@ main {
     padding-top: 1px;
 }
 
+.tile-header {
+    margin-top: 10px;
+}
+
 .tile-header h4 {
-    margin-bottom: 0;
+    //margin-bottom: 0;
+    display: inline;
+}
+
+.tile-header .ds-stats {
+    display: inline;
+    float: right;
+}
+.tile-header .ds-stats strong {
+    font-size: 1.1em;
+}
+.tile-header .ds-stats .ds-stat-2 {
+  float: right;
 }
 
 .selected-tile {
     box-shadow: 0px 0px 10px 2px rgb(178, 183, 195);
 }
 
-.chart-base {
+.ds-chart-base {
   margin-left: auto;
   margin-right: auto;
   display: block;
 }
 
 
-.mikej-chart {
+.ds-audience-title h1 {
+    font-weight: bold;
 }
 
 
@@ -47,14 +64,6 @@ main {
 
 
 /* temp fixes */
-#genderChart svg {
-    /* margin-left: 42px; */
-    margin-top: 32px;
-}
-#maritalChart svg {
-    /* margin-left: 42px; */
-    margin-top: 32px;
-}
 #incomeChart svg g text {
     font-size: 12px;
 }
@@ -86,10 +95,15 @@ body {
 .fas {
     margin-right: 4px;
 }
+.aud-nav {
+    position: fixed;
+    width: 106px;
+    top: 206px;
+}
 
 
 /* Tooltips */
-.tooltip {
+.ds-tooltip {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -107,12 +121,110 @@ body {
   z-index: 1;
 }
 
-.grid line {
+/* Legend */
+.ds-audience-legend {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+.ds-audience-legend-row {
+  margin-top: 5px;
+  overflow: auto;
+}
+.ds-audience-legend-color {
+  height: 20px;
+  width: 50px;
+  content: "";
+}
+
+.ds-grid line {
   stroke: lightgrey;
   stroke-opacity: 0.7;
   shape-rendering: crispEdges;
 }
 
-.grid path {
+.ds-grid path {
   stroke-width: 0;
+}
+
+.ds-stats {
+  font-weight: 700;
+}
+
+.ds-hbar-status {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.ds-toggle-button {
+  margin-top: 10px;
+  float: right;
+  text-align: right;
+  display: none;
+}
+
+/* .ds-toggle-button-aud {
+  width: 20px;
+  height: 20px;
+  float: left;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.2)
+} */
+
+/* .ds-hbar-toggle {
+    width: 50px;
+    height: 20px;
+    border-radius: 5px;
+} */
+
+.ds-toggle-main {
+  float: right;
+  text-align: right;
+  display: inline-block;
+  background: #ddd;
+  width: 50px;
+  height: 20px;
+  overflow: hidden;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin: 0 10px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1)
+}
+
+ .ds-toggle-after {
+    content: " ";
+    display: block;
+    width: 30px;
+    height: 20px;
+    /* background-color: @active; */
+    /*background-color: blue; */
+    border: 3px solid #fff;
+    border-top: 0;
+    border-bottom: 0;
+    margin-left: -3px;
+    transition: all 0.3s ease-in-out;
+  }
+
+.ds-toggle-button.active .ds-toggle-after {
+
+      margin-left: 25px;
+
+}
+
+.toggle-label {
+  display: inline-block;
+  line-height: 30px;
+}
+
+.toggle-label-off {
+  color: #eee;
+}
+
+.active {
+
+  .toggle-label-off {
+    color: #ccc;
+  }
+
+  .toggle-label-on {
+    color: #eee;
+  }
 }

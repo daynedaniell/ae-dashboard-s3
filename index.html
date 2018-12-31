@@ -16,15 +16,15 @@
     <!-- fontawesome icons, feel free to delete if/when not needed anymore -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
 
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 
     <link rel= "stylesheet" type= "text/css" href= "styles/custom.css">
 
 
 </head>
 <body>
-    <nav class="navbar navbar-dark navbar-fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">AE Insights</a>
+    <nav class="navbar navbar-dark navbar-fixed-top bg-dark flex-md-nowrap p-0 shadow col-sm-3 col-md-2">
+      <a class="navbar-brand mr-0" href="#">AE Insights</a>
     </nav>
 
 
@@ -52,26 +52,40 @@
                 </a>
               </li>
             </ul>
+            <div class="aud-nav">
+              <hr>
+                <form class="ds-audience-selection-form">
+                  <div class="checkbox">
+                    <label><input type="checkbox" value="1" checked>New Car Buyers</label>
+                  </div>
+                  <div class="checkbox">
+                    <label><input type="checkbox" value="2">Nissan Competitive Set</label>
+                  </div>
+                </form>
+            </div>
         </nav>
 
         <main role="main" class="col-sm-10">
 
-          <div class="row audience-header">
+          <div class="row ds-audience-header">
             <div class="col-sm-12">
-                <div class="col-sm-8 audience-title">
-                    <h1>New Car Buyers</h1>
-                </div>
 
-                <!-- Main Legend Here... -->
-                <div class="col-sm-4 ds-audience-legend">
-                    Test
+                <div class="ds-audience-title col-sm-8">
                 </div>
-
-                <!--
+                <div class="ds-audience-legend col-sm-4">
+                  <div class='ds-audience-legend-row' id="dsAudienceLegend1">
+                    <div class="ds-audience-legend-color col-sm-4"></div>
+                    <div class="ds-audience-legend-label col-sm-8"><span></span></div>
+                  </div>
+                  <div class='ds-audience-legend-row' id="dsAudienceLegend2">
+                    <div class="ds-audience-legend-color col-sm-4"></div>
+                    <div class="ds-audience-legend-label col-sm-8"><span></span></div>
+                  </div>
+                </div>
+                <div style="float:none;width:100%;overflow:auto;"></div>
                 <div class="well">
                     <div id="waveChart"></div>
                 </div>
-              -->
             </div>
         </div>
         <div class="tab-content relative">
@@ -142,10 +156,17 @@
             </div>
             <div class="col-sm-6">
               <div class="well tile">
-                  <div class="tile-header">
+                  <div class="tile-header col-sm-2">
                       <h4>Location</h4>
                   </div>
-                  <div id="stateChart"></div>
+                  <div id="stateChart">
+                    <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
+                    <div class="ds-toggle-button col-sm-2">
+                        <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
+                        <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
+                        <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
+                    </div>
+                  </div>
               </div>
             </div>
           </div>
@@ -153,18 +174,34 @@
             <div class="row">
               <div class="col-sm-6">
                 <div class="well tile">
-                    <div class="tile-header">
+                    <div class="tile-header col-sm-2">
                         <h4>Interests</h4>
                     </div>
-                    <div id="interestsChart"></div>
+                    <div id="interestsChart">
+                      <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
+                      <div class="ds-toggle-button col-sm-2">
+                          <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
+
+
+                          <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
+                          <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
+                      </div>
+                    </div>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="well tile">
-                    <div class="tile-header">
+                    <div class="tile-header col-sm-2">
                         <h4>Retail</h4>
                     </div>
-                    <div id="retailChart"></div>
+                    <div id="retailChart">
+                      <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
+                      <div class="ds-toggle-button col-sm-2">
+                          <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
+                          <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
+                          <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
+                      </div>
+                    </div>
                 </div>
               </div>
             </div>
@@ -218,7 +255,7 @@
     <!-- Data science viz functions -->
     <script src="js/audience_data_processing.js"></script>
     <script src="js/audience_charts.js"></script>
-    <script src="js/analyze.js"></script>
+    <script src="js/audience_comparison_charts.js"></script>
 
 
     <script>
@@ -228,21 +265,49 @@
           $(this).tab('show')
         })
 */
-        async function f() {
+        async function f(audIds) {
             // setting these as globals for now
-            targetDemog = await d3.tsv("data/demographics_target_1.tsv");
-            targetInterests = await d3.tsv("data/interests_target_1.tsv");
-            targetRetail = await d3.tsv("data/retail_target_1.tsv");
+            if (audIds.length > 0 & audIds.length <= 2) {
 
-            randomDemog = await d3.tsv("data/demographics_random.tsv");
-            randomInterests = await d3.tsv("data/interests_random.tsv");
-            randomRetail = await d3.tsv("data/retail_random.tsv");
+              randomDemog = await d3.tsv("data/random_audience/demographics_random.tsv");
+              randomInterests = await d3.tsv("data/random_audience/interests_random.tsv");
+              randomRetail = await d3.tsv("data/random_audience/retail_random.tsv");
 
-            statesPaths = await d3.json("js/us-states.json");
+              statesPaths = await d3.json("js/us-states.json");
 
-            analyze();
+              targetAud = await d3.json("data/target_aud_" + audIds[0] + "/audience.json");
+              targetDemog = await d3.tsv("data/target_aud_" + audIds[0] + "/demographics_target.tsv");
+              targetInterests = await d3.tsv("data/target_aud_" + audIds[0] + "/interests_target.tsv");
+              targetRetail = await d3.tsv("data/target_aud_" + audIds[0] + "/retail_target.tsv");
+
+              if (audIds.length == 1){
+                drawCharts();
+              } else if (audIds.length == 2) {
+                  targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
+                  targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
+                  targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
+                  targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
+
+                  drawComparisonCharts();
+              }
+
+            }
         }
-        f();
+
+        $(document).ready(function(){
+          $(".ds-audience-selection-form").change(function(){
+            let selectedAudiences =
+              $('.ds-audience-selection-form input:checkbox:checked')
+                .map(function() { return $(this).val(); })
+                .get();
+
+            if (selectedAudiences.length > 0 & selectedAudiences.length <= 2) {
+              f(selectedAudiences);
+            } else {
+              alert("Please select 1 or 2 audiences for visualization.");
+            }
+          }).change(); // fires on load and on form change
+        });
 
     </script>
 

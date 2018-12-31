@@ -247,12 +247,15 @@ function indexInterestsRetail(attrName, targetData, randomData) {
       .filter(d => (d["index"] >= 100) & (d["index"] <= 500) & (d["target_pct"] > 5) )
     ;
 
-    return indexArray;
+    return targetCounts;
 }
 
 
 /* for interests/retail, get the max indexing item for each category, and pick top 5 among that list */
-function indexInterestsRetailTop5(indexDs) {
+function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
+  //console.log('2' + JSON.stringify(indexDs2))
+  let f = indexDs.filter((d) => ( d.index <= 500 && d.target_pct >= 5))
+
   let a = d3.nest()
     .key(function(d) { return d["category"]; })
     .rollup(function(v) {
@@ -265,28 +268,121 @@ function indexInterestsRetailTop5(indexDs) {
         target_pct: max_item.target_pct
       };
     })
-    .entries(indexDs)
+    .entries(f)
     .map(function(d) {
+        //console.log('d: ' + JSON.stringify(d))
+        let comp;
+        if (indexDs2 != null) {
+          comp = indexDs2.filter(function(d2) { return d2.attrib_value === d.value.attrib_value })
+          //console.log('comp: ' + JSON.stringify(comp[0])) //(d2.value.attrib_value === d.value.attrib_value))
+        }
+
         return {
           category: d.key,
           attrib_value: d.value.attrib_value,
           target_pct: d.value.target_pct,
-          index: d.value.index
+          index: d.value.index,
+          compare_pct: (indexDs2 != null && comp[0] != undefined) ? comp[0].target_pct : 0,
+          compare_index: (indexDs2 != null && comp[0] != undefined) ? comp[0].index : 0
         }
     })
-    .sort(function(a,b) { return b.index - a.index; })
-    .slice(0, 5)
-    ;
+    .sort(function(a,b){
+      if ( b.index != a.index ){
+        return b.index - a.index;
+      } else {
+        return b.target_pct - a.target_pct;
+      }
+    })
+    .slice(0, 5);
 
-    return a;
+    if (indexDs2 != null) {
+        let c = a.map(function(d) {
+            return {
+              category: d.category,
+              attrib_value: d.attrib_value,
+              target_pct: d.compare_pct,
+              random_pct: d.random_pct,
+              index: d.compare_index
+            }
+        })
+        // console.log('target: ' + JSON.stringify(a))
+        // console.log('compare: ' + JSON.stringify(c))
+        return [a, c];
+    } else {
+      return a;
+    }
+
+
 }
+
+function indexStatesTop5(indexDs1, indexDs2) {
+  //console.log(indexDs2);
+  let a = [...indexDs1].filter( d => ( d["random_pct"] > 0 ) )
+                      .sort(function(a,b){
+                        if ( b.index != a.index ){
+                          return b.index - a.index;
+                        } else {
+                          return b.target_pct - a.target_pct;
+                        }
+                      })
+                      .slice(0, 5)
+                      .map(function(d){
+                        //console.log('test')
+                        //console.log([...indexDs2].filter(d2 => (d2.attrib_value === d.attrib_value)))
+                        let comp = [...indexDs2].filter(d2 => (d2.attrib_value === d.attrib_value))
+                        return {
+                          attrib_value: getStateName(d.attrib_value),
+                          target_pct: d.target_pct,
+                          random_pct: d.random_pct,
+                          index: d.index,
+                          compare_pct: comp[0].target_pct,
+                          compare_index: comp[0].index
+                       }
+                     });
+  let c = a.map(function(d) {
+      return {
+        attrib_value: d.attrib_value,
+        target_pct: d.compare_pct,
+        random_pct: d.random_pct,
+        index: d.compare_index
+      }
+  })
+  // console.log('target: ' + JSON.stringify(a))
+  // console.log('compare: ' + JSON.stringify(c))
+  //console.log('Comped: ' + JSON.stringify(a))
+  return [a, c];
+}
+
 
 /* extract an array of values for the specified attribute */
 function unpack(rows, key) {
   return rows.map(function(row) { return row[key]; });
 }
 
+/* get state name from state code */
+function getStateName(stateCode) {
+  return statesPaths.features.filter(d => ( d.properties.code == stateCode ) ).map(function(d){return d.properties.name;})[0];
+}
 
+/* get median category */
+function getMedianCategory(indexDs) {
+  let medianCat = '';
+  let sum = 0;
+  let i = 0;
+  while (sum < 50) {
+    medianCat = indexDs[i].attrib_value;
+    sum += indexDs[i].target_pct;
+    i++;
+  }
+  return medianCat;
+}
+
+/* get percentage of non-zero category values */
+function getNonZeroPct(indexDs) {
+  let zeroPct = indexDs
+    .filter(function(d) { return d["attrib_value"] == "0"; })[0].target_pct;
+  return 100 - zeroPct;
+}
 
 
 
