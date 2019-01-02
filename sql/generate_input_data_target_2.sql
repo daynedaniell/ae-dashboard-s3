@@ -18,43 +18,71 @@ audience.json in the data/target_aud_2 folder:
 
 -- Nissan Altima audience
 drop table if exists #competitive;
-select distinct idl_id
-into #competitive
+create table #competitive (
+  idl_id varchar(70) encode zstd
+)
+distkey(idl_id);
+
+insert into #competitive
+select idl_id
 from acxiom.audience_attributes__2018_06
 where attribute_name in (9044)
-and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER');
+and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER')
+group by 1;
 
-select distinct idl_id
-into #comp_first
+drop table if exists #comp_first;
+create table #comp_first (
+  idl_id varchar(70) encode zstd
+)
+distkey(idl_id);
+
+insert into #comp_first
+select idl_id
 from acxiom.audience_attributes__2018_06
 where attribute_name = 9042
-and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019');
+and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019')
+group by 1;
 
-select distinct idl_id
+select idl_id
 into #comp
 from #competitive
 join #comp_first
-using (idl_id);
+using (idl_id)
+group by 1;
 
 drop table if exists #competitive2;
-select distinct idl_id
-into #competitive2
+create table #competitive2 (
+  idl_id varchar(70) encode zstd
+)
+distkey(idl_id);
+
+insert into #competitive2
+select idl_id
 from acxiom.audience_attributes__2018_06
 where attribute_name in (9054)
-and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER');
+and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER')
+group by 1;
 
-select distinct idl_id
-into #comp_second
+drop table if exists #comp_second;
+create table #comp_second (
+  idl_id varchar(70) encode zstd
+)
+distkey(idl_id);
+
+insert into #comp_second
+select idl_id
 from acxiom.audience_attributes__2018_06
 where attribute_name = 9052
-and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019');
+and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019')
+group by 1;
 
 insert into #comp
-select distinct idl_id
+select idl_id
 from #competitive2
 join #comp_second
 using (idl_id)
-where idl_id not in (select idl_id from #comp);
+where idl_id not in (select idl_id from #comp)
+group by 1;
 
 
 -- ids crosswalk
@@ -65,8 +93,9 @@ create table #target_aud_ids_xwalk (
 distkey(idl_id);
 
 insert into #target_aud_ids_xwalk
-SELECT distinct idl_id
+SELECT idl_id
 from #comp
+group by 1
 order by random()
 limit 5000;
 
@@ -109,7 +138,7 @@ create table #taxonomy (
 distkey(attribute_name);
 
 insert into #taxonomy
-select distinct
+select
   attribute_name,
   attribute_value,
   category,
@@ -123,6 +152,7 @@ from jumpshot_data_science.acxiom_ds_taxonomy
 where action in ('ok','limit to 1','split')
 and use_as_idx_filter = 't'
 and clean_attribute_value_description not in ('3 Average','4 Somewhat Unlikely','5 Most Unlikely')
+group by 1,2,3,4,5,6
 ;
 
 create table #states (
@@ -393,7 +423,7 @@ distkey(temp_id);
 insert into #children
 SELECT distinct
   temp_id,
-  case 
+  case
     when clean_attribute_value_description::int >= 5 then '5+'
     else clean_attribute_value_description
   end as children

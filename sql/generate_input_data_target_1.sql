@@ -23,9 +23,10 @@ create table #target_aud_ids_xwalk (
 distkey(idl_id);
 
 insert into #target_aud_ids_xwalk
-SELECT distinct idl_id
+SELECT idl_id
 from acxiom.audience_attributes__2018_03
 where attribute_name = '6244' and attribute_value = '1'
+group by 1
 order by random()
 limit 5000;
 

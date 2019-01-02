@@ -777,18 +777,22 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
           let filteredIds2 = filterAttr(targetDemog2, DS_VIS_STORE["activeFilter"][0], DS_VIS_STORE["activeFilter"][1]).map(function(d) { return d.temp_id; });
 
           if (attrName == "interests"){
-            filteredData1 = targetInterests.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+            //filteredData1 = targetInterests.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+            orderedTargetFilter(targetInterests, filteredIds1, filteredData1);
             attrIndex1 = indexInterestsRetail(attrName, filteredData1, randomInterests);
 
-            filteredData2 = targetInterests2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+            //filteredData2 = targetInterests2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+            orderedTargetFilter(targetInterests2, filteredIds2, filteredData2);
             attrIndex2 = indexInterestsRetail(attrName, filteredData2, randomInterests);
             toggleTo = (DS_VIS_STORE["interestsActive"][0] === 1) ? 1 : 2;
 
           } else if (attrName == "retail"){
-            filteredData1 = targetRetail.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+            //filteredData1 = targetRetail.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+            orderedTargetFilter(targetRetail, filteredIds1, filteredData1);
             attrIndex1 = indexInterestsRetail(attrName, filteredData1, randomRetail);
 
-            filteredData2 = targetRetail2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+            //filteredData2 = targetRetail2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+            orderedTargetFilter(targetRetail2, filteredIds2, filteredData2);
             attrIndex2 = indexInterestsRetail(attrName, filteredData2, randomRetail);
             toggleTo = (DS_VIS_STORE["retailActive"][0] === 1) ? 1 : 2;
 
@@ -1492,16 +1496,20 @@ function updateComparisonCharts(attrName, attrValue) {
             if (demogAttributeListName == "interests"){
               // target = DS_VIS_STORE["interestsActive"][0] === 1 ? targetInterests : targetInterests2;
               // compare = DS_VIS_STORE["interestsActive"][1] === 1 ? targetInterests : targetInterests2;
-              filteredData1 = targetInterests.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+              //filteredData1 = targetInterests.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+              orderedTargetFilter(targetInterests, filteredIds1, filteredData1);
               attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomInterests);
 
-              filteredData2 = targetInterests2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+              //filteredData2 = targetInterests2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+              orderedTargetFilter(targetInterests2, filteredIds2, filteredData2);
               attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomInterests);
             } else if (demogAttributeListName == "retail"){
-              filteredData1 = targetRetail.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+              //filteredData1 = targetRetail.filter(function(d) { return filteredIds1.includes(d["temp_id"]); });
+              orderedTargetFilter(targetRetail, filteredIds1, filteredData1);
               attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomRetail);
 
-              filteredData2 = targetRetail2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+              //filteredData2 = targetRetail2.filter(function(d) { return filteredIds2.includes(d["temp_id"]); });
+              orderedTargetFilter(targetRetail2, filteredIds2, filteredData2);
               attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomRetail);
             }
             attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2);

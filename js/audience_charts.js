@@ -246,7 +246,10 @@ function barChart(attrName, indexDs) {
        //tooltip.style('opacity', 0);
        drawCharts();
      } else {
+       var t0 = performance.now();
        updateCharts(attrName, d.attrib_value);
+       var t1 = performance.now();
+       console.log('updateCharts: ' + (t1 - t0))
      }
 	}
 
@@ -1025,6 +1028,23 @@ function drawCharts() {
 /*******************************************************************************
 *** UPDATE ALL CHARTS **********************************************************
 *******************************************************************************/
+function orderedTargetFilter(targetData, filteredIds, filteredData) {
+  let targetPos = 0;
+    filteredIds.forEach(function(id) {
+      while (+targetData[targetPos]["temp_id"] < id) {
+        targetPos++;
+      }
+      while (+targetData[targetPos]["temp_id"] == id) {
+        filteredData.push(targetData[targetPos]);
+        if (targetPos + 1 < targetData.length) {
+          targetPos++;
+        } else {
+          break;
+        }
+
+      }
+    });
+}
 
 /* updates bar charts when a value element is clicked on a chart */
 function updateCharts(attrName, attrValue) {
@@ -1042,6 +1062,7 @@ function updateCharts(attrName, attrValue) {
 
   demogAttributesList.forEach(function(demogAttributeListName) {
       if (attrName != demogAttributeListName) {
+        var t3 = performance.now();
           /* reset opacity */
           if ( barChartAttributesList.includes(demogAttributeListName) ) {
             d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
@@ -1053,25 +1074,148 @@ function updateCharts(attrName, attrValue) {
             d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
           }
 
+
+
+
           if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+
             let filteredData = [];
             let filteredIds = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
-
             if (demogAttributeListName == "interests"){
-              filteredData = targetInterests.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
+              orderedTargetFilter(targetInterests, filteredIds, filteredData);
+              // let targetPos = 0;
+              //   filteredIds.forEach(function(id) {
+              //     while (+targetInterests[targetPos]["temp_id"] < id) {
+              //       targetPos++;
+              //     }
+              //     while (+targetInterests[targetPos]["temp_id"] == id) {
+              //       filteredData.push(targetInterests[targetPos]);
+              //       if (targetPos + 1 < targetInterests.length) {
+              //         targetPos++;
+              //       } else {
+              //         break;
+              //       }
+              //
+              //     }
+              //   });
+              //filteredData = targetInterests.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomInterests);
+              console.log("indexInterestsRetail: " + (t1 - t0))
             } else if (demogAttributeListName == "retail"){
-              filteredData = targetRetail.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
+              console.log("first if " + demogAttributeListName + ": ")
+              var t0 = performance.now();
+              console.log(targetRetail.length)
+
+              orderedTargetFilter(targetRetail, filteredIds, filteredData);
+
+              // let targetPos = 0;
+              //   filteredIds.forEach(function(id) {
+              //     while (+targetRetail[targetPos]["temp_id"] < id) {
+              //       targetPos++;
+              //     }
+              //     while (+targetRetail[targetPos]["temp_id"] == id) {
+              //       filteredData.push(targetRetail[targetPos]);
+              //       if (targetPos + 1 < targetRetail.length) {
+              //         targetPos++;
+              //       } else {
+              //         break;
+              //       }
+              //     }
+              //   });
+              //   console.log(filteredData.length)
+
+
+                // function objectsAreSame(x, y) {
+                //    var objectsAreSame = true;
+                //    for(var propertyName in x) {
+                //       if(x[propertyName] !== y[propertyName]) {
+                //          objectsAreSame = false;
+                //          break;
+                //       }
+                //    }
+                //    return objectsAreSame;
+                // }
+
+                /* old way */
+                // let filteredData2 = []
+                // filteredData2 = targetRetail.filter(function(d) {  return filteredIds.includes(d["temp_id"]); });
+                // console.log("These are the same: " + objectsAreSame(filteredData, filteredData2))
+
+              // filteredData = _.filter(targetRetail, (v) => _.includes(filteredIds, v.temp_id));
+              // function filter(a)
+              // {
+              //     var match = []
+              //
+              //     for (var i = 0; i < a.length; i++)
+              //     {
+              //
+              //         let tmp = filteredIds.find(function(element) {
+              //           return element === a[i]["temp_id"];
+              //         });
+              //         if ( tmp !== -1 ) match.push(a[i])
+              //     }
+              //
+              //     return match
+              // }
+
+              // filteredIds.forEach(function(id) {
+              //   console.log(id)
+              //   filteredData.push(targetRetail.filter(x => x.temp_id === id))
+              // });
+
+
+              // filteredData = targetRetail.filter(function(d) {
+              //   return this.indexOf(d["temp_id"]) < 0;
+              // },
+              // filteredIds
+              // );
+              // const fastIntersection = (...arrays) => {
+              //   // if we process the arrays from shortest to longest
+              //   // then we will identify failure points faster, i.e. when
+              //   // one item is not in all arrays
+              //   const ordered = (arrays.length===1
+              //       ? arrays :
+              //       arrays.sort((a1,a2) => a1.length - a2.length)),
+              //     shortest = ordered[0],
+              //     set = new Set(), // used for bookeeping, Sets are faster
+              //     result = [], // the intersection, conversion from Set is slow
+              //   // for each item in the shortest array
+              //   for(let i=0;i<shortest.length;i++) {
+              //     const item = shortest[i];
+              //     // see if item is in every subsequent array
+              //     let every = true; // don't use ordered.every ... it is slow
+              //     for(let j=1;j<ordered.length;j++) {
+              //       if(ordered[j].includes(item)) continue;
+              //       every = false;
+              //       break;
+              //     }
+              //     // ignore if not in every other array, or if already captured
+              //     if(!every || set.has(item)) continue;
+              //     // otherwise, add to bookeeping set and the result
+              //     set.add(item);
+              //     result[result.length] = item;
+              //   }
+              //   return result;
+              // }
+              // let ids = fastIntersection()
+              var t1 = performance.now();
+              console.log(t1 - t0)
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomRetail);
             }
+
             attrIndexTop = indexInterestsRetailTop5(attrIndex);
+
           } else {
+            var t0 = performance.now();
             let filteredData = filterAttr(targetDemog, attrName, attrValue);
+            var t1 = performance.now();
+            console.log("other perf: " + (t1 - t0))
             attrIndex = indexAttr(demogAttributeListName,
                                   indexCats[demogAttributeListName],
                                   filteredData,
                                   randomDemog);
           }
+
       } else {
           if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
             if (demogAttributeListName == "interests"){
@@ -1087,6 +1231,8 @@ function updateCharts(attrName, attrValue) {
                                   randomDemog);
           }
       }
+      var t4 = performance.now();
+      console.log("Main stuff " + demogAttributeListName + ": " + (t4 - t3))
 
       // update the wave chart data
       if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
@@ -1112,6 +1258,7 @@ function updateCharts(attrName, attrValue) {
             addStat("income", incomeMedianCat, prefix = "<strong>Median: </strong>");
         }
       }
+
 
 
       // update charts
@@ -1228,6 +1375,7 @@ function updateCharts(attrName, attrValue) {
   waveChart(indexes);
 
 
+
   /* Make the elems in selected chart opaque, except for the clicked chart elem */
   if ( barChartAttributesList.includes(attrName) | hBarChartAttributesList.includes(attrName) ) {
       d3.selectAll("#" + attrName + "Chart svg rect")
@@ -1252,4 +1400,5 @@ function updateCharts(attrName, attrValue) {
   /* Highlight the selected tile */
   $( ".tile" ).removeClass("selected-tile");
   $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
+
 }

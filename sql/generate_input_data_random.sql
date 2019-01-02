@@ -8,8 +8,9 @@ create table #random_aud_ids_xwalk (
 distkey(idl_id);
 
 insert into #random_aud_ids_xwalk
-SELECT distinct idl_id
+SELECT idl_id
 from acxiom.audience_attributes__2018_03
+group by 1
 order by random()
 limit 5000;
 
