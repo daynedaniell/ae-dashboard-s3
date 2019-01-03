@@ -85,25 +85,25 @@ function makeIndexCats(){
       {attrib_value: 'Married', target_count: 0, random_count: 0},
       {attrib_value: 'Single', target_count: 0, random_count: 0}
   ];
-  const childrenIndexCats = [
-      {attrib_value: '0', target_count: 0, random_count: 0},
-      {attrib_value: '1', target_count: 0, random_count: 0},
-      {attrib_value: '2', target_count: 0, random_count: 0},
-      {attrib_value: '3', target_count: 0, random_count: 0},
-      {attrib_value: '4', target_count: 0, random_count: 0},
-      {attrib_value: '5', target_count: 0, random_count: 0},
-      {attrib_value: '6', target_count: 0, random_count: 0},
-      {attrib_value: '7', target_count: 0, random_count: 0},
-      {attrib_value: '8+', target_count: 0, random_count: 0}
-  ];
   // const childrenIndexCats = [
   //     {attrib_value: '0', target_count: 0, random_count: 0},
   //     {attrib_value: '1', target_count: 0, random_count: 0},
   //     {attrib_value: '2', target_count: 0, random_count: 0},
   //     {attrib_value: '3', target_count: 0, random_count: 0},
   //     {attrib_value: '4', target_count: 0, random_count: 0},
-  //     {attrib_value: '5+', target_count: 0, random_count: 0}
+  //     {attrib_value: '5', target_count: 0, random_count: 0},
+  //     {attrib_value: '6', target_count: 0, random_count: 0},
+  //     {attrib_value: '7', target_count: 0, random_count: 0},
+  //     {attrib_value: '8+', target_count: 0, random_count: 0}
   // ];
+  const childrenIndexCats = [
+      {attrib_value: '0', target_count: 0, random_count: 0},
+      {attrib_value: '1', target_count: 0, random_count: 0},
+      {attrib_value: '2', target_count: 0, random_count: 0},
+      {attrib_value: '3', target_count: 0, random_count: 0},
+      {attrib_value: '4', target_count: 0, random_count: 0},
+      {attrib_value: '5+', target_count: 0, random_count: 0}
+  ];
   const educationIndexCats = [
       {attrib_value: 'High School', target_count: 0, random_count: 0},
       {attrib_value: 'College', target_count: 0, random_count: 0},
@@ -194,7 +194,7 @@ function makeIndexCats(){
 /* Indexing for interests/retail */
 
 /* calculate an array of pct and indexes for interests/retail */
-function indexInterestsRetail(attrName, targetData, randomData) {
+function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
 
     let targetCounts = d3.nest()
       .key(function(d) { return d[attrName+"_category"] + "|" + d[attrName]; })
@@ -251,9 +251,19 @@ function indexInterestsRetail(attrName, targetData, randomData) {
         } else {catEntryIndex["index"] = 0}
     });
 
-    let indexArray = targetCounts
-      .filter(d => (d["index"] >= 100) & (d["index"] <= 500) & (d["target_pct"] > 5) )
-    ;
+    if (bubble == true) {
+      let indexArray = targetCounts
+        .filter(d => ((d["index"] <= 500)))
+      ;
+    } else {
+      let indexArray = targetCounts
+        .filter(d => (d["index"] >= 100) & (d["index"] <= 500) & (d["target_pct"] > 5) )
+      ;
+    }
+
+
+
+
 
     return targetCounts;
 }

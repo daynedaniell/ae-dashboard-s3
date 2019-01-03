@@ -3,6 +3,7 @@ let DS_VIS_STORE = {
     stateActive: [1,2],
     interestsActive: [1,2],
     retailActive: [1,2],
+    activeView: "single"
 }
 
 /*******************************************************************************
@@ -172,7 +173,7 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 	    .append("text")
       .attr("class", "series1")
       .text(function(d) {
-       return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
+       return formatAsInteger(d3.format("d")(d.index));
       })
 	    .attr("text-anchor", "middle")
 	    /* Set x position to the left edge of each bar plus half the bar width */
@@ -186,7 +187,10 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 	  //  .attr("class", "yAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", fontSize)
-	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseup)
+      .on("mousemove", mouseover);
 
   /* 2nd series */
   plot.selectAll("text.series2")
@@ -195,7 +199,7 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
       .append("text")
       .attr("class", "series2")
       .text(function(d) {
-       return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
+       return formatAsInteger(d3.format("d")(d.index));
       })
       .attr("text-anchor", "middle")
       /* Set x position to the left edge of each bar plus half the bar width */
@@ -209,7 +213,10 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
   //    .attr("class", "yAxis")
       .attr("font-family", "sans-serif")
       .attr("font-size", fontSize)
-      .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+      .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseup)
+      .on("mousemove", mouseover);
 
 
 
@@ -252,8 +259,10 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
      if (isSelected){
        DS_VIS_STORE["activeFilter"] = null;
        drawComparisonCharts();
+       showActiveFilter(DS_VIS_STORE);
      } else {
        updateComparisonCharts(attrName, d.attrib_value);
+       showActiveFilter(DS_VIS_STORE);
      }
 	}
 
@@ -284,6 +293,12 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 *** 2-SERIES STACKED BAR CHART *************************************************
 *******************************************************************************/
 function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2) {
+  console.log("STACKED indexDs1: " + JSON.stringify(indexDs1) )
+  let indexCat1 = [indexDs1[0], indexDs2[0].attrib_value == indexDs1[0].attrib_value ? indexDs2[0] : indexDs2[1]]
+  let indexCat2 = [indexDs1[1], indexDs2[1].attrib_value == indexDs1[1].attrib_value ? indexDs2[1] : indexDs2[0]]
+  combo1 = +indexCat1[0].target_pct + +indexCat1[1].target_pct
+  combo2 = +indexCat2[0].target_pct + +indexCat2[1].target_pct
+
   let innerWidth = 360;
 
   let basics = barChartSetup(innerWidth);
@@ -297,8 +312,13 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
                  .range([0, width]);
 
   let yScale = d3.scaleLinear()
-                 .domain([0, 100])
+                 .domain([0, Math.max((indexDs1[0].target_pct + indexDs2[0].target_pct), (indexDs1[1].target_pct + indexDs2[1].target_pct))])
                  .range([height, 0]);
+
+  console.log(yScale(combo2) - yScale(combo1))
+  y1 = yScale(combo2) - yScale(combo1) < 0 ? yScale(combo2) - yScale(combo1) : 0;
+  y2 = yScale(combo2) - yScale(combo1) > 0 ? yScale(combo2) - yScale(combo1) : 0;
+
 
   /* Create SVG element */
   let svg = d3.select("#"+attrName+"Chart")
@@ -306,25 +326,25 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot")
-              .attr("class", "ds-chart-base");;
+              .attr("class", "ds-chart-base");
 
   const tooltip = d3.select("#"+attrName+"Chart").append("div")
       .attr("class", "ds-tooltip")
       .style("opacity", 0);
 
   /* Add horizontal grid lines */
-  function make_y_gridlines() {
-      return d3.axisLeft(yScale)
-          .ticks(5)
-  }
+  // function make_y_gridlines() {
+  //     return d3.axisLeft(yScale)
+  //         .ticks(5)
+  // }
 
   svg.append("g")
       .attr("class", "ds-grid")
       .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
-      .call(make_y_gridlines()
-          .tickSize(-width)
-          .tickFormat("")
-      )
+      // .call(make_y_gridlines()
+      //     .tickSize(-width)
+      //     .tickFormat("")
+      //)
 
   let plot = svg.append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -332,14 +352,14 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
   /* Attach index data and add the chart elems */
   /* 1st series */
   plot.selectAll("rect.series1")
-      .data(indexDs1)
+      .data(indexCat1)
       .enter()
       .append("rect")
       .attr("class", "series1")
       .attr("x", xScale(0) + (width / indexDs1.length - barPadding)/2 )
       .attr("width", width / indexDs1.length - barPadding)
-      .attr("y", function(d, i) { return i ? 0 : yScale(d.target_pct); })
-      .attr("height", function(d) { return height - yScale(d.target_pct); })
+      .attr("y", function(d, i) { return i ? y1 : yScale(d.target_pct); })
+      .attr("height", function(d) { return height-yScale(d.target_pct); })
       .attr("fill", function(d, i) {
           return i ? colorAudience12 : colorAudience11;
       })
@@ -354,14 +374,14 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
 
   /* 2nd series */
   plot.selectAll("rect.series2")
-      .data(indexDs2)
+      .data(indexCat2)
       .enter()
       .append("rect")
       .attr("class", "series2")
       .attr("x", xScale(1) + (width / indexDs1.length - barPadding)/2 )
       .attr("width", width / indexDs1.length - barPadding)
-      .attr("y", function(d, i) { return i ? 0 : yScale(d.target_pct); })
-      .attr("height", function(d) { return height - yScale(d.target_pct); })
+      .attr("y", function(d, i) { return i ? y2 : yScale(d.target_pct); })
+      .attr("height", function(d) { return height-yScale(d.target_pct); })
       .attr("fill", function(d, i) {
           return i ? colorAudience12 : colorAudience11;
       })
@@ -378,7 +398,7 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
   /* Add y labels to plot */
   /* 1st series */
   plot.selectAll("text.series1")
-      .data(indexDs1)
+      .data(indexCat1)
       .enter()
       .append("text")
       .attr("class", "series1")
@@ -390,16 +410,19 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
       .attr("x",  xScale(0) + (width / indexDs1.length - barPadding)/2
                             + ((width / 2 - barPadding) / 2) )
       .attr("y", function(d, i) {
-           return (1 - i) * yScale(d.target_pct) + 14;
+           return i ? y1 + 14 : yScale(d.target_pct) + 14;
       })
       .attr("class", "yAxis")
       .attr("font-family", "sans-serif")
   //    .attr("font-size", "8px")
-      .attr("fill", "white");
+      .attr("fill", "white")
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseup)
+      .on("mousemove", mouseover);
 
   /* 2nd series */
   plot.selectAll("text.series2")
-      .data(indexDs2)
+      .data(indexCat2)
       .enter()
       .append("text")
       .attr("class", "series2")
@@ -411,12 +434,15 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
       .attr("x", xScale(1) + (width / indexDs1.length - barPadding)/2
                            + ((width / 2 - barPadding) / 2) )
       .attr("y", function(d, i) {
-           return (1 - i) * yScale(d.target_pct) + 14;
+           return i ? y2 + 14 : yScale(d.target_pct) + 14;
       })
       .attr("class", "yAxis")
       .attr("font-family", "sans-serif")
 //      .attr("font-size", "8px")
-      .attr("fill", "white");
+      .attr("fill", "white")
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseup)
+      .on("mousemove", mouseover);
 
 
   /* Add x labels to chart */
@@ -424,7 +450,7 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
                    .attr("transform", "translate(" + margin.left + "," + (margin.top + height)  + ")");
 
   xLabels.selectAll("text.xAxis")
-         .data([{"series_name": audName1}, {"series_name": audName2}])
+         .data([{"series_name": indexCat1[0].attrib_value}, {"series_name": indexCat2[0].attrib_value}])
          .enter()
          .append("text")
          .text(function(d) { return d.series_name;})
@@ -439,18 +465,18 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
          .attr("class", "xAxis");
 
   /* Add a y-axis */
-  let axis = d3.axisLeft(yScale)
-      .ticks(5)
-      .tickFormat(function (d) { return d + "%" })
-      .tickSize(0);
-
-  svg.append("g")
-      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
-      .attr("class", "axis")
-      .call(axis);
-
-  /* Remove vertical and extra horizontal gridlines */
-  svg.selectAll(".domain").remove()
+  // let axis = d3.axisLeft(yScale)
+  //     .ticks(5)
+  //     .tickFormat(function (d) { return d + "%" })
+  //     .tickSize(0);
+  //
+  // svg.append("g")
+  //     .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+  //     .attr("class", "axis")
+  //     .call(axis);
+  //
+  // /* Remove vertical and extra horizontal gridlines */
+  // svg.selectAll(".domain").remove()
 
 
   function up(d, i) {
@@ -463,8 +489,10 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
      if (isSelected){
        DS_VIS_STORE["activeFilter"] = null;
        drawComparisonCharts();
+       showActiveFilter(DS_VIS_STORE);
      } else {
        updateComparisonCharts(attrName, d.attrib_value);
+       showActiveFilter(DS_VIS_STORE);
      }
   }
 
@@ -490,6 +518,44 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
   }
 }
 
+
+
+/*******************************************************************************
+*** NUMBER CHART ***************************************************************
+*******************************************************************************/
+function numberChart(attrName, indexDs1, indexDs2) {
+      let innerWidth = 360;
+
+      let basics = barChartSetup(innerWidth);
+      let margin = basics.margin,
+          width = basics.width,
+          height = basics.height,
+          barPadding = basics.barPadding * 100;
+
+      $("#"+attrName+"Chart").html(
+        "<div class='ds-number-value' style='color: " + colorSeries1 + "'>" + indexDs1[0].target_pct + "% "
+            + "<br/>"
+            + indexDs1[0].attrib_value
+            + "<br/>"
+            + indexDs1[0].index + "</div>"
+            + "<div class='ds-number-value' id='dsAud2' style='color: " + colorSeries2 + "'>" + indexDs2[0].target_pct + "% "
+                + "<br/>"
+                + indexDs2[0].attrib_value
+                + "<br/>"
+                + indexDs2[0].index + "</div>"
+      )
+
+
+      // svg.append("g")
+      //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      //     .append("div")
+      //     .html("test")
+
+      console.log(JSON.stringify('.......' + JSON.stringify(indexDs1)))
+
+
+
+}
 
 
 /*******************************************************************************
@@ -534,7 +600,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 		          .attr("width", width + margin.left + margin.right + 15) // Adjusted to fit axis
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot")
-              .attr("class", "ds-chart-base");;
+              .attr("class", "ds-chart-base");
 
   const tooltip = d3.select("#"+attrName+"Chart")
       .append("div")
@@ -643,7 +709,10 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 	    //.attr("class", "xAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", "11px")
-	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout)
+      .on("mousemove", mouseover);
 
   /* Series 2 */
   plot.selectAll("text.series2")
@@ -663,7 +732,10 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
       //.attr("class", "xAxis")
       .attr("font-family", "sans-serif")
       .attr("font-size", "11px")
-      .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+      .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout)
+      .on("mousemove", mouseover);
 
 
 
@@ -1227,7 +1299,7 @@ function mikeJ2SeriesChart(attrName, indexDs1, indexDs2) {
     height: height,
     width: width,
     xaxis: {
-      range: [ 80, 520 ],
+      range: [ 0, 520 ],
       title: 'index'
     },
     yaxis: {
@@ -1256,6 +1328,29 @@ function mikeJ2SeriesChart(attrName, indexDs1, indexDs2) {
       }
     }]
   };
+
+  var myPlot = document.getElementById('waveChart');
+  myPlot.on('plotly_click', function(data){
+    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+    let mapping = {
+      "number of children": "children",
+      "age": "age",
+      "ethnicity": "ethnicity",
+      "gender": "gender",
+      "marital status": "marital",
+      "education": "education",
+      "income": "income",
+      "location": "state",
+      "interests": "interests",
+      "retail": "retail"
+    }
+
+
+    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+  });
 
   let chartName = attrName+"DetailChart";
   Plotly.newPlot(chartName, [trace1, trace2], layout, {responsive: true});
@@ -1348,6 +1443,7 @@ function drawComparisonCharts() {
   let ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
   let ageMedianCat2 = getMedianCategory(ageIndex2);
   let genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
+  console.log("GENDER INDEX" + JSON.stringify(genderIndex2))
   let ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
   let maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
   let childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
@@ -1403,7 +1499,9 @@ function drawComparisonCharts() {
   bar2SeriesChart("education", educationIndex1, educationIndex2);
   bar2SeriesChart("income", incomeIndex1, incomeIndex2);
   add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "<span style='color: #000;'><strong>Median: </strong></span>");
+  //bar2SeriesChart("gender", genderIndex1, genderIndex2);
   stackedBar2SeriesChart("gender", audName1, genderIndex1, audName2, genderIndex2);
+  //numberChart("gender", genderIndex1, genderIndex2);
   stackedBar2SeriesChart("marital", audName1, maritalIndex1, audName2, maritalIndex2);
   (DS_VIS_STORE["stateActive"][0] === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
   (DS_VIS_STORE["interestsActive"][0] === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
@@ -1595,7 +1693,7 @@ function updateComparisonCharts(attrName, attrValue) {
       // update charts
       if ( barChartAttributesList.includes(demogAttributeListName) ) {
           // update bar chart
-            let innerWidth = 360;
+            let innerWidth = 400;
             if (demogAttributeListName == "income") {
             	  innerWidth = 610;
             }
@@ -1715,7 +1813,7 @@ function updateComparisonCharts(attrName, attrValue) {
                  return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
               })
               .text(function(d) {
-               return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
+               return formatAsInteger(d3.format("d")(d.index));
               })
               .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
               .attr("class", "yAxis")
@@ -1735,7 +1833,7 @@ function updateComparisonCharts(attrName, attrValue) {
                  return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
               })
               .text(function(d) {
-               return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
+               return formatAsInteger(d3.format("d")(d.index));
               })
               .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
               .attr("class", "yAxis")

@@ -24,11 +24,10 @@ create table #competitive (
 distkey(idl_id);
 
 insert into #competitive
-select idl_id
+select distinct idl_id
 from acxiom.audience_attributes__2018_06
 where attribute_name in (9044)
-and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER')
-group by 1;
+and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER');
 
 drop table if exists #comp_first;
 create table #comp_first (
@@ -37,11 +36,10 @@ create table #comp_first (
 distkey(idl_id);
 
 insert into #comp_first
-select idl_id
+select distinct idl_id
 from acxiom.audience_attributes__2018_06
 where attribute_name = 9042
-and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019')
-group by 1;
+and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019');
 
 select idl_id
 into #comp
@@ -57,11 +55,10 @@ create table #competitive2 (
 distkey(idl_id);
 
 insert into #competitive2
-select idl_id
+select distinct idl_id
 from acxiom.audience_attributes__2018_06
 where attribute_name in (9054)
-and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER')
-group by 1;
+and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER');
 
 drop table if exists #comp_second;
 create table #comp_second (
@@ -138,7 +135,7 @@ create table #taxonomy (
 distkey(attribute_name);
 
 insert into #taxonomy
-select
+select distinct
   attribute_name,
   attribute_value,
   category,
@@ -152,7 +149,6 @@ from jumpshot_data_science.acxiom_ds_taxonomy
 where action in ('ok','limit to 1','split')
 and use_as_idx_filter = 't'
 and clean_attribute_value_description not in ('3 Average','4 Somewhat Unlikely','5 Most Unlikely')
-group by 1,2,3,4,5,6
 ;
 
 create table #states (

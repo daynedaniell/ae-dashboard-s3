@@ -7,7 +7,8 @@
 let colorOverIndex = '#ffb14e',
     colorUnderIndex = '#4880da',
     colorNeutralIndex1 = 'grey',
-    colorNeutralIndex2 = 'rgb(192,192,192)';
+    colorNeutralIndex2 = 'rgb(192,192,192)',
+    colorZeroIndex = 'rgba(53, 128, 224, 0.07)';
 
 
 /* color-by-index functions */
@@ -16,6 +17,8 @@ function colorByIndexBar(index) {
         return colorOverIndex;
     } else if (index > 80) {
         return colorNeutralIndex1;
+    } else if (index == 0) {
+        return colorZeroIndex;
     }
     return colorUnderIndex;
 }
@@ -191,7 +194,7 @@ function barChart(attrName, indexDs) {
 	    .enter()
 	    .append("text")
 	    .text(function(d) {
-			     return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
+			     return formatAsInteger(d3.format("d")(d.index));
 	    })
 	    .attr("text-anchor", "middle")
 	    /* Set x position to the left edge of each bar plus half the bar width */
@@ -204,7 +207,10 @@ function barChart(attrName, indexDs) {
 	    .attr("class", "yAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", "11px")
-	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseup)
+      .on("mousemove", mouseover);
 
 	/* Add x labels to chart */
 	let xLabels = svg.append("g")
@@ -244,7 +250,9 @@ function barChart(attrName, indexDs) {
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
        //tooltip.style('opacity', 0);
+       DS_VIS_STORE["activeFilter"] = null;
        drawCharts();
+       showActiveFilter(DS_VIS_STORE);
      } else {
        var t0 = performance.now();
        updateCharts(attrName, d.attrib_value);
@@ -366,7 +374,9 @@ function pieChart(attrName, indexDs){
       isSelected = d3.select(".selected-tile #"+attrName+"Chart path[attrib-value="+d.data.attrib_value+"][selected='yes']")
                      ._groups[0][0];
       if (isSelected){
+        DS_VIS_STORE["activeFilter"] = null;
         drawCharts();
+        showActiveFilter(DS_VIS_STORE);
       } else {
         updateCharts(attrName, d.data.attrib_value);
       }
@@ -600,7 +610,10 @@ function hBarChart(attrName, indexDs) {
 	    .attr("class", "xAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", "11px")
-	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout)
+      .on("mousemove", mouseover);
 
 	/* Add y labels to chart */
 	let yLabels = svg.append("g")
@@ -806,7 +819,7 @@ function waveChart(ds) {
 *** MIKEJ CHART ****************************************************************
 *******************************************************************************/
 function mikeJChart(attrName, indexDs) {
-
+  console.log(attrName + ': ' + JSON.stringify(indexDs.filter((d) => d.index < 100)))
   // sort data alphabetically by category
   indexDs.sort((a, b) => b.category.localeCompare(a.category));
 
@@ -841,6 +854,7 @@ function mikeJChart(attrName, indexDs) {
       line: {width: 0}
     },
     hovertext: toolTipValues,
+    custom: "test",
     hoverinfo: 'text',
     hoverlabel: {
       bgcolor: '#fff',
@@ -869,7 +883,7 @@ function mikeJChart(attrName, indexDs) {
     height: height,
     width: width,
     xaxis: {
-      range: [ 80, 520 ],
+      range: [ 0, 520 ],
       title: 'index'
     },
     yaxis: {
@@ -898,6 +912,32 @@ function mikeJChart(attrName, indexDs) {
       }
     }]
   };
+
+  var myPlot = document.getElementById('waveChart');
+  myPlot.on('plotly_click', function(data){
+    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+    let mapping = {
+      "number of children": "children",
+      "age": "age",
+      "ethnicity": "ethnicity",
+      "gender": "gender",
+      "marital status": "marital",
+      "education": "education",
+      "income": "income",
+      "location": "state",
+      "interests": "interests",
+      "retail": "retail"
+    }
+
+
+    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+
+
+
+  });
 
   let chartName = attrName+"DetailChart";
   Plotly.newPlot(chartName, [trace], layout, {responsive: true});
@@ -928,11 +968,16 @@ function addAudienceLegend(compare=false) {
     $("#dsAudienceLegend1 .ds-audience-legend-label span").text("Over-Index")
     $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorUnderIndex)
     $("#dsAudienceLegend2 .ds-audience-legend-label span").text("Under-Index")
+    $("#dsAudienceLegend3 .ds-audience-legend-color").css({"background-color": colorZeroIndex, "display": "block"})
+    $("#dsAudienceLegend3 .ds-audience-legend-label span").text("No Data")
+    $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "block")
   } else {
     $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorSeries1)
     $("#dsAudienceLegend1 .ds-audience-legend-label span").text(targetAud.name)
     $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorSeries2)
     $("#dsAudienceLegend2 .ds-audience-legend-label span").text(targetAud2.name)
+    $("#dsAudienceLegend3 .ds-audience-legend-color").css("display", "none")
+    $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "none")
   }
 
   // add audience title
@@ -943,6 +988,55 @@ function addAudienceLegend(compare=false) {
   // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-l2 col-sm-8'>Under-Index</div>");
 }
 
+/*******************************************************************************
+*** SHOW ACTIVE FILTERS ********************************************************
+*******************************************************************************/
+function showActiveFilter(store) {
+  let cat = null;
+  if (store["activeFilter"] != null) {
+      cat = store["activeFilter"][0];
+      cat = cat[0].toUpperCase() + cat.slice(1)
+      $(".ds-current-filter-remove").css("display", "inline");
+  } else {
+    $(".ds-current-filter-remove").css("display", "none");
+  }
+  $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "No active filters");
+}
+
+function removeActiveFilter(store) {
+  store["activeFilter"] = null;
+  if (store["activeView"] == "single") {
+    drawCharts();
+  } else {
+    drawComparisonCharts();
+  }
+
+}
+
+/* Remove filter by clicking remove icon in sidebar */
+$(".ds-current-filter-remove").click(function() {
+  removeActiveFilter(DS_VIS_STORE);
+  $(".ds-current-filter").text("No active filters");
+  $(this).css("display", "none");
+})
+
+$(".ds-audience-selection-form").change(function(){
+  let selectedAudiences =
+    $('.ds-audience-selection-form input:checkbox:checked')
+      .map(function() { return $(this).val(); })
+      .get();
+
+  if (selectedAudiences.length > 0 & selectedAudiences.length >= 2) {
+    DS_VIS_STORE["activeView"] = "compare";
+  } else if (selectedAudiences.length == 1){
+    DS_VIS_STORE["activeView"] = "single";
+  }
+  console.log(DS_VIS_STORE["activeView"])
+
+  DS_VIS_STORE["activeFilter"] = null;
+  $(".ds-current-filter").text("No active filters");
+  $(".ds-current-filter-remove").css("display", "none");
+});
 
 /*******************************************************************************
 *** ADD AUDIENCE TITLE *********************************************************
@@ -965,6 +1059,7 @@ function drawCharts() {
   // add the audience title
   addAudienceTitle(targetAud);
   addAudienceLegend();
+  showActiveFilter(DS_VIS_STORE);
 
   let indexCats = makeIndexCats();
   let demogAttributesList = Object.keys(indexCats);
@@ -985,6 +1080,7 @@ function drawCharts() {
   let incomeMedianCat = getMedianCategory(incomeIndex0);
   let stateIndex0 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
   let interestsIndex0 = indexInterestsRetail("interests", targetInterests, randomInterests);
+  let interestsIndexBubble0 = indexInterestsRetail("interests", targetInterests, randomInterests, bubble=true);
   let interestsIndexTop0 = indexInterestsRetailTop5(interestsIndex0);
   let retailIndex0 = indexInterestsRetail("retail", targetRetail, randomRetail);
   let retailIndexTop0 = indexInterestsRetailTop5(retailIndex0);
@@ -1020,9 +1116,26 @@ function drawCharts() {
 
   $( ".tile" ).removeClass("selected-tile");
 
-  mikeJChart('interests', interestsIndex0);
+  mikeJChart('interests', interestsIndexBubble0);
   mikeJChart('retail', retailIndex0);
 }
+
+$("#interests-tab").click(function() {
+    DS_VIS_STORE.activeFilter = null;
+    showActiveFilter(DS_VIS_STORE);
+})
+
+$("#retail-tab").click(function() {
+    DS_VIS_STORE.activeFilter = null;
+    showActiveFilter(DS_VIS_STORE);
+})
+
+$("#dashboard-tab").click(function() {
+    DS_VIS_STORE.activeFilter = null;
+    showActiveFilter(DS_VIS_STORE);
+    drawCharts();
+})
+
 
 
 /*******************************************************************************
@@ -1048,6 +1161,8 @@ function orderedTargetFilter(targetData, filteredIds, filteredData) {
 
 /* updates bar charts when a value element is clicked on a chart */
 function updateCharts(attrName, attrValue) {
+  DS_VIS_STORE.activeFilter = [attrName, attrValue];
+  showActiveFilter(DS_VIS_STORE);
 //  console.log(attrName);
 //  console.log(attrValue);
   let attrIndex = [];
@@ -1354,7 +1469,7 @@ function updateCharts(attrName, attrValue) {
                  return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
               })
               .text(function(d) {
-               return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
+               return formatAsInteger(d3.format("d")(d.index));
               })
               .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
               .attr("class", "yAxis");
