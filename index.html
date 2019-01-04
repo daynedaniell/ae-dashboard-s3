@@ -316,7 +316,10 @@
             if (selectedAudiences.length > 0 & selectedAudiences.length <= 2) {
               f(selectedAudiences);
             } else {
-              alert("Please select 1 or 2 audiences for visualization.");
+              console.log(DS_VIS_STORE)
+              $(this).after("<p class='ds-audience-select-alert'><em>Please select an audience!</em></p>");
+              $(".ds-active-filters").css("top", "400px")
+              //alert("Please select 1 or 2 audiences for visualization.");
             }
           }).change(); // fires on load and on form change
         });

@@ -506,7 +506,7 @@ var legend = d3.select("body").append("svg")
 function hBarChart(attrName, indexDs) {
     $("#"+attrName+"Chart .ds-toggle-button").css("display", "none");
     $("#"+attrName+"Chart .ds-hbar-status").text("Top 5 By Index");
-  let innerWidth = 610;
+  let innerWidth = 630;
 
 	let basics = barChartSetup(innerWidth);
 	let margin = basics.margin,
@@ -516,7 +516,7 @@ function hBarChart(attrName, indexDs) {
 
   let firstDatasetBarChart = indexDs;
   //let maxAttrLength = d3.max(firstDatasetBarChart, function(d) { return d.attrib_value.length; }) * 9;
-  let maxAttrLength = width / 2.5;
+  let maxAttrLength = width / 2.25;
 
 	let yScale = d3.scaleLinear()
                  .domain([0, firstDatasetBarChart.length])
@@ -612,7 +612,7 @@ function hBarChart(attrName, indexDs) {
 
 	/* Add y labels to chart */
 	let yLabels = svg.append("g")
-		               .attr("transform", "translate(" + margin.left + "," + (margin.top)  + ")");
+		               .attr("transform", "translate(" + (margin.left - 30) + "," + (margin.top)  + ")");
 
 	yLabels.selectAll("text.yAxis")
 		     .data(firstDatasetBarChart)
@@ -630,9 +630,29 @@ function hBarChart(attrName, indexDs) {
 				 .attr("y", function(d, i) {
 				       return (i * (height / firstDatasetBarChart.length)) + ((height / firstDatasetBarChart.length - barPadding) / 2);
 				 })
-		     .attr("x", 0)
+		     .attr("x", 66)
 		     .attr("class", "yAxis");
          //.call(wrap, 200, '-', type = 'hbar');
+
+  yLabels.selectAll("text.ranking")
+		     .data([ 1, 2, 3, 4, 5])
+		     .enter()
+		     .append("text")
+         .attr("class", "ranking")
+		     .text(function(d) {
+           return "#" + d;
+         })
+         .attr("fill", "#81838c")
+   	     .attr("font-size", "36px")
+		     .attr("text-anchor", "start")
+			   /* Set y position to the top edge of each bar plus half the bar width */
+				 .attr("y", function(d, i) {
+				       return (i * (height / indexDs.length))
+                    + ((height / indexDs.length - barPadding) / 2)
+                    + 10;
+				 })
+		     .attr("x", 0)
+		     .attr("class", "yAxis");
 
   /* Add x-axis */
   let xAxis = d3.axisBottom(xScale)
@@ -1037,10 +1057,19 @@ $(".ds-audience-selection-form").change(function(){
       .map(function() { return $(this).val(); })
       .get();
 
+  if (DS_VIS_STORE["activeView"] == null) {
+    $(".ds-audience-select-alert").remove()
+    $(".ds-active-filters").css("top", "360px")
+  }
+
   if (selectedAudiences.length > 0 & selectedAudiences.length >= 2) {
     DS_VIS_STORE["activeView"] = "compare";
   } else if (selectedAudiences.length == 1){
     DS_VIS_STORE["activeView"] = "single";
+  }
+
+  if (selectedAudiences.length == 0) {
+    DS_VIS_STORE["activeView"] = null;
   }
 
   DS_VIS_STORE["activeFilter"] = null;
@@ -1153,20 +1182,44 @@ function drawCharts() {
   mikeJChart('retail', retailIndex0);
 }
 
+function resetCharts() {
+    if (DS_VIS_STORE["activeView"] == "single") {
+        drawCharts();
+    } else if (DS_VIS_STORE["activeView"]) {
+        drawComparisonCharts();
+    }
+}
+
+/* Reset dashboard charts if filter was left on when switching to bubble */
 $("#interests-tab").click(function() {
-    DS_VIS_STORE.activeFilter = null;
-    showActiveFilter(DS_VIS_STORE);
+    if (DS_VIS_STORE.activeFilter != null) {
+        DS_VIS_STORE.activeFilter = null;
+        showActiveFilter(DS_VIS_STORE);
+        resetCharts();
+    }
 })
 
 $("#retail-tab").click(function() {
-    DS_VIS_STORE.activeFilter = null;
-    showActiveFilter(DS_VIS_STORE);
+    if (DS_VIS_STORE.activeFilter != null) {
+        DS_VIS_STORE.activeFilter = null;
+        showActiveFilter(DS_VIS_STORE);
+        resetCharts();
+    }
 })
 
-$("#dashboard-tab").click(function() {
-    DS_VIS_STORE.activeFilter = null;
-    drawCharts();
-})
+
+
+//$("#dashboard-tab").click(function() {
+    //console.log(DS_VIS_STORE)
+    // if (DS_VIS_STORE["activeView"] == "single" && DS_VIS_STORE["activeFilter"] != null) {
+    //     DS_VIS_STORE.activeFilter = null;
+    //     drawCharts();
+    // } else if (DS_VIS_STORE["activeView"] && DS_VIS_STORE["activeFilter"] != null) {
+    //     DS_VIS_STORE.activeFilter = null;
+    //     drawComparisonCharts();
+    // }
+
+// })
 
 
 
