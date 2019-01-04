@@ -85,16 +85,24 @@ function makeIndexCats(){
       {attrib_value: 'Married', target_count: 0, random_count: 0},
       {attrib_value: 'Single', target_count: 0, random_count: 0}
   ];
+  // const childrenIndexCats = [
+  //     {attrib_value: '0', target_count: 0, random_count: 0},
+  //     {attrib_value: '1', target_count: 0, random_count: 0},
+  //     {attrib_value: '2', target_count: 0, random_count: 0},
+  //     {attrib_value: '3', target_count: 0, random_count: 0},
+  //     {attrib_value: '4', target_count: 0, random_count: 0},
+  //     {attrib_value: '5', target_count: 0, random_count: 0},
+  //     {attrib_value: '6', target_count: 0, random_count: 0},
+  //     {attrib_value: '7', target_count: 0, random_count: 0},
+  //     {attrib_value: '8+', target_count: 0, random_count: 0}
+  // ];
   const childrenIndexCats = [
       {attrib_value: '0', target_count: 0, random_count: 0},
       {attrib_value: '1', target_count: 0, random_count: 0},
       {attrib_value: '2', target_count: 0, random_count: 0},
       {attrib_value: '3', target_count: 0, random_count: 0},
       {attrib_value: '4', target_count: 0, random_count: 0},
-      {attrib_value: '5', target_count: 0, random_count: 0},
-      {attrib_value: '6', target_count: 0, random_count: 0},
-      {attrib_value: '7', target_count: 0, random_count: 0},
-      {attrib_value: '8+', target_count: 0, random_count: 0}
+      {attrib_value: '5+', target_count: 0, random_count: 0}
   ];
   const educationIndexCats = [
       {attrib_value: 'High School', target_count: 0, random_count: 0},
@@ -186,7 +194,7 @@ function makeIndexCats(){
 /* Indexing for interests/retail */
 
 /* calculate an array of pct and indexes for interests/retail */
-function indexInterestsRetail(attrName, targetData, randomData) {
+function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
 
     let targetCounts = d3.nest()
       .key(function(d) { return d[attrName+"_category"] + "|" + d[attrName]; })
@@ -243,16 +251,28 @@ function indexInterestsRetail(attrName, targetData, randomData) {
         } else {catEntryIndex["index"] = 0}
     });
 
-    let indexArray = targetCounts
-      .filter(d => (d["index"] >= 100) & (d["index"] <= 500) & (d["target_pct"] > 5) )
-    ;
+    if (bubble == true) {
+      let indexArray = targetCounts
+        .filter(d => ((d["index"] <= 500)))
+      ;
+    } else {
+      let indexArray = targetCounts
+        .filter(d => (d["index"] >= 100) & (d["index"] <= 500) & (d["target_pct"] > 5) )
+      ;
+    }
 
-    return indexArray;
+
+
+
+
+    return targetCounts;
 }
 
 
 /* for interests/retail, get the max indexing item for each category, and pick top 5 among that list */
-function indexInterestsRetailTop5(indexDs) {
+function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
+  let f = indexDs.filter((d) => ( d.index <= 500 && d.target_pct >= 5))
+
   let a = d3.nest()
     .key(function(d) { return d["category"]; })
     .rollup(function(v) {
@@ -265,13 +285,20 @@ function indexInterestsRetailTop5(indexDs) {
         target_pct: max_item.target_pct
       };
     })
-    .entries(indexDs)
+    .entries(f)
     .map(function(d) {
+        let comp;
+        if (indexDs2 != null) {
+          comp = indexDs2.filter(function(d2) { return d2.attrib_value === d.value.attrib_value })
+        }
+
         return {
           category: d.key,
           attrib_value: d.value.attrib_value,
           target_pct: d.value.target_pct,
-          index: d.value.index
+          index: d.value.index,
+          compare_pct: (indexDs2 != null && comp[0] != undefined) ? comp[0].target_pct : 0,
+          compare_index: (indexDs2 != null && comp[0] != undefined) ? comp[0].index : 0
         }
     })
     .sort(function(a,b){
@@ -283,11 +310,27 @@ function indexInterestsRetailTop5(indexDs) {
     })
     .slice(0, 5);
 
-    return a;
+    if (indexDs2 != null) {
+        let c = a.map(function(d) {
+            return {
+              category: d.category,
+              attrib_value: d.attrib_value,
+              target_pct: d.compare_pct,
+              random_pct: d.random_pct,
+              index: d.compare_index
+            }
+        })
+
+        return [a, c];
+    } else {
+      return a;
+    }
+
+
 }
 
-function indexStatesTop5(indexDs) {
-  let a = [...indexDs].filter( d => ( d["random_pct"] > 0 ) )
+function indexStatesTop5(indexDs1, indexDs2) {
+  let a = [...indexDs1].filter( d => ( d["random_pct"] > 0 ) )
                       .sort(function(a,b){
                         if ( b.index != a.index ){
                           return b.index - a.index;
@@ -297,15 +340,28 @@ function indexStatesTop5(indexDs) {
                       })
                       .slice(0, 5)
                       .map(function(d){
+                        let comp = [...indexDs2].filter(d2 => (d2.attrib_value === d.attrib_value))
                         return {
                           attrib_value: getStateName(d.attrib_value),
                           target_pct: d.target_pct,
                           random_pct: d.random_pct,
-                          index: d.index
+                          index: d.index,
+                          compare_pct: comp[0].target_pct,
+                          compare_index: comp[0].index
                        }
                      });
-  return a;
+  let c = a.map(function(d) {
+      return {
+        attrib_value: d.attrib_value,
+        target_pct: d.compare_pct,
+        random_pct: d.random_pct,
+        index: d.compare_index
+      }
+  })
+
+  return [a, c];
 }
+
 
 /* extract an array of values for the specified attribute */
 function unpack(rows, key) {

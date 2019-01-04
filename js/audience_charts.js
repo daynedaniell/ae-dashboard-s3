@@ -7,7 +7,8 @@
 let colorOverIndex = '#ffb14e',
     colorUnderIndex = '#4880da',
     colorNeutralIndex1 = 'grey',
-    colorNeutralIndex2 = 'rgb(192,192,192)';
+    colorNeutralIndex2 = 'rgb(192,192,192)',
+    colorZeroIndex = 'rgba(53, 128, 224, 0.07)';
 
 
 /* color-by-index functions */
@@ -16,6 +17,8 @@ function colorByIndexBar(index) {
         return colorOverIndex;
     } else if (index > 80) {
         return colorNeutralIndex1;
+    } else if (index == 0) {
+        return colorZeroIndex;
     }
     return colorUnderIndex;
 }
@@ -51,14 +54,11 @@ function wrap(text, width, sep = " ", type = "pie") {
 
       /* Split horizontal bar text on last dash */
       if (type === "hbar") {
-        //console.log(words)
         words = words.map(function (word) { return word.trim() })
 
-        //console.log(words)
         let numWords = words.length
         let firstLine = words.slice(0, -1).join(" - ");
         let secondLine = (numWords > 1) ? "- " + words.slice(-1)[0] : words.slice(-1)[0];
-        //console.log([firstLine, secondLine ]);
         words = (numWords > 1) ? [secondLine, firstLine] : [secondLine];
       }
 
@@ -128,10 +128,10 @@ function barChart(attrName, indexDs) {
 		          .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot")
-              .attr("class", "chart-base");
+              .attr("class", "ds-chart-base");
 
   const tooltip = d3.select("#"+attrName+"Chart").append("div")
-      .attr("class", "tooltip")
+      .attr("class", "ds-tooltip")
       .style("opacity", 0);
 
   /* Add horizontal grid lines */
@@ -141,7 +141,7 @@ function barChart(attrName, indexDs) {
   }
 
   svg.append("g")
-      .attr("class", "grid")
+      .attr("class", "ds-grid")
       .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
       .call(make_y_gridlines()
           .tickSize(-width)
@@ -191,7 +191,7 @@ function barChart(attrName, indexDs) {
 	    .enter()
 	    .append("text")
 	    .text(function(d) {
-			     return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
+			     return formatAsInteger(d3.format("d")(d.index));
 	    })
 	    .attr("text-anchor", "middle")
 	    /* Set x position to the left edge of each bar plus half the bar width */
@@ -204,7 +204,10 @@ function barChart(attrName, indexDs) {
 	    .attr("class", "yAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", "11px")
-	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseup)
+      .on("mousemove", mouseover);
 
 	/* Add x labels to chart */
 	let xLabels = svg.append("g")
@@ -243,20 +246,25 @@ function barChart(attrName, indexDs) {
      /* if clicking on already selected item, then reset the charts */
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
+       //tooltip.style('opacity', 0);
+       DS_VIS_STORE["activeFilter"] = null;
        drawCharts();
+       showActiveFilter(DS_VIS_STORE);
      } else {
+       var t0 = performance.now();
        updateCharts(attrName, d.attrib_value);
+       var t1 = performance.now();
      }
 	}
 
 
   function mouseover(d) {
-    let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.event.clientX - bound.x + 30;
-    let tipY = d3.event.clientY - bound.y - 10;
+    //let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    //let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.mouse(this)[0] + 70;//d3.event.clientX - bound.x + 30;
+    let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
     if (width - tipX < 50) {
-      tipX = d3.event.clientX - bound.x - 100;
+        tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
     }
     tooltip.transition()
         .duration(200)
@@ -290,7 +298,7 @@ function pieChart(attrName, indexDs){
 
 	let vis = d3.select("#"+attrName+"Chart")
               .append("svg:svg")
-              .attr("class", "chart-base")
+              .attr("class", "ds-chart-base")
               .attr("id", attrName+"ChartPlot")
               .data([indexDs])          /* associate our data with the document */
               .attr("width", width)
@@ -362,7 +370,9 @@ function pieChart(attrName, indexDs){
       isSelected = d3.select(".selected-tile #"+attrName+"Chart path[attrib-value="+d.data.attrib_value+"][selected='yes']")
                      ._groups[0][0];
       if (isSelected){
+        DS_VIS_STORE["activeFilter"] = null;
         drawCharts();
+        showActiveFilter(DS_VIS_STORE);
       } else {
         updateCharts(attrName, d.data.attrib_value);
       }
@@ -394,11 +404,11 @@ function mapChart(attrName, indexDs) {
 			        .append("svg")
 			        .attr("width", width)
 			        .attr("height", height)
-              .attr("class", "chart-base");
+              .attr("class", "ds-chart-base");
 
   let tooltip = d3.select("#"+attrName+"Chart")
     .append("div")
-    .attr("class", "tooltip")
+    .attr("class", "ds-tooltip")
     .style("opacity", 0);
 
   let data = indexDs;
@@ -470,12 +480,12 @@ var legend = d3.select("body").append("svg")
 */
 
   function mouseover(d) {
-      let ttipsvg = d3.select("#"+attrName+"Chart").node()
-      let bound = ttipsvg.getBoundingClientRect();
-      let tipX = d3.event.clientX - bound.x + 30;
-      let tipY = d3.event.clientY - bound.y - 20;
+      //let ttipsvg = d3.select("#"+attrName+"Chart").node()
+      //let bound = ttipsvg.getBoundingClientRect();
+      let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
+      let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
       if (width - tipX < 50) {
-          tipX = d3.event.clientX - bound.x - 100;
+          tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
       }
 
       tooltip.html(d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index)
@@ -495,6 +505,8 @@ var legend = d3.select("body").append("svg")
 *** HORIZONTAL BAR CHART *******************************************************
 *******************************************************************************/
 function hBarChart(attrName, indexDs) {
+    $("#"+attrName+"Chart .ds-toggle-button").css("display", "none");
+    $("#"+attrName+"Chart .ds-hbar-status").text("Top 5 By Index");
   let innerWidth = 610;
 
 	let basics = barChartSetup(innerWidth);
@@ -521,11 +533,11 @@ function hBarChart(attrName, indexDs) {
 		          .attr("width", width + margin.left + margin.right + 15) // Adjusted to fit axis
               .attr("height", height + margin.top + margin.bottom)
               .attr("id", attrName+"ChartPlot")
-              .attr("class", "chart-base");
+              .attr("class", "ds-chart-base");
 
   const tooltip = d3.select("#"+attrName+"Chart")
       .append("div")
-      .attr("class", "tooltip")
+      .attr("class", "ds-tooltip")
       .style("opacity", 0);
 
   /* Add horizontal grid lines */
@@ -535,7 +547,7 @@ function hBarChart(attrName, indexDs) {
   }
 
   svg.append("g")
-      .attr("class", "grid")
+      .attr("class", "ds-grid")
       .attr("transform", "translate(" + (margin.left + maxAttrLength - 1) + "," + (margin.top + height - 1) + ")")
       .call(make_x_gridlines()
           .tickSize(-height)
@@ -594,7 +606,10 @@ function hBarChart(attrName, indexDs) {
 	    .attr("class", "xAxis")
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", "11px")
-	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout)
+      .on("mousemove", mouseover);
 
 	/* Add y labels to chart */
 	let yLabels = svg.append("g")
@@ -641,12 +656,12 @@ function hBarChart(attrName, indexDs) {
 
 
   function mouseover(d) {
-    let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.event.clientX - bound.x + 30;
-    let tipY = d3.event.clientY - bound.y - 60;
-    if (width - tipX < 100) {
-      tipX = d3.event.clientX - bound.x - 100;
+    //let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    //let bound = ttipsvg.getBoundingClientRect();
+    let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
+    let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
+    if (width - tipX < 50) {
+        tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
     }
 
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
@@ -707,7 +722,7 @@ function waveChart(ds) {
       x: unpack(ds[attrName], 'index'),
       y: unpack(ds[attrName], 'target_pct'),
       base: unpack(ds[attrName], 'target_pct').map(x => -x/2),
-      width: 8,
+      width: 6,
       type: 'bar',
       marker: {
         color: unpack(ds[attrName], 'index').map(x => colorByIndexBar(x)),
@@ -735,6 +750,22 @@ function waveChart(ds) {
     hovermode:'closest',
     height: height,
     width: width,
+    annotations: [{
+      x: 0,
+      y: -50,
+      xref: 'x',
+      yref: 'y',
+      text: '0',
+      showarrow: false,
+    },
+    {
+      x: 500,
+      y: -50,
+      xref: 'x',
+      yref: 'y',
+      text: '500',
+      showarrow: false,
+    }],
     xaxis: {
       range: [0, 500],
       showgrid: false,
@@ -788,6 +819,32 @@ function waveChart(ds) {
         width: 1.5,
         dash: 'dot'
       }
+    },
+    {
+      type: 'line',
+      x0: 0,
+      y0: 0.25,
+      x1: 0,
+      yref: 'paper',
+      y1: 0.75,
+      line: {
+        color: 'grey',
+        width: 0.75,
+        dash: 'dot'
+      }
+    },
+    {
+      type: 'line',
+      x0: 500,
+      y0: 0.25,
+      x1: 500,
+      yref: 'paper',
+      y1: 0.75,
+      line: {
+        color: 'grey',
+        width: 0.75,
+        dash: 'dot'
+      }
     }]
   };
 
@@ -796,11 +853,11 @@ function waveChart(ds) {
 }
 
 
+
 /*******************************************************************************
 *** MIKEJ CHART ****************************************************************
 *******************************************************************************/
 function mikeJChart(attrName, indexDs) {
-
   // sort data alphabetically by category
   indexDs.sort((a, b) => b.category.localeCompare(a.category));
 
@@ -835,6 +892,7 @@ function mikeJChart(attrName, indexDs) {
       line: {width: 0}
     },
     hovertext: toolTipValues,
+    custom: "test",
     hoverinfo: 'text',
     hoverlabel: {
       bgcolor: '#fff',
@@ -863,7 +921,7 @@ function mikeJChart(attrName, indexDs) {
     height: height,
     width: width,
     xaxis: {
-      range: [ 80, 520 ],
+      range: [ 0, 520 ],
       title: 'index'
     },
     yaxis: {
@@ -911,6 +969,85 @@ function addStat(attrName, stat, prefix='', suffix='') {
     .append("<div class='ds-stats'>" + prefix + stat + suffix + "</div>");
 }
 
+/*******************************************************************************
+*** ADD AUDIENCE LEGEND ********************************************************
+*******************************************************************************/
+function addAudienceLegend(compare=false) {
+  // remove existing title, if any
+  // $( ".ds-audience-legend div" ).remove();
+  if (compare === false) {
+    $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorOverIndex)
+    $("#dsAudienceLegend1 .ds-audience-legend-label span").text("Over-Index")
+    $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorUnderIndex)
+    $("#dsAudienceLegend2 .ds-audience-legend-label span").text("Under-Index")
+    $("#dsAudienceLegend3 .ds-audience-legend-color").css({"background-color": colorZeroIndex, "display": "block"})
+    $("#dsAudienceLegend3 .ds-audience-legend-label span").text("No Data")
+    $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "block")
+  } else {
+    $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorSeries1)
+    $("#dsAudienceLegend1 .ds-audience-legend-label span").text(targetAud.name)
+    $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorSeries2)
+    $("#dsAudienceLegend2 .ds-audience-legend-label span").text(targetAud2.name)
+    $("#dsAudienceLegend3 .ds-audience-legend-color").css("display", "none")
+    $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "none")
+  }
+
+  // add audience title
+  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-row'></div>")
+  // $( ".ds-audience-legend-row" ).append("<div class='ds-audience-legend-color col-sm-4' style='background-color:" + colorOverIndex + "'></div>");
+  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-l1 col-sm-8'>Over-Index</div>");
+  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-color col-sm-4' style='background-color:" + colorUnderIndex + "'></div>");
+  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-l2 col-sm-8'>Under-Index</div>");
+}
+
+/*******************************************************************************
+*** SHOW ACTIVE FILTERS ********************************************************
+*******************************************************************************/
+function showActiveFilter(store) {
+  let cat = null;
+  if (store["activeFilter"] != null) {
+      cat = store["activeFilter"][0];
+      cat = cat[0].toUpperCase() + cat.slice(1)
+      $(".ds-current-filter-remove").css("display", "inline");
+  } else {
+    $(".ds-current-filter-remove").css("display", "none");
+  }
+  $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "No active filters");
+}
+
+function removeActiveFilter(store) {
+  store["activeFilter"] = null;
+  if (store["activeView"] == "single") {
+    drawCharts();
+  } else {
+    drawComparisonCharts();
+  }
+
+}
+
+/* Remove filter by clicking remove icon in sidebar */
+$(".ds-current-filter-remove").click(function() {
+  removeActiveFilter(DS_VIS_STORE);
+  $(".ds-current-filter").text("No active filters");
+  $(this).css("display", "none");
+})
+
+$(".ds-audience-selection-form").change(function(){
+  let selectedAudiences =
+    $('.ds-audience-selection-form input:checkbox:checked')
+      .map(function() { return $(this).val(); })
+      .get();
+
+  if (selectedAudiences.length > 0 & selectedAudiences.length >= 2) {
+    DS_VIS_STORE["activeView"] = "compare";
+  } else if (selectedAudiences.length == 1){
+    DS_VIS_STORE["activeView"] = "single";
+  }
+
+  DS_VIS_STORE["activeFilter"] = null;
+  $(".ds-current-filter").text("No active filters");
+  $(".ds-current-filter-remove").css("display", "none");
+});
 
 /*******************************************************************************
 *** ADD AUDIENCE TITLE *********************************************************
@@ -928,8 +1065,11 @@ function addAudienceTitle(targetAud) {
 *******************************************************************************/
 function drawCharts() {
 
+  d3.selectAll('.ds-tooltip').remove()
   // add the audience title
   addAudienceTitle(targetAud);
+  addAudienceLegend();
+  showActiveFilter(DS_VIS_STORE);
 
   let indexCats = makeIndexCats();
   let demogAttributesList = Object.keys(indexCats);
@@ -950,6 +1090,7 @@ function drawCharts() {
   let incomeMedianCat = getMedianCategory(incomeIndex0);
   let stateIndex0 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
   let interestsIndex0 = indexInterestsRetail("interests", targetInterests, randomInterests);
+  let interestsIndexBubble0 = indexInterestsRetail("interests", targetInterests, randomInterests, bubble=true);
   let interestsIndexTop0 = indexInterestsRetailTop5(interestsIndex0);
   let retailIndex0 = indexInterestsRetail("retail", targetRetail, randomRetail);
   let retailIndexTop0 = indexInterestsRetailTop5(retailIndex0);
@@ -969,8 +1110,32 @@ function drawCharts() {
 
   waveChart(indexes);
 
+  let myPlot = document.getElementById('waveChart');
+  myPlot.on('plotly_click', function(data){
+    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+    let mapping = {
+      "number of children": "children",
+      "age": "age",
+      "ethnicity": "ethnicity",
+      "gender": "gender",
+      "marital status": "marital",
+      "education": "education",
+      "income": "income",
+      "location": "state",
+      "interests": "interests",
+      "retail": "retail"
+    }
+
+    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+
+
+  });
+
   barChart("age", ageIndex0);
-  addStat("age", ageMedianCat, prefix = "<strong>Median: </strong>", suffix = " years");
+  addStat("age", ageMedianCat, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
   barChart("ethnicity", ethnicityIndex0);
   barChart("children", childrenIndex0);
   addStat("children", childrenNonZeroPct, prefix = "<strong>Child present: </strong>", suffix = "%");
@@ -985,19 +1150,54 @@ function drawCharts() {
 
   $( ".tile" ).removeClass("selected-tile");
 
-  mikeJChart('interests', interestsIndex0);
+  mikeJChart('interests', interestsIndexBubble0);
   mikeJChart('retail', retailIndex0);
 }
+
+$("#interests-tab").click(function() {
+    DS_VIS_STORE.activeFilter = null;
+    showActiveFilter(DS_VIS_STORE);
+})
+
+$("#retail-tab").click(function() {
+    DS_VIS_STORE.activeFilter = null;
+    showActiveFilter(DS_VIS_STORE);
+})
+
+$("#dashboard-tab").click(function() {
+    DS_VIS_STORE.activeFilter = null;
+    showActiveFilter(DS_VIS_STORE);
+    drawCharts();
+})
+
 
 
 /*******************************************************************************
 *** UPDATE ALL CHARTS **********************************************************
 *******************************************************************************/
+function orderedTargetFilter(targetData, filteredIds, filteredData) {
+  let targetPos = 0;
+    filteredIds.forEach(function(id) {
+      while (+targetData[targetPos]["temp_id"] < id) {
+        targetPos++;
+      }
+      while (+targetData[targetPos]["temp_id"] == id) {
+        filteredData.push(targetData[targetPos]);
+        if (targetPos + 1 < targetData.length) {
+          targetPos++;
+        } else {
+          break;
+        }
+
+      }
+    });
+}
 
 /* updates bar charts when a value element is clicked on a chart */
 function updateCharts(attrName, attrValue) {
-//  console.log(attrName);
-//  console.log(attrValue);
+  DS_VIS_STORE.activeFilter = [attrName, attrValue];
+  showActiveFilter(DS_VIS_STORE);
+
   let attrIndex = [];
   let indexCats = makeIndexCats();
   let indexes = {};
@@ -1010,6 +1210,7 @@ function updateCharts(attrName, attrValue) {
 
   demogAttributesList.forEach(function(demogAttributeListName) {
       if (attrName != demogAttributeListName) {
+        var t3 = performance.now();
           /* reset opacity */
           if ( barChartAttributesList.includes(demogAttributeListName) ) {
             d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
@@ -1021,25 +1222,142 @@ function updateCharts(attrName, attrValue) {
             d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
           }
 
+
+
+
           if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+
             let filteredData = [];
             let filteredIds = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
-
             if (demogAttributeListName == "interests"){
-              filteredData = targetInterests.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
+              orderedTargetFilter(targetInterests, filteredIds, filteredData);
+              // let targetPos = 0;
+              //   filteredIds.forEach(function(id) {
+              //     while (+targetInterests[targetPos]["temp_id"] < id) {
+              //       targetPos++;
+              //     }
+              //     while (+targetInterests[targetPos]["temp_id"] == id) {
+              //       filteredData.push(targetInterests[targetPos]);
+              //       if (targetPos + 1 < targetInterests.length) {
+              //         targetPos++;
+              //       } else {
+              //         break;
+              //       }
+              //
+              //     }
+              //   });
+              //filteredData = targetInterests.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomInterests);
             } else if (demogAttributeListName == "retail"){
-              filteredData = targetRetail.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
+              var t0 = performance.now();
+
+              orderedTargetFilter(targetRetail, filteredIds, filteredData);
+
+              // let targetPos = 0;
+              //   filteredIds.forEach(function(id) {
+              //     while (+targetRetail[targetPos]["temp_id"] < id) {
+              //       targetPos++;
+              //     }
+              //     while (+targetRetail[targetPos]["temp_id"] == id) {
+              //       filteredData.push(targetRetail[targetPos]);
+              //       if (targetPos + 1 < targetRetail.length) {
+              //         targetPos++;
+              //       } else {
+              //         break;
+              //       }
+              //     }
+              //   });
+
+
+                // function objectsAreSame(x, y) {
+                //    var objectsAreSame = true;
+                //    for(var propertyName in x) {
+                //       if(x[propertyName] !== y[propertyName]) {
+                //          objectsAreSame = false;
+                //          break;
+                //       }
+                //    }
+                //    return objectsAreSame;
+                // }
+
+                /* old way */
+                // let filteredData2 = []
+                // filteredData2 = targetRetail.filter(function(d) {  return filteredIds.includes(d["temp_id"]); });
+                // console.log("These are the same: " + objectsAreSame(filteredData, filteredData2))
+
+              // filteredData = _.filter(targetRetail, (v) => _.includes(filteredIds, v.temp_id));
+              // function filter(a)
+              // {
+              //     var match = []
+              //
+              //     for (var i = 0; i < a.length; i++)
+              //     {
+              //
+              //         let tmp = filteredIds.find(function(element) {
+              //           return element === a[i]["temp_id"];
+              //         });
+              //         if ( tmp !== -1 ) match.push(a[i])
+              //     }
+              //
+              //     return match
+              // }
+
+              // filteredIds.forEach(function(id) {
+              //   filteredData.push(targetRetail.filter(x => x.temp_id === id))
+              // });
+
+
+              // filteredData = targetRetail.filter(function(d) {
+              //   return this.indexOf(d["temp_id"]) < 0;
+              // },
+              // filteredIds
+              // );
+              // const fastIntersection = (...arrays) => {
+              //   // if we process the arrays from shortest to longest
+              //   // then we will identify failure points faster, i.e. when
+              //   // one item is not in all arrays
+              //   const ordered = (arrays.length===1
+              //       ? arrays :
+              //       arrays.sort((a1,a2) => a1.length - a2.length)),
+              //     shortest = ordered[0],
+              //     set = new Set(), // used for bookeeping, Sets are faster
+              //     result = [], // the intersection, conversion from Set is slow
+              //   // for each item in the shortest array
+              //   for(let i=0;i<shortest.length;i++) {
+              //     const item = shortest[i];
+              //     // see if item is in every subsequent array
+              //     let every = true; // don't use ordered.every ... it is slow
+              //     for(let j=1;j<ordered.length;j++) {
+              //       if(ordered[j].includes(item)) continue;
+              //       every = false;
+              //       break;
+              //     }
+              //     // ignore if not in every other array, or if already captured
+              //     if(!every || set.has(item)) continue;
+              //     // otherwise, add to bookeeping set and the result
+              //     set.add(item);
+              //     result[result.length] = item;
+              //   }
+              //   return result;
+              // }
+              // let ids = fastIntersection()
+              var t1 = performance.now();
+
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomRetail);
             }
+
             attrIndexTop = indexInterestsRetailTop5(attrIndex);
+
           } else {
+            var t0 = performance.now();
             let filteredData = filterAttr(targetDemog, attrName, attrValue);
+            var t1 = performance.now();
             attrIndex = indexAttr(demogAttributeListName,
                                   indexCats[demogAttributeListName],
                                   filteredData,
                                   randomDemog);
           }
+
       } else {
           if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
             if (demogAttributeListName == "interests"){
@@ -1055,6 +1373,7 @@ function updateCharts(attrName, attrValue) {
                                   randomDemog);
           }
       }
+      var t4 = performance.now();
 
       // update the wave chart data
       if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
@@ -1080,6 +1399,7 @@ function updateCharts(attrName, attrValue) {
             addStat("income", incomeMedianCat, prefix = "<strong>Median: </strong>");
         }
       }
+
 
 
       // update charts
@@ -1161,7 +1481,7 @@ function updateCharts(attrName, attrValue) {
               });
 
           /* Update the text labels on bars */
-          function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
+          function textInside(d) { return (height - yScale(d.target_pct)) > 20 }; // Display text inside if bar is big enough
 
           plot.selectAll("text.yAxis")
               .data(currentDatasetBarChart)
@@ -1175,7 +1495,7 @@ function updateCharts(attrName, attrValue) {
                  return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
               })
               .text(function(d) {
-               return d.index > 0 ? formatAsInteger(d3.format("d")(d.index)) : '';
+               return formatAsInteger(d3.format("d")(d.index));
               })
               .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
               .attr("class", "yAxis");
@@ -1194,6 +1514,7 @@ function updateCharts(attrName, attrValue) {
 
   // update the wave chart
   waveChart(indexes);
+
 
 
   /* Make the elems in selected chart opaque, except for the clicked chart elem */
@@ -1220,4 +1541,5 @@ function updateCharts(attrName, attrValue) {
   /* Highlight the selected tile */
   $( ".tile" ).removeClass("selected-tile");
   $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
+
 }

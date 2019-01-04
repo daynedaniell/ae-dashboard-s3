@@ -23,11 +23,12 @@ create table #target_aud_ids_xwalk (
 distkey(idl_id);
 
 insert into #target_aud_ids_xwalk
-SELECT distinct idl_id
+SELECT idl_id
 from acxiom.audience_attributes__2018_03
 where attribute_name = '6244' and attribute_value = '1'
+group by 1
 order by random()
-limit 2000;
+limit 5000;
 
 -- output to tsv, if needed
 -- \pset footer OFF
@@ -352,8 +353,8 @@ distkey(temp_id);
 insert into #children
 SELECT distinct
   temp_id,
-  case clean_attribute_value_description
-    when '8' then '8+'
+  case
+    when clean_attribute_value_description::int >= 5 then '5+'
     else clean_attribute_value_description
   end as children
 from #aud_attributes

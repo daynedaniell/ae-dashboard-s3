@@ -18,43 +18,68 @@ audience.json in the data/target_aud_2 folder:
 
 -- Nissan Altima audience
 drop table if exists #competitive;
+create table #competitive (
+  idl_id varchar(70) encode zstd
+)
+distkey(idl_id);
+
+insert into #competitive
 select distinct idl_id
-into #competitive
 from acxiom.audience_attributes__2018_06
 where attribute_name in (9044)
 and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER');
 
+drop table if exists #comp_first;
+create table #comp_first (
+  idl_id varchar(70) encode zstd
+)
+distkey(idl_id);
+
+insert into #comp_first
 select distinct idl_id
-into #comp_first
 from acxiom.audience_attributes__2018_06
 where attribute_name = 9042
 and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019');
 
-select distinct idl_id
+select idl_id
 into #comp
 from #competitive
 join #comp_first
-using (idl_id);
+using (idl_id)
+group by 1;
 
 drop table if exists #competitive2;
+create table #competitive2 (
+  idl_id varchar(70) encode zstd
+)
+distkey(idl_id);
+
+insert into #competitive2
 select distinct idl_id
-into #competitive2
 from acxiom.audience_attributes__2018_06
 where attribute_name in (9054)
 and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER');
 
-select distinct idl_id
-into #comp_second
+drop table if exists #comp_second;
+create table #comp_second (
+  idl_id varchar(70) encode zstd
+)
+distkey(idl_id);
+
+insert into #comp_second
+select idl_id
 from acxiom.audience_attributes__2018_06
 where attribute_name = 9052
-and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019');
+and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019')
+group by 1;
 
 insert into #comp
-select distinct idl_id
+select idl_id
 from #competitive2
 join #comp_second
 using (idl_id)
-where idl_id not in (select idl_id from #comp);
+where idl_id not in (select idl_id from #comp)
+group by 1;
 
 
 -- ids crosswalk
@@ -65,10 +90,11 @@ create table #target_aud_ids_xwalk (
 distkey(idl_id);
 
 insert into #target_aud_ids_xwalk
-SELECT distinct idl_id
+SELECT idl_id
 from #comp
+group by 1
 order by random()
-limit 2000;
+limit 5000;
 
 -- output to tsv, if needed
 -- \pset footer OFF
@@ -393,8 +419,8 @@ distkey(temp_id);
 insert into #children
 SELECT distinct
   temp_id,
-  case clean_attribute_value_description
-    when '8' then '8+'
+  case
+    when clean_attribute_value_description::int >= 5 then '5+'
     else clean_attribute_value_description
   end as children
 from #aud_attributes
