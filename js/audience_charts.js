@@ -54,14 +54,11 @@ function wrap(text, width, sep = " ", type = "pie") {
 
       /* Split horizontal bar text on last dash */
       if (type === "hbar") {
-        //console.log(words)
         words = words.map(function (word) { return word.trim() })
 
-        //console.log(words)
         let numWords = words.length
         let firstLine = words.slice(0, -1).join(" - ");
         let secondLine = (numWords > 1) ? "- " + words.slice(-1)[0] : words.slice(-1)[0];
-        //console.log([firstLine, secondLine ]);
         words = (numWords > 1) ? [secondLine, firstLine] : [secondLine];
       }
 
@@ -257,7 +254,6 @@ function barChart(attrName, indexDs) {
        var t0 = performance.now();
        updateCharts(attrName, d.attrib_value);
        var t1 = performance.now();
-       console.log('updateCharts: ' + (t1 - t0))
      }
 	}
 
@@ -754,6 +750,22 @@ function waveChart(ds) {
     hovermode:'closest',
     height: height,
     width: width,
+    annotations: [{
+      x: 0,
+      y: -50,
+      xref: 'x',
+      yref: 'y',
+      text: '0',
+      showarrow: false,
+    },
+    {
+      x: 500,
+      y: -50,
+      xref: 'x',
+      yref: 'y',
+      text: '500',
+      showarrow: false,
+    }],
     xaxis: {
       range: [0, 500],
       showgrid: false,
@@ -807,6 +819,32 @@ function waveChart(ds) {
         width: 1.5,
         dash: 'dot'
       }
+    },
+    {
+      type: 'line',
+      x0: 0,
+      y0: 0.25,
+      x1: 0,
+      yref: 'paper',
+      y1: 0.75,
+      line: {
+        color: 'grey',
+        width: 0.75,
+        dash: 'dot'
+      }
+    },
+    {
+      type: 'line',
+      x0: 500,
+      y0: 0.25,
+      x1: 500,
+      yref: 'paper',
+      y1: 0.75,
+      line: {
+        color: 'grey',
+        width: 0.75,
+        dash: 'dot'
+      }
     }]
   };
 
@@ -815,11 +853,11 @@ function waveChart(ds) {
 }
 
 
+
 /*******************************************************************************
 *** MIKEJ CHART ****************************************************************
 *******************************************************************************/
 function mikeJChart(attrName, indexDs) {
-  console.log(attrName + ': ' + JSON.stringify(indexDs.filter((d) => d.index < 100)))
   // sort data alphabetically by category
   indexDs.sort((a, b) => b.category.localeCompare(a.category));
 
@@ -913,32 +951,6 @@ function mikeJChart(attrName, indexDs) {
     }]
   };
 
-  var myPlot = document.getElementById('waveChart');
-  myPlot.on('plotly_click', function(data){
-    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
-    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
-    let mapping = {
-      "number of children": "children",
-      "age": "age",
-      "ethnicity": "ethnicity",
-      "gender": "gender",
-      "marital status": "marital",
-      "education": "education",
-      "income": "income",
-      "location": "state",
-      "interests": "interests",
-      "retail": "retail"
-    }
-
-
-    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
-    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
-    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-
-
-
-  });
-
   let chartName = attrName+"DetailChart";
   Plotly.newPlot(chartName, [trace], layout, {responsive: true});
 }
@@ -1031,7 +1043,6 @@ $(".ds-audience-selection-form").change(function(){
   } else if (selectedAudiences.length == 1){
     DS_VIS_STORE["activeView"] = "single";
   }
-  console.log(DS_VIS_STORE["activeView"])
 
   DS_VIS_STORE["activeFilter"] = null;
   $(".ds-current-filter").text("No active filters");
@@ -1053,7 +1064,6 @@ function addAudienceTitle(targetAud) {
 *** DRAW ALL CHARTS ************************************************************
 *******************************************************************************/
 function drawCharts() {
-  console.log(targetAud)
 
   d3.selectAll('.ds-tooltip').remove()
   // add the audience title
@@ -1099,6 +1109,30 @@ function drawCharts() {
   };
 
   waveChart(indexes);
+
+  let myPlot = document.getElementById('waveChart');
+  myPlot.on('plotly_click', function(data){
+    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+    let mapping = {
+      "number of children": "children",
+      "age": "age",
+      "ethnicity": "ethnicity",
+      "gender": "gender",
+      "marital status": "marital",
+      "education": "education",
+      "income": "income",
+      "location": "state",
+      "interests": "interests",
+      "retail": "retail"
+    }
+
+    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+
+
+  });
 
   barChart("age", ageIndex0);
   addStat("age", ageMedianCat, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
@@ -1163,8 +1197,7 @@ function orderedTargetFilter(targetData, filteredIds, filteredData) {
 function updateCharts(attrName, attrValue) {
   DS_VIS_STORE.activeFilter = [attrName, attrValue];
   showActiveFilter(DS_VIS_STORE);
-//  console.log(attrName);
-//  console.log(attrValue);
+
   let attrIndex = [];
   let indexCats = makeIndexCats();
   let indexes = {};
@@ -1215,11 +1248,8 @@ function updateCharts(attrName, attrValue) {
               //   });
               //filteredData = targetInterests.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomInterests);
-              console.log("indexInterestsRetail: " + (t1 - t0))
             } else if (demogAttributeListName == "retail"){
-              console.log("first if " + demogAttributeListName + ": ")
               var t0 = performance.now();
-              console.log(targetRetail.length)
 
               orderedTargetFilter(targetRetail, filteredIds, filteredData);
 
@@ -1237,7 +1267,6 @@ function updateCharts(attrName, attrValue) {
               //       }
               //     }
               //   });
-              //   console.log(filteredData.length)
 
 
                 // function objectsAreSame(x, y) {
@@ -1274,7 +1303,6 @@ function updateCharts(attrName, attrValue) {
               // }
 
               // filteredIds.forEach(function(id) {
-              //   console.log(id)
               //   filteredData.push(targetRetail.filter(x => x.temp_id === id))
               // });
 
@@ -1314,7 +1342,7 @@ function updateCharts(attrName, attrValue) {
               // }
               // let ids = fastIntersection()
               var t1 = performance.now();
-              console.log(t1 - t0)
+
               attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomRetail);
             }
 
@@ -1324,7 +1352,6 @@ function updateCharts(attrName, attrValue) {
             var t0 = performance.now();
             let filteredData = filterAttr(targetDemog, attrName, attrValue);
             var t1 = performance.now();
-            console.log("other perf: " + (t1 - t0))
             attrIndex = indexAttr(demogAttributeListName,
                                   indexCats[demogAttributeListName],
                                   filteredData,
@@ -1347,7 +1374,6 @@ function updateCharts(attrName, attrValue) {
           }
       }
       var t4 = performance.now();
-      console.log("Main stuff " + demogAttributeListName + ": " + (t4 - t3))
 
       // update the wave chart data
       if ( hBarChartAttributesList.includes(demogAttributeListName) ) {

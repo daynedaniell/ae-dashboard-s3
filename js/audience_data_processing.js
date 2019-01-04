@@ -271,7 +271,6 @@ function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
 
 /* for interests/retail, get the max indexing item for each category, and pick top 5 among that list */
 function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
-  //console.log('2' + JSON.stringify(indexDs2))
   let f = indexDs.filter((d) => ( d.index <= 500 && d.target_pct >= 5))
 
   let a = d3.nest()
@@ -288,11 +287,9 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
     })
     .entries(f)
     .map(function(d) {
-        //console.log('d: ' + JSON.stringify(d))
         let comp;
         if (indexDs2 != null) {
           comp = indexDs2.filter(function(d2) { return d2.attrib_value === d.value.attrib_value })
-          //console.log('comp: ' + JSON.stringify(comp[0])) //(d2.value.attrib_value === d.value.attrib_value))
         }
 
         return {
@@ -323,8 +320,7 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
               index: d.compare_index
             }
         })
-        // console.log('target: ' + JSON.stringify(a))
-        // console.log('compare: ' + JSON.stringify(c))
+
         return [a, c];
     } else {
       return a;
@@ -334,7 +330,6 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
 }
 
 function indexStatesTop5(indexDs1, indexDs2) {
-  //console.log(indexDs2);
   let a = [...indexDs1].filter( d => ( d["random_pct"] > 0 ) )
                       .sort(function(a,b){
                         if ( b.index != a.index ){
@@ -345,8 +340,6 @@ function indexStatesTop5(indexDs1, indexDs2) {
                       })
                       .slice(0, 5)
                       .map(function(d){
-                        //console.log('test')
-                        //console.log([...indexDs2].filter(d2 => (d2.attrib_value === d.attrib_value)))
                         let comp = [...indexDs2].filter(d2 => (d2.attrib_value === d.attrib_value))
                         return {
                           attrib_value: getStateName(d.attrib_value),
@@ -365,9 +358,7 @@ function indexStatesTop5(indexDs1, indexDs2) {
         index: d.compare_index
       }
   })
-  // console.log('target: ' + JSON.stringify(a))
-  // console.log('compare: ' + JSON.stringify(c))
-  //console.log('Comped: ' + JSON.stringify(a))
+
   return [a, c];
 }
 

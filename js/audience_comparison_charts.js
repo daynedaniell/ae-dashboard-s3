@@ -293,7 +293,6 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 *** 2-SERIES STACKED BAR CHART *************************************************
 *******************************************************************************/
 function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2) {
-  console.log("STACKED indexDs1: " + JSON.stringify(indexDs1) )
   let indexCat1 = [indexDs1[0], indexDs2[0].attrib_value == indexDs1[0].attrib_value ? indexDs2[0] : indexDs2[1]]
   let indexCat2 = [indexDs1[1], indexDs2[1].attrib_value == indexDs1[1].attrib_value ? indexDs2[1] : indexDs2[0]]
   combo1 = +indexCat1[0].target_pct + +indexCat1[1].target_pct
@@ -315,7 +314,6 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
                  .domain([0, Math.max((indexDs1[0].target_pct + indexDs2[0].target_pct), (indexDs1[1].target_pct + indexDs2[1].target_pct))])
                  .range([height, 0]);
 
-  console.log(yScale(combo2) - yScale(combo1))
   y1 = yScale(combo2) - yScale(combo1) < 0 ? yScale(combo2) - yScale(combo1) : 0;
   y2 = yScale(combo2) - yScale(combo1) > 0 ? yScale(combo2) - yScale(combo1) : 0;
 
@@ -551,7 +549,6 @@ function numberChart(attrName, indexDs1, indexDs2) {
       //     .append("div")
       //     .html("test")
 
-      console.log(JSON.stringify('.......' + JSON.stringify(indexDs1)))
 
 
 
@@ -812,7 +809,6 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
               toggleFromStore(DS_VIS_STORE, 'stateActive')
               toggleFromStore(DS_VIS_STORE, 'stateColors')
           } else if (attrName === 'interests') {
-            console.log('yup')
               toggleFromStore(DS_VIS_STORE, 'interestsActive')//store.activeInterests = (store.activeInterests === 1) ? 2 : 1;
               toggleFromStore(DS_VIS_STORE, 'interestsColors')
           } else {
@@ -832,7 +828,6 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
       });
       changeToggleColor(attrName, DS_VIS_STORE[attrName+"Colors"][0]);
       toggleComparisonCharts(attrName);
-      console.log(attrName)
     });
 
       function toggleComparisonCharts(attrName) {
@@ -918,13 +913,9 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 
         }
 
-        console.log('toggling to: ' + toggleTo)
         target = (toggleTo === 1) ? attrIndexTop1[0] : attrIndexTop2[0];
 
         compare = (toggleTo === 1) ? attrIndexTop1[1] : attrIndexTop2[1];
-        console.log('hi there')
-        console.log(JSON.stringify(target))
-        console.log(JSON.stringify(DS_VIS_STORE))
 
         color1 = DS_VIS_STORE[attrName+"Colors"][0];
         color2 = DS_VIS_STORE[attrName+"Colors"][1];
@@ -1138,6 +1129,22 @@ function wave2SeriesChart(ds1, ds2) {
     hovermode:'closest',
     height: height,
     width: width,
+    annotations: [{
+      x: 0,
+      y: -50,
+      xref: 'x',
+      yref: 'y',
+      text: '0',
+      showarrow: false,
+    },
+    {
+      x: 500,
+      y: -50,
+      xref: 'x',
+      yref: 'y',
+      text: '500',
+      showarrow: false,
+    }],
     xaxis: {
       range: [0, 500],
       showgrid: false,
@@ -1189,6 +1196,32 @@ function wave2SeriesChart(ds1, ds2) {
       line: {
         color: 'grey',
         width: 1.5,
+        dash: 'dot'
+      }
+    },
+    {
+      type: 'line',
+      x0: 0,
+      y0: 0.25,
+      x1: 0,
+      yref: 'paper',
+      y1: 0.75,
+      line: {
+        color: 'grey',
+        width: 0.75,
+        dash: 'dot'
+      }
+    },
+    {
+      type: 'line',
+      x0: 500,
+      y0: 0.25,
+      x1: 500,
+      yref: 'paper',
+      y1: 0.75,
+      line: {
+        color: 'grey',
+        width: 0.75,
         dash: 'dot'
       }
     }]
@@ -1329,29 +1362,6 @@ function mikeJ2SeriesChart(attrName, indexDs1, indexDs2) {
     }]
   };
 
-  var myPlot = document.getElementById('waveChart');
-  myPlot.on('plotly_click', function(data){
-    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
-    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
-    let mapping = {
-      "number of children": "children",
-      "age": "age",
-      "ethnicity": "ethnicity",
-      "gender": "gender",
-      "marital status": "marital",
-      "education": "education",
-      "income": "income",
-      "location": "state",
-      "interests": "interests",
-      "retail": "retail"
-    }
-
-
-    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
-    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
-    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-  });
-
   let chartName = attrName+"DetailChart";
   Plotly.newPlot(chartName, [trace1, trace2], layout, {responsive: true});
 }
@@ -1443,7 +1453,6 @@ function drawComparisonCharts() {
   let ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
   let ageMedianCat2 = getMedianCategory(ageIndex2);
   let genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
-  console.log("GENDER INDEX" + JSON.stringify(genderIndex2))
   let ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
   let maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
   let childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
@@ -1490,6 +1499,29 @@ function drawComparisonCharts() {
 
 
   wave2SeriesChart(indexes1, indexes2);
+
+  var myPlot = document.getElementById('waveChart');
+  myPlot.on('plotly_click', function(data){
+    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+    let mapping = {
+      "number of children": "children",
+      "age": "age",
+      "ethnicity": "ethnicity",
+      "gender": "gender",
+      "marital status": "marital",
+      "education": "education",
+      "income": "income",
+      "location": "state",
+      "interests": "interests",
+      "retail": "retail"
+    }
+
+
+    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+  });
 
   bar2SeriesChart("age", ageIndex1, ageIndex2);
   add2SeriesStat("age", ageMedianCat1, ageMedianCat2, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
@@ -1563,11 +1595,8 @@ function drawComparisonChartsHbar(hbarAttr) {
 
 /* updates bar charts when a value element is clicked on a chart */
 function updateComparisonCharts(attrName, attrValue) {
-  //activeFilter = [attrName, attrValue];
   DS_VIS_STORE.activeFilter = [attrName, attrValue];
-  //console.log("FILTER: " + JSON.stringify(activeFilter))
-//  console.log(attrName);
-//  console.log(attrValue);
+
   let attrIndex = [];
   let indexCats = makeIndexCats();
 
@@ -1624,7 +1653,6 @@ function updateComparisonCharts(attrName, attrValue) {
                                   filteredData2,
                                   randomDemog);
             if (demogAttributeListName == "state") {
-                //console.log('TEST: ' + JSON.stringify(indexStatesTop5(attrIndex1, attrIndex2)))
                 attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2);
                 attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1);
             }
