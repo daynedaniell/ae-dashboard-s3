@@ -51,7 +51,6 @@ function wrap(text, width, sep = " ", type = "pie") {
           y = text.attr("y"),
           dy = parseFloat(text.attr("dy")),
           tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-
       /* Split horizontal bar text on last dash */
       if (type === "hbar") {
         words = words.map(function (word) { return word.trim() })
@@ -67,7 +66,7 @@ function wrap(text, width, sep = " ", type = "pie") {
       while (word = words.pop()) {
         line.push(word);
         tspan.text(line.join(" "));
-        if (tspan.node().getComputedTextLength() > width) {
+        if (width == 1 || tspan.node().getComputedTextLength() > width) {
           line.pop();
           tspan.text(line.join(" "));
           line = [word];
@@ -1166,7 +1165,6 @@ $("#retail-tab").click(function() {
 
 $("#dashboard-tab").click(function() {
     DS_VIS_STORE.activeFilter = null;
-    showActiveFilter(DS_VIS_STORE);
     drawCharts();
 })
 
