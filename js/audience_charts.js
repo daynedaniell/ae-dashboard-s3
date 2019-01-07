@@ -258,19 +258,30 @@ function barChart(attrName, indexDs) {
 
 
   function mouseover(d) {
-    //let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    //let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.mouse(this)[0] + 70;//d3.event.clientX - bound.x + 30;
-    let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
-    if (width - tipX < 50) {
-        tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
-    }
+    // let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    // let bound = ttipsvg.getBoundingClientRect();
+    // let tipX = d3.event.clientX - bound.x + 130;
+    // let tipY = d3.event.clientY - bound.y + 320;
+    // var tooltipSpan = document.getElementById('tooltip-span');
+    let e = window.event;
+    var x = e.clientX,
+        y = e.clientY;
+    let tipY = (y - 40) + 'px';
+    let tipX = (x) + 'px';
+
     tooltip.transition()
         .duration(200)
     tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
         .style("opacity", .9)
-        .style('left', `${(tipX)}px`)
-        .style('top', `${(tipY)}px`);
+        .style('left', `${tipX}`)
+        .style('top', `${tipY}`);
+    // };
+    // let tipX = d3.mouse(this)[0] + 10;//d3.event.clientX - bound.x + 30;
+    // let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
+    // if (width - tipX < 50) {
+    //     tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
+    // }
+
   }
 
   function mouseup(d) {
@@ -482,16 +493,22 @@ var legend = d3.select("body").append("svg")
   function mouseover(d) {
       //let ttipsvg = d3.select("#"+attrName+"Chart").node()
       //let bound = ttipsvg.getBoundingClientRect();
-      let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
-      let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
-      if (width - tipX < 50) {
-          tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
-      }
+      // let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
+      // let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
+      // if (width - tipX < 50) {
+      //     tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
+      // }
+
+      let e = window.event;
+      var x = e.clientX,
+          y = e.clientY;
+      let tipY = (y - 60) + 'px';
+      let tipX = (x) + 'px';
 
       tooltip.html(d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index)
           .style("opacity", .9)
-          .style('left', `${(tipX)}px`)
-          .style('top', `${(tipY)}px`);
+          .style('left', `${(tipX)}`)
+          .style('top', `${(tipY)}`);
   }
 
   function mouseout() {
@@ -678,16 +695,22 @@ function hBarChart(attrName, indexDs) {
   function mouseover(d) {
     //let ttipsvg = d3.select("#"+attrName+"Chart").node()
     //let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
-    let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
-    if (width - tipX < 50) {
-        tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
-    }
+    // let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
+    // let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
+    // if (width - tipX < 50) {
+    //     tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
+    // }
+    let e = window.event;
+    var x = e.clientX,
+        y = e.clientY;
+
+    let tipY = (y - 80) + 'px';
+    let tipX = (x) + 'px';
 
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
         .style("opacity", .9)
-        .style('left', `${(tipX)}px`)
-        .style('top', `${(tipY)}px`);
+        .style('left', `${(tipX)}`)
+        .style('top', `${(tipY)}`);
   }
 
   function mouseout() {
@@ -770,7 +793,7 @@ function waveChart(ds) {
   let layout = {
     hovermode:'closest',
     // height: height,
-    // width: width,
+    // width: "100%",
     annotations: [{
       x: 0,
       y: -50,
@@ -939,8 +962,8 @@ function mikeJChart(attrName, indexDs) {
 
   let layout = {
     hovermode:'closest',
-    height: height,
-    width: width,
+    // height: height,
+    // width: width,
     xaxis: {
       range: [ 0, 520 ],
       title: 'index'

@@ -12,6 +12,78 @@ main {
     color: #252937;
 }
 
+.ds-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.ds-grid-nav {
+    grid-column: 1 / 2;
+    padding: 0 20px;
+}
+
+.ds-grid-main {
+    grid-column: 2 / -1;
+    display: grid;
+    grid-gap: 10px;
+    padding: 0 30px;
+}
+
+.ds-audience-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+.ds-grid-charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    grid-gap: 30px;
+    justify-content: space-evenly;
+}
+
+.ds-grid-charts-big {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+    grid-gap: 30px;
+}
+
+.ds-grid-full {
+    grid-column: 1 / -1;
+}
+
+/* Legend */
+.ds-audience-legend {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  display: grid;
+  justify-content: end;
+  white-space: nowrap;
+}
+.ds-audience-legend-row {
+  margin-top: 5px;
+  overflow: auto;
+}
+.ds-audience-legend-color {
+  height: 20px;
+  width: 50px;
+  content: "";
+  border: 1px solid #e8e8e8;
+}
+
+.ds-audience-legend-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 5px;
+}
+
+/* .ds-chart {
+  grid-column: span 1;
+}
+
+.ds-chart {
+  grid-column: span 2;
+} */
+
 .well {
     border-radius: 6px;
     box-shadow: 0 0 2px 0 rgba(32, 32, 32, 0.12);
@@ -76,8 +148,11 @@ main {
 
 /* temp layout for nav etc */
 body {
-    min-height: 2000px;
+    /* min-height: 2000px; */
     padding-top: 70px;
+}
+.ds-grid-brand a {
+  padding: 15px 5px;
 }
 .nav {
     position: fixed;
@@ -86,7 +161,7 @@ body {
 .nav>li>a {
     position: relative;
     display: block;
-    padding: 10px 0px 10px 6px;
+    padding: 10px 0px 10px 0px;
     margin-bottom: 10px;
 }
 .nav>li>a:focus, .nav>li>a:hover {
@@ -121,7 +196,7 @@ body {
   max-width: 500px;
   padding: 15px;
   word-break: break-all;
-  position: absolute;
+  position: fixed;
   background-color: #fff;
   margin-top: -20px;
   font: 15px "MuseoSans-300", sans-serif;
@@ -132,21 +207,7 @@ body {
   z-index: 1;
 }
 
-/* Legend */
-.ds-audience-legend {
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-.ds-audience-legend-row {
-  margin-top: 5px;
-  overflow: auto;
-}
-.ds-audience-legend-color {
-  height: 20px;
-  width: 50px;
-  content: "";
-  border: 1px solid #e8e8e8;
-}
+
 
 .ds-grid line {
   stroke: lightgrey;

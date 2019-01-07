@@ -23,15 +23,15 @@
 
 </head>
 <body>
-    <nav class="navbar navbar-dark navbar-fixed-top bg-dark flex-md-nowrap p-0 shadow col-sm-3 col-md-2">
+    <nav class="navbar navbar-dark navbar-fixed-top bg-dark flex-md-nowrap p-0 shadow col-sm-3 col-md-2 ds-grid-brand">
       <a class="navbar-brand mr-0" href="#">AE Insights</a>
     </nav>
 
 
 
-    <div class="container-fluid">
-      <div class="row">
-        <nav class="col-sm-1">
+    <div class="ds-grid-container">
+      <!-- <div class="row"> -->
+        <nav class="ds-grid-nav">
             <ul class="nav">
               <li class="nav-item">
                 <a class="nav-link active" id="dashboard-tab" data-toggle="tab" href="#dashboard">
@@ -73,38 +73,36 @@
             </div>
         </nav>
 
-        <main role="main" class="col-sm-10">
+        <main role="main" class="ds-grid-main">
 
-          <div class="row ds-audience-header">
-            <div class="col-sm-12">
+          <div class="ds-audience-header">
 
-                <div class="ds-audience-title col-sm-8">
+              <div class="ds-audience-title">
+              </div>
+              <div class="ds-audience-legend">
+                <div class='ds-audience-legend-row' id="dsAudienceLegend1">
+                  <div class="ds-audience-legend-color"></div>
+                  <div class="ds-audience-legend-label"><span></span></div>
                 </div>
-                <div class="ds-audience-legend col-sm-4">
-                  <div class='ds-audience-legend-row' id="dsAudienceLegend1">
-                    <div class="ds-audience-legend-color col-sm-4"></div>
-                    <div class="ds-audience-legend-label col-sm-8"><span></span></div>
-                  </div>
-                  <div class='ds-audience-legend-row' id="dsAudienceLegend2">
-                    <div class="ds-audience-legend-color col-sm-4"></div>
-                    <div class="ds-audience-legend-label col-sm-8"><span></span></div>
-                  </div>
-                  <div class='ds-audience-legend-row' id="dsAudienceLegend3">
-                    <div class="ds-audience-legend-color col-sm-4"></div>
-                    <div class="ds-audience-legend-label col-sm-8"><span></span></div>
-                  </div>
+                <div class='ds-audience-legend-row' id="dsAudienceLegend2">
+                  <div class="ds-audience-legend-color"></div>
+                  <div class="ds-audience-legend-label"><span></span></div>
                 </div>
-                <div style="float:none;width:100%;overflow:auto;"></div>
-                <div class="well">
-                    <div id="waveChart" style="width:100%;height:150px;"></div>
+                <div class='ds-audience-legend-row' id="dsAudienceLegend3">
+                  <div class="ds-audience-legend-color"></div>
+                  <div class="ds-audience-legend-label"><span></span></div>
                 </div>
-            </div>
+              </div>
+              <!-- <div style="float:none;width:100%;overflow:auto;"></div> -->
+              <div class="well ds-grid-full">
+                  <div id="waveChart" style="width:100%;height:150px;"></div>
+              </div>
         </div>
         <div class="tab-content relative">
           <div class="tab-pane active" id="dashboard" role="tabpanel">
-            <div class="row">
+            <div class="ds-grid-charts">
 
-            <div class="col-sm-4">
+            <div class="ds-chart">
                 <div class="well tile">
                     <div class="tile-header">
                         <h4>Age</h4>
@@ -112,7 +110,7 @@
                     <div id="ageChart"></div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="ds-chart">
                 <div class="well tile">
                     <div class="tile-header">
                         <h4>Gender</h4>
@@ -120,7 +118,7 @@
                     <div id="genderChart"></div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="ds-chart">
                 <div class="well tile">
                     <div class="tile-header">
                         <h4>Ethnicity</h4>
@@ -128,10 +126,10 @@
                     <div id="ethnicityChart"></div>
                 </div>
             </div>
-          </div>
+          <!-- </div> -->
 
-            <div class="row">
-            <div class="col-sm-4">
+
+            <div class="ds-chart">
                 <div class="well tile">
                     <div class="tile-header">
                         <h4>Marital status</h4>
@@ -139,7 +137,7 @@
                     <div id="maritalChart"></div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="ds-chart">
                 <div class="well tile">
                     <div class="tile-header">
                         <h4>Number of children</h4>
@@ -147,7 +145,7 @@
                     <div id="childrenChart"></div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="ds-chart">
                 <div class="well tile">
                     <div class="tile-header">
                         <h4>Education</h4>
@@ -155,10 +153,10 @@
                     <div id="educationChart"></div>
                 </div>
             </div>
-          </div>
+            </div>
 
-            <div class="row">
-            <div class="col-sm-6">
+            <div class="ds-grid-charts-big">
+            <div class="ds-chart-big">
               <div class="well tile">
                   <div class="tile-header">
                       <h4>Income</h4>
@@ -166,7 +164,7 @@
                   <div id="incomeChart"></div>
               </div>
             </div>
-            <div class="col-sm-6">
+            <div class="ds-chart-big">
               <div class="well tile">
                   <div class="tile-header col-sm-2">
                       <h4>Location</h4>
@@ -181,10 +179,10 @@
                   </div>
               </div>
             </div>
-          </div>
 
-            <div class="row">
-              <div class="col-sm-6">
+
+
+              <div class="ds-chart-big">
                 <div class="well tile">
                     <div class="tile-header col-sm-2">
                         <h4>Interests</h4>
@@ -201,7 +199,7 @@
                     </div>
                 </div>
               </div>
-              <div class="col-sm-6">
+              <div class="ds-chart-big">
                 <div class="well tile">
                     <div class="tile-header col-sm-2">
                         <h4>Retail</h4>
@@ -219,13 +217,14 @@
             </div>
           </div>
 
+
           <div class="tab-pane" id="interests" role="tabpanel">
             <div class="col-sm-12">
               <div class="well tile">
                   <div class="tile-header">
                       <h4>Interests</h4>
                   </div>
-                  <div id="interestsDetailChart" class="mikej-chart"></div>
+                  <div id="interestsDetailChart" class="mikej-chart ds-grid-full" style="width:100%;height:100%;"></div>
               </div>
             </div>
           </div>
@@ -235,14 +234,14 @@
                   <div class="tile-header">
                       <h4>Retail</h4>
                   </div>
-                  <div id="retailDetailChart" class="mikej-chart"></div>
+                  <div id="retailDetailChart" class="mikej-chart" style="width:100%;height:1334px;"></div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
         </main>
-      </div>
     </div>
 
 
