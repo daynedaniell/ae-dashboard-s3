@@ -1127,8 +1127,8 @@ function wave2SeriesChart(ds1, ds2) {
 
   let layout = {
     hovermode:'closest',
-    height: height,
-    width: width,
+    // height: height,
+    // width: width,
     annotations: [{
       x: 0,
       y: -50,

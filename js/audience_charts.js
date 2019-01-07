@@ -384,6 +384,7 @@ function pieChart(attrName, indexDs){
 *******************************************************************************/
 
 function mapChart(attrName, indexDs) {
+  $("#"+attrName+"Chart .ds-toggle-button").css("display", "none");
   //Width and height of map
   let width = 600;
   let height = 360;
@@ -763,12 +764,13 @@ function waveChart(ds) {
   });
 
   let height = 150;
-	let width = 1260;
+	let width = "100%";
+  //let width = 1260;
 
   let layout = {
     hovermode:'closest',
-    height: height,
-    width: width,
+    // height: height,
+    // width: width,
     annotations: [{
       x: 0,
       y: -50,
