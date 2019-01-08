@@ -49,6 +49,7 @@ main {
 
 .ds-grid-full {
     grid-column: 1 / -1;
+    overflow: auto;
 }
 
 /* Legend */
@@ -74,6 +75,10 @@ main {
   display: grid;
   grid-template-columns: auto 1fr;
   grid-gap: 5px;
+}
+
+.ds-grid-tabs {
+  overflow-x: scroll;
 }
 
 /* .ds-chart {

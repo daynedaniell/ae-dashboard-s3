@@ -1,4 +1,11 @@
-
+let DS_VIS_STORE = {
+    activeFilter: null,
+    stateActive: [1,2],
+    interestsActive: [1,2],
+    retailActive: [1,2],
+    activeView: "single",
+    scaleWeight: 1
+}
 /*******************************************************************************
 *** COLORS AND FORMATS *********************************************************
 *******************************************************************************/
@@ -87,9 +94,11 @@ function wrap(text, width, sep = " ", type = "pie") {
 *******************************************************************************/
 
 function barChartSetup(innerWidth=360) {
+  console.log(DS_VIS_STORE['scaleWeight'])
 	let margin = {top: 30, right: 0, bottom: 20, left: 30};
 	let width = innerWidth - margin.left - margin.right;
-  let height = 360 - margin.top - margin.bottom;
+  let height = 360
+  console.log(DS_VIS_STORE['scaleWeight']) - margin.top - margin.bottom;
 	let barPadding = 1;
 
 	return {

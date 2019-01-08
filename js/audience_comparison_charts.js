@@ -1,10 +1,4 @@
-let DS_VIS_STORE = {
-    activeFilter: null,
-    stateActive: [1,2],
-    interestsActive: [1,2],
-    retailActive: [1,2],
-    activeView: "single"
-}
+
 
 /*******************************************************************************
 *** COLORS AND FORMATS *********************************************************
@@ -293,7 +287,77 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
   function mouseup(d) {
     tooltip.style('opacity', 0);
   }
+
 }
+
+// Use a timer so the chart is not constantly redrawn while window is being resized.
+var resizeTimer;
+let innerWidth = 400;
+let basics = barChartSetup(innerWidth);
+let SCALE_WEIGTH = 1;
+
+window.onresize = function(event) {
+ clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function()
+  {
+    var s = d3.selectAll('svg');
+    //s = s.remove();
+    set_vars(basics);
+    // drawGraphic();
+  }, 100);
+}
+let nextBreak = 1550;
+function set_vars(basics) {
+  //alert('setting vars')
+  var default_width = 960;
+  var default_height = 500;
+  var default_ratio = basics.width / basics.height;
+  //let nextBreak = 1550;
+
+  current_width = window.innerWidth;
+  current_height = window.innerHeight;
+
+
+  current_ratio = current_width / current_height;
+
+  // Check if height is limiting factor
+  if ( current_ratio > default_ratio ){
+    h = current_height;
+    w = h * default_ratio;
+  // Else width is limiting
+  } else {
+    w = current_width;
+    h = w / default_ratio;
+  }
+
+  if (current_width >= 1550) {
+    console.log(current_width)
+      SCALE_WEIGHT = 1;
+  } else if (current_width >= 1240) {
+      SCALE_WEIGHT = 0.75;
+  } else {
+      console.log(current_width)
+      SCALE_WEIGHT = 0.5;
+  }
+
+  console.log(SCALE_WEIGHT);
+
+  // if (+current_width < +nextBreak) {
+  //   console.log(nextBreak + ', ' + current_width + ', ' + JSON.stringify(basics))
+  //   basics.width = basics.width / 1.25
+  //   basics.height = basics.height / 1.25
+  //   nextBreak = nextBreak/1.25
+  //   console.log('now... ' + nextBreak + ', ' + current_width + ', ' + JSON.stringify(basics))
+  //
+  //   //drawCharts()
+  // }
+
+  // Set new width and height based on graph dimensions
+  // width = w - margin.left - margin.right;
+  // height = h - margin.top - margin.bottom;
+
+};
+
 
 
 /*******************************************************************************
@@ -1349,8 +1413,8 @@ function mikeJ2SeriesChart(attrName, indexDs1, indexDs2) {
 
   let layout = {
     hovermode:'closest',
-    height: height,
-    width: width,
+    // height: height,
+    // width: width,
     xaxis: {
       range: [ 0, 520 ],
       title: 'index'
