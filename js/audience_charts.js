@@ -94,10 +94,9 @@ function wrap(text, width, sep = " ", type = "pie") {
 *******************************************************************************/
 
 function barChartSetup(innerWidth=360) {
-  console.log(DS_VIS_STORE['scaleWeight'])
 	let margin = {top: 30, right: 0, bottom: 20, left: 30};
-	let width = innerWidth - margin.left - margin.right;
-  let height = 360
+	let width = innerWidth * DS_VIS_STORE['scaleWeight'] - margin.left - margin.right;
+  let height = 360 * DS_VIS_STORE['scaleWeight']
   console.log(DS_VIS_STORE['scaleWeight']) - margin.top - margin.bottom;
 	let barPadding = 1;
 
@@ -119,6 +118,8 @@ function barChart(attrName, indexDs) {
       width = basics.width,
       height = basics.height,
   		barPadding = basics.barPadding;
+
+  console.log("width: " + width + ", height: " + height);
 
   let firstDatasetBarChart = indexDs;
 
@@ -305,8 +306,8 @@ function barChart(attrName, indexDs) {
 *******************************************************************************/
 
 function pieChart(attrName, indexDs){
-  let width = 360,
-		  height = 360,
+  let width = 360 * DS_VIS_STORE["scaleWeight"],
+		  height = 360 * DS_VIS_STORE["scaleWeight"],
 		  outerRadius = Math.min(width - 60, height - 60) / 2,
       innerRadius = outerRadius * .999,
       innerRadiusFinal = outerRadius * .5,
@@ -537,8 +538,8 @@ function hBarChart(attrName, indexDs) {
 
 	let basics = barChartSetup(innerWidth);
 	let margin = basics.margin,
-      width = basics.width,
-      height = basics.height,
+      width = basics.width * DS_VIS_STORE["scaleWeight"] +30,
+      height = basics.height * DS_VIS_STORE["scaleWeight"] + 10,
   		barPadding = basics.barPadding;
 
   let firstDatasetBarChart = indexDs;
@@ -1126,6 +1127,18 @@ function addAudienceTitle(targetAud) {
 *** DRAW ALL CHARTS ************************************************************
 *******************************************************************************/
 function drawCharts() {
+
+  current_width = window.innerWidth;
+
+  if (current_width >= 1550) {
+    console.log(current_width)
+      DS_VIS_STORE["scaleWeight"] = 1;
+  } else if (current_width >= 960) {
+      DS_VIS_STORE["scaleWeight"] = 0.75;
+  } else {
+      console.log(current_width)
+      DS_VIS_STORE["scaleWeight"] = 0.5;
+  }
 
   d3.selectAll('.ds-tooltip').remove()
   // add the audience title

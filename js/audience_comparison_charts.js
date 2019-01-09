@@ -294,7 +294,6 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 var resizeTimer;
 let innerWidth = 400;
 let basics = barChartSetup(innerWidth);
-let SCALE_WEIGTH = 1;
 
 window.onresize = function(event) {
  clearTimeout(resizeTimer);
@@ -315,32 +314,17 @@ function set_vars(basics) {
   //let nextBreak = 1550;
 
   current_width = window.innerWidth;
-  current_height = window.innerHeight;
-
-
-  current_ratio = current_width / current_height;
-
-  // Check if height is limiting factor
-  if ( current_ratio > default_ratio ){
-    h = current_height;
-    w = h * default_ratio;
-  // Else width is limiting
-  } else {
-    w = current_width;
-    h = w / default_ratio;
-  }
 
   if (current_width >= 1550) {
     console.log(current_width)
-      SCALE_WEIGHT = 1;
+      DS_VIS_STORE["scaleWeight"] = 1;
   } else if (current_width >= 1240) {
-      SCALE_WEIGHT = 0.75;
+      DS_VIS_STORE["scaleWeight"] = 0.75;
   } else {
       console.log(current_width)
-      SCALE_WEIGHT = 0.5;
+      DS_VIS_STORE["scaleWeight"] = 0.5;
   }
 
-  console.log(SCALE_WEIGHT);
 
   // if (+current_width < +nextBreak) {
   //   console.log(nextBreak + ', ' + current_width + ', ' + JSON.stringify(basics))
