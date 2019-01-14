@@ -275,6 +275,9 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 
     let tipY = (y - 40) + 'px';
     let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
+    }
 
     tooltip.transition()
         .duration(200)
@@ -564,6 +567,9 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
 
     let tipY = (y - 40) + 'px';
     let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
+    }
 
     tooltip.transition()
         .duration(200)
@@ -1084,6 +1090,9 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 
     let tipY = (y - 80) + 'px';
     let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
+    }
 
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
         .style("opacity", .9)

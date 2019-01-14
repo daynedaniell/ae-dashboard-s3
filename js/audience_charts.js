@@ -276,8 +276,12 @@ function barChart(attrName, indexDs) {
     let e = window.event;
     var x = e.clientX,
         y = e.clientY;
+
     let tipY = (y - 40) + 'px';
     let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
+    }
 
     tooltip.transition()
         .duration(200)
@@ -514,6 +518,9 @@ var legend = d3.select("body").append("svg")
           y = e.clientY;
       let tipY = (y - 60) + 'px';
       let tipX = (x) + 'px';
+      if  (window.innerWidth - x < 200) {
+        tipX = (x - 130) + 'px';
+      }
 
       tooltip.html(d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index)
           .style("opacity", .9)
@@ -716,6 +723,9 @@ function hBarChart(attrName, indexDs) {
 
     let tipY = (y - 80) + 'px';
     let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
+    }
 
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
         .style("opacity", .9)
@@ -1066,7 +1076,7 @@ function showActiveFilter(store) {
   } else {
     $(".ds-current-filter-remove").css("display", "none");
   }
-  $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "No active filters");
+  $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "Click chart item to filter.");
 }
 
 function removeActiveFilter(store) {
@@ -1082,7 +1092,7 @@ function removeActiveFilter(store) {
 /* Remove filter by clicking remove icon in sidebar */
 $(".ds-current-filter-remove").click(function() {
   removeActiveFilter(DS_VIS_STORE);
-  $(".ds-current-filter").text("No active filters");
+  $(".ds-current-filter").text("Click chart item to filter.");
   $(this).css("display", "none");
 })
 
@@ -1108,7 +1118,7 @@ $(".ds-audience-selection-form").change(function(){
   }
 
   DS_VIS_STORE["activeFilter"] = null;
-  $(".ds-current-filter").text("No active filters");
+  $(".ds-current-filter").text("Click chart item to filter.");
   $(".ds-current-filter-remove").css("display", "none");
 });
 
@@ -1128,17 +1138,17 @@ function addAudienceTitle(targetAud) {
 *******************************************************************************/
 function drawCharts() {
 
-  current_width = window.innerWidth;
-
-  if (current_width >= 1550) {
-    console.log(current_width)
-      DS_VIS_STORE["scaleWeight"] = 1;
-  } else if (current_width >= 960) {
-      DS_VIS_STORE["scaleWeight"] = 0.75;
-  } else {
-      console.log(current_width)
-      DS_VIS_STORE["scaleWeight"] = 0.5;
-  }
+  // current_width = window.innerWidth;
+  //
+  // if (current_width >= 1550) {
+  //   console.log(current_width)
+  //     DS_VIS_STORE["scaleWeight"] = 1;
+  // } else if (current_width >= 960) {
+  //     DS_VIS_STORE["scaleWeight"] = 1;
+  // } else {
+  //     console.log(current_width)
+  //     DS_VIS_STORE["scaleWeight"] = 1;
+  // }
 
   d3.selectAll('.ds-tooltip').remove()
   // add the audience title
