@@ -1073,7 +1073,9 @@ function showActiveFilter(store) {
       cat = store["activeFilter"][0];
       cat = cat[0].toUpperCase() + cat.slice(1)
       $(".ds-current-filter-remove").css("display", "inline");
+      $(".ds-filter-tip").css("display","none");
   } else {
+    $(".ds-filter-tip").css("display","");
     $(".ds-current-filter-remove").css("display", "none");
   }
   $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "Click chart item to filter.");
@@ -1093,6 +1095,7 @@ function removeActiveFilter(store) {
 $(".ds-current-filter-remove").click(function() {
   removeActiveFilter(DS_VIS_STORE);
   $(".ds-current-filter").text("Click chart item to filter.");
+  $(".ds-filter-tip").css("display","");
   $(this).css("display", "none");
 })
 
@@ -1119,6 +1122,7 @@ $(".ds-audience-selection-form").change(function(){
 
   DS_VIS_STORE["activeFilter"] = null;
   $(".ds-current-filter").text("Click chart item to filter.");
+  $(".ds-filter-tip").css("display","");
   $(".ds-current-filter-remove").css("display", "none");
 });
 
@@ -1254,7 +1258,9 @@ $("#interests-tab").click(function() {
         showActiveFilter(DS_VIS_STORE);
         resetCharts();
     }
-})
+    $(".ds-current-filter").text("");
+    $(".ds-filter-tip").css("display","none");
+});
 
 $("#retail-tab").click(function() {
     if (DS_VIS_STORE.activeFilter != null) {
@@ -1262,7 +1268,14 @@ $("#retail-tab").click(function() {
         showActiveFilter(DS_VIS_STORE);
         resetCharts();
     }
-})
+    $(".ds-current-filter").text("");
+    $(".ds-filter-tip").css("display","none");
+});
+
+$("#dashboard-tab").click(function() {
+  showActiveFilter(DS_VIS_STORE);
+});
+
 
 
 
