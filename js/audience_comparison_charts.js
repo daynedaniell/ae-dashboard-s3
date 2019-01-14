@@ -1,10 +1,4 @@
-let DS_VIS_STORE = {
-    activeFilter: null,
-    stateActive: [1,2],
-    interestsActive: [1,2],
-    retailActive: [1,2],
-    activeView: "single"
-}
+
 
 /*******************************************************************************
 *** COLORS AND FORMATS *********************************************************
@@ -268,32 +262,90 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 
 
   function mouseover(d) {
-    let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.event.clientX - bound.x + 30;
-    let tipY = d3.event.clientY - bound.y - 10;
-    if (width - tipX < 50) {
-      tipX = d3.event.clientX - bound.x - 100;
+    // let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    // let bound = ttipsvg.getBoundingClientRect();
+    // let tipX = d3.event.clientX - bound.x + 30;
+    // let tipY = d3.event.clientY - bound.y - 10;
+    // if (width - tipX < 50) {
+    //   tipX = d3.event.clientX - bound.x - 100;
+    // }
+    let e = window.event;
+    var x = e.clientX,
+        y = e.clientY;
+
+    let tipY = (y - 40) + 'px';
+    let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
     }
-    // let e = window.event;
-    // var x = e.clientX,
-    //     y = e.clientY;
-    //
-    // let tipY = (y - 40) + 'px';
-    // let tipX = (x) + 'px';
+
 
     tooltip.transition()
         .duration(200)
     tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
         .style("opacity", .9)
-        .style('left', `${(tipX)}px`)
-        .style('top', `${(tipY)}px`);
+        .style('left', `${(tipX)}`)
+        .style('top', `${(tipY)}`);
   }
 
   function mouseup(d) {
     tooltip.style('opacity', 0);
   }
+
 }
+
+// Use a timer so the chart is not constantly redrawn while window is being resized.
+var resizeTimer;
+let innerWidth = 400;
+let basics = barChartSetup(innerWidth);
+
+window.onresize = function(event) {
+ clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function()
+  {
+    var s = d3.selectAll('svg');
+    //s = s.remove();
+    set_vars(basics);
+    // drawGraphic();
+  }, 100);
+}
+let nextBreak = 1550;
+function set_vars(basics) {
+  //alert('setting vars')
+  var default_width = 960;
+  var default_height = 500;
+  var default_ratio = basics.width / basics.height;
+  //let nextBreak = 1550;
+
+  current_width = window.innerWidth;
+
+  if (current_width >= 1550) {
+    console.log(current_width)
+      DS_VIS_STORE["scaleWeight"] = 1;
+  } else if (current_width >= 1240) {
+      DS_VIS_STORE["scaleWeight"] = 0.75;
+  } else {
+      console.log(current_width)
+      DS_VIS_STORE["scaleWeight"] = 0.5;
+  }
+
+
+  // if (+current_width < +nextBreak) {
+  //   console.log(nextBreak + ', ' + current_width + ', ' + JSON.stringify(basics))
+  //   basics.width = basics.width / 1.25
+  //   basics.height = basics.height / 1.25
+  //   nextBreak = nextBreak/1.25
+  //   console.log('now... ' + nextBreak + ', ' + current_width + ', ' + JSON.stringify(basics))
+  //
+  //   //drawCharts()
+  // }
+
+  // Set new width and height based on graph dimensions
+  // width = w - margin.left - margin.right;
+  // height = h - margin.top - margin.bottom;
+
+};
+
 
 
 /*******************************************************************************
@@ -711,24 +763,28 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
   function mouseover(d) {
     // let ttipsvg = d3.select("#"+attrName+"Chart").node()
     // let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.mouse(this)[0] + 70;//d3.event.clientX - bound.x + 30;
-    let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
-    if (width - tipX < 50) {
-        tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
+    // let tipX = d3.mouse(this)[0] + 70;//d3.event.clientX - bound.x + 30;
+    // let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
+    // if (width - tipX < 50) {
+    //     tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
+    // }
+    let e = window.event;
+    var x = e.clientX,
+        y = e.clientY;
+
+    let tipY = (y - 40) + 'px';
+    let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
     }
-    // let e = window.event;
-    // var x = e.clientX,
-    //     y = e.clientY;
-    //
-    // let tipY = (y - 40) + 'px';
-    // let tipX = (x) + 'px';
+
 
     tooltip.transition()
         .duration(200)
     tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
         .style("opacity", .9)
-        .style('left', `${(tipX)}px`)
-        .style('top', `${(tipY)}px`);
+        .style('left', `${(tipX)}`)
+        .style('top', `${(tipY)}`);
   }
 
   function mouseup(d) {
@@ -1231,10 +1287,19 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
     // if (width - tipX < 100) {
     //   tipX = d3.event.clientX - bound.x - 100;
     // }
-    let tipX = d3.mouse(this)[0] + 30;//d3.event.clientX - bound.x + 30;
-    let tipY = d3.mouse(this)[1] - 20;//d3.event.clientY - bound.y - 20;
-    if (width - tipX < 50) {
-        tipX = d3.mouse(this)[0] - 20;//d3.event.clientX - bound.x - 100;
+    // let tipX = d3.mouse(this)[0] + 30;//d3.event.clientX - bound.x + 30;
+    // let tipY = d3.mouse(this)[1] - 20;//d3.event.clientY - bound.y - 20;
+    // if (width - tipX < 50) {
+    //     tipX = d3.mouse(this)[0] - 20;//d3.event.clientX - bound.x - 100;
+    // }
+    let e = window.event;
+    var x = e.clientX,
+        y = e.clientY;
+
+    let tipY = (y - 80) + 'px';
+    let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
     }
     // let e = window.event;
     // var x = e.clientX,
@@ -1245,8 +1310,8 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
         .style("opacity", .9)
-        .style('left', `${(tipX)}px`)
-        .style('top', `${(tipY)}px`);
+        .style('left', `${(tipX)}`)
+        .style('top', `${(tipY)}`);
   }
 
   function mouseout() {
@@ -1555,8 +1620,8 @@ function mikeJ2SeriesChart(attrName, indexDs1, indexDs2) {
 
   let layout = {
     hovermode:'closest',
-    height: height,
-    width: width,
+    // height: height,
+    // width: width,
     xaxis: {
       range: [ 0, 520 ],
       title: 'index'

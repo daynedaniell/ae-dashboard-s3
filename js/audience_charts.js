@@ -1,4 +1,11 @@
-
+let DS_VIS_STORE = {
+    activeFilter: null,
+    stateActive: [1,2],
+    interestsActive: [1,2],
+    retailActive: [1,2],
+    activeView: "single",
+    scaleWeight: 1
+}
 /*******************************************************************************
 *** COLORS AND FORMATS *********************************************************
 *******************************************************************************/
@@ -88,8 +95,9 @@ function wrap(text, width, sep = " ", type = "pie") {
 
 function barChartSetup(innerWidth=360) {
 	let margin = {top: 30, right: 0, bottom: 20, left: 30};
-	let width = innerWidth - margin.left - margin.right;
-  let height = 360 - margin.top - margin.bottom;
+	let width = innerWidth * DS_VIS_STORE['scaleWeight'] - margin.left - margin.right;
+  let height = 360 * DS_VIS_STORE['scaleWeight']
+  console.log(DS_VIS_STORE['scaleWeight']) - margin.top - margin.bottom;
 	let barPadding = 1;
 
 	return {
@@ -110,6 +118,8 @@ function barChart(attrName, indexDs) {
       width = basics.width,
       height = basics.height,
   		barPadding = basics.barPadding;
+
+  console.log("width: " + width + ", height: " + height);
 
   let firstDatasetBarChart = indexDs;
 
@@ -258,19 +268,34 @@ function barChart(attrName, indexDs) {
 
 
   function mouseover(d) {
-    //let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    //let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.mouse(this)[0] + 70;//d3.event.clientX - bound.x + 30;
-    let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
-    if (width - tipX < 50) {
-        tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
+    // let ttipsvg = d3.select("#"+attrName+"Chart").node()
+    // let bound = ttipsvg.getBoundingClientRect();
+    // let tipX = d3.event.clientX - bound.x + 130;
+    // let tipY = d3.event.clientY - bound.y + 320;
+    // var tooltipSpan = document.getElementById('tooltip-span');
+    let e = window.event;
+    var x = e.clientX,
+        y = e.clientY;
+
+    let tipY = (y - 40) + 'px';
+    let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
     }
+
     tooltip.transition()
         .duration(200)
     tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
         .style("opacity", .9)
-        .style('left', `${(tipX)}px`)
-        .style('top', `${(tipY)}px`);
+        .style('left', `${tipX}`)
+        .style('top', `${tipY}`);
+    // };
+    // let tipX = d3.mouse(this)[0] + 10;//d3.event.clientX - bound.x + 30;
+    // let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
+    // if (width - tipX < 50) {
+    //     tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
+    // }
+
   }
 
   function mouseup(d) {
@@ -285,8 +310,8 @@ function barChart(attrName, indexDs) {
 *******************************************************************************/
 
 function pieChart(attrName, indexDs){
-  let width = 360,
-		  height = 360,
+  let width = 360 * DS_VIS_STORE["scaleWeight"],
+		  height = 360 * DS_VIS_STORE["scaleWeight"],
 		  outerRadius = Math.min(width - 60, height - 60) / 2,
       innerRadius = outerRadius * .999,
       innerRadiusFinal = outerRadius * .5,
@@ -482,16 +507,25 @@ var legend = d3.select("body").append("svg")
   function mouseover(d) {
       //let ttipsvg = d3.select("#"+attrName+"Chart").node()
       //let bound = ttipsvg.getBoundingClientRect();
-      let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
-      let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
-      if (width - tipX < 50) {
-          tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
+      // let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
+      // let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
+      // if (width - tipX < 50) {
+      //     tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
+      // }
+
+      let e = window.event;
+      var x = e.clientX,
+          y = e.clientY;
+      let tipY = (y - 60) + 'px';
+      let tipX = (x) + 'px';
+      if  (window.innerWidth - x < 200) {
+        tipX = (x - 130) + 'px';
       }
 
       tooltip.html(d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index)
           .style("opacity", .9)
-          .style('left', `${(tipX)}px`)
-          .style('top', `${(tipY)}px`);
+          .style('left', `${(tipX)}`)
+          .style('top', `${(tipY)}`);
   }
 
   function mouseout() {
@@ -511,8 +545,8 @@ function hBarChart(attrName, indexDs) {
 
 	let basics = barChartSetup(innerWidth);
 	let margin = basics.margin,
-      width = basics.width,
-      height = basics.height,
+      width = basics.width * DS_VIS_STORE["scaleWeight"] +30,
+      height = basics.height * DS_VIS_STORE["scaleWeight"] + 10,
   		barPadding = basics.barPadding;
 
   let firstDatasetBarChart = indexDs;
@@ -678,16 +712,25 @@ function hBarChart(attrName, indexDs) {
   function mouseover(d) {
     //let ttipsvg = d3.select("#"+attrName+"Chart").node()
     //let bound = ttipsvg.getBoundingClientRect();
-    let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
-    let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
-    if (width - tipX < 50) {
-        tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
+    // let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
+    // let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
+    // if (width - tipX < 50) {
+    //     tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
+    // }
+    let e = window.event;
+    var x = e.clientX,
+        y = e.clientY;
+
+    let tipY = (y - 80) + 'px';
+    let tipX = (x) + 'px';
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
     }
 
     tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
         .style("opacity", .9)
-        .style('left', `${(tipX)}px`)
-        .style('top', `${(tipY)}px`);
+        .style('left', `${(tipX)}`)
+        .style('top', `${(tipY)}`);
   }
 
   function mouseout() {
@@ -770,7 +813,7 @@ function waveChart(ds) {
   let layout = {
     hovermode:'closest',
     // height: height,
-    // width: width,
+    // width: "100%",
     annotations: [{
       x: 0,
       y: -50,
@@ -939,8 +982,8 @@ function mikeJChart(attrName, indexDs) {
 
   let layout = {
     hovermode:'closest',
-    height: height,
-    width: width,
+    // height: height,
+    // width: width,
     xaxis: {
       range: [ 0, 520 ],
       title: 'index'
@@ -1033,7 +1076,7 @@ function showActiveFilter(store) {
   } else {
     $(".ds-current-filter-remove").css("display", "none");
   }
-  $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "No active filters");
+  $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "Click chart item to filter.");
 }
 
 function removeActiveFilter(store) {
@@ -1049,7 +1092,7 @@ function removeActiveFilter(store) {
 /* Remove filter by clicking remove icon in sidebar */
 $(".ds-current-filter-remove").click(function() {
   removeActiveFilter(DS_VIS_STORE);
-  $(".ds-current-filter").text("No active filters");
+  $(".ds-current-filter").text("Click chart item to filter.");
   $(this).css("display", "none");
 })
 
@@ -1075,7 +1118,7 @@ $(".ds-audience-selection-form").change(function(){
   }
 
   DS_VIS_STORE["activeFilter"] = null;
-  $(".ds-current-filter").text("No active filters");
+  $(".ds-current-filter").text("Click chart item to filter.");
   $(".ds-current-filter-remove").css("display", "none");
 });
 
@@ -1094,6 +1137,18 @@ function addAudienceTitle(targetAud) {
 *** DRAW ALL CHARTS ************************************************************
 *******************************************************************************/
 function drawCharts() {
+
+  // current_width = window.innerWidth;
+  //
+  // if (current_width >= 1550) {
+  //   console.log(current_width)
+  //     DS_VIS_STORE["scaleWeight"] = 1;
+  // } else if (current_width >= 960) {
+  //     DS_VIS_STORE["scaleWeight"] = 1;
+  // } else {
+  //     console.log(current_width)
+  //     DS_VIS_STORE["scaleWeight"] = 1;
+  // }
 
   d3.selectAll('.ds-tooltip').remove()
   // add the audience title
