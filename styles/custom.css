@@ -194,7 +194,8 @@ ul.ds-nav {
 .tile-header .ds-stats strong {
     font-size: 1.1em;
 }
-.tile-header .ds-stats .ds-stat-2 {
+.tile-header .ds-stats .ds-stat-2, .tile-header .ds-stats .ds-stat-3 {
+  clear: both;
   float: right;
 }
 
@@ -422,3 +423,14 @@ body {
     font-size: 11px;
   }
 } */
+
+/* To discard */
+.checkbox+.checkbox {
+  margin-top: 0;
+}
+
+.checkbox {
+  float: left;
+  height: 60px;
+  margin: 0;
+}

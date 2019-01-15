@@ -74,6 +74,9 @@
                 <div class="checkbox">
                   <label><input type="checkbox" value="2">2</label>
                 </div>
+                <div class="checkbox">
+                  <label><input type="checkbox" value="3">3</label>
+                </div>
               </form>
           </div>
 
@@ -260,6 +263,7 @@
     <script src="js/audience_data_processing.js"></script>
     <script src="js/audience_charts.js"></script>
     <script src="js/audience_comparison_charts.js"></script>
+    <script src="js/audience_comparison_charts3.js"></script>
 
 
     <script>
@@ -271,7 +275,8 @@
 */
         async function f(audIds) {
             // setting these as globals for now
-            if (audIds.length > 0 & audIds.length <= 2) {
+            console.log('ids' + audIds);
+            if (audIds.length > 0 & audIds.length <= 3) {
 
               randomDemog = await d3.tsv("data/random_audience/demographics_random.tsv");
               randomInterests = await d3.tsv("data/random_audience/interests_random.tsv");
@@ -293,6 +298,19 @@
                   targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
 
                   drawComparisonCharts();
+              } else if (audIds.length == 3) {
+                  console.log("Three")
+                  targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
+                  targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
+                  targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
+                  targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
+
+                  targetAud3 = await d3.json("data/target_aud_" + audIds[2] + "/audience.json");
+                  targetDemog3 = await d3.tsv("data/target_aud_" + audIds[2] + "/demographics_target.tsv");
+                  targetInterests3 = await d3.tsv("data/target_aud_" + audIds[2] + "/interests_target.tsv");
+                  targetRetail3 = await d3.tsv("data/target_aud_" + audIds[2] + "/retail_target.tsv");
+
+                  drawComparisonCharts3();
               }
 
             }
@@ -305,12 +323,13 @@
                 .map(function() { return $(this).val(); })
                 .get();
 
-            if (selectedAudiences.length > 0 & selectedAudiences.length <= 2) {
+            if (selectedAudiences.length > 0 & selectedAudiences.length <= 3) {
+              console.log(selectedAudiences)
               f(selectedAudiences);
             } else {
-              console.log(DS_VIS_STORE)
-              $(this).after("<p class='ds-audience-select-alert'><em>Please select an audience!</em></p>");
-              $(".ds-active-filters").css("top", "400px")
+              //console.log(DS_VIS_STORE)
+              //$(this).after("<p class='ds-audience-select-alert'><em>Please select an audience!</em></p>");
+              //$(".ds-active-filters").css("top", "400px")
               //alert("Please select 1 or 2 audiences for visualization.");
             }
           }).change(); // fires on load and on form change

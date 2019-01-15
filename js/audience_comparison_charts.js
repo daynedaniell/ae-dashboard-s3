@@ -17,6 +17,7 @@
 
 let colorSeries1 = "#4d3c96",
     colorSeries2 = "#0fbbc1",
+    colorSeries3 = "#dddddd",
 
     colorAudience11 = colorSeries1,
     colorAudience12 = colorSeries2,
@@ -294,58 +295,6 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 
 }
 
-// Use a timer so the chart is not constantly redrawn while window is being resized.
-var resizeTimer;
-let innerWidth = 400;
-let basics = barChartSetup(innerWidth);
-
-window.onresize = function(event) {
- clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(function()
-  {
-    var s = d3.selectAll('svg');
-    //s = s.remove();
-    set_vars(basics);
-    // drawGraphic();
-  }, 100);
-}
-let nextBreak = 1550;
-function set_vars(basics) {
-  //alert('setting vars')
-  var default_width = 960;
-  var default_height = 500;
-  var default_ratio = basics.width / basics.height;
-  //let nextBreak = 1550;
-
-  current_width = window.innerWidth;
-
-  if (current_width >= 1550) {
-    console.log(current_width)
-      DS_VIS_STORE["scaleWeight"] = 1;
-  } else if (current_width >= 1240) {
-      DS_VIS_STORE["scaleWeight"] = 0.75;
-  } else {
-      console.log(current_width)
-      DS_VIS_STORE["scaleWeight"] = 0.5;
-  }
-
-
-  // if (+current_width < +nextBreak) {
-  //   console.log(nextBreak + ', ' + current_width + ', ' + JSON.stringify(basics))
-  //   basics.width = basics.width / 1.25
-  //   basics.height = basics.height / 1.25
-  //   nextBreak = nextBreak/1.25
-  //   console.log('now... ' + nextBreak + ', ' + current_width + ', ' + JSON.stringify(basics))
-  //
-  //   //drawCharts()
-  // }
-
-  // Set new width and height based on graph dimensions
-  // width = w - margin.left - margin.right;
-  // height = h - margin.top - margin.bottom;
-
-};
-
 
 
 /*******************************************************************************
@@ -354,7 +303,6 @@ function set_vars(basics) {
 function hBarParallelChart(attrName, audName1, indexDs1, audName2, indexDs2) {
 
     let innerWidth = 400;
-    console.log(JSON.stringify(indexDs1))
 
     let basics = barChartSetup(innerWidth);
     let margin = basics.margin,
@@ -504,9 +452,6 @@ function hBarParallelChart(attrName, audName1, indexDs1, audName2, indexDs2) {
         .attr("class", "xAxis")
         .attr("transform", "translate(" + (margin.left) + "," + (height/3.5 + 60 + height/4) + ")")
         .call(xAxis);
-
-    // /* Remove vertical and extra horizontal gridlines */
-    // svg.selectAll(".domain").remove()
 
 
     function up(d, i) {
@@ -1519,7 +1464,7 @@ function wave2SeriesChart(ds1, ds2) {
   };
 
   let traces = [...traces1, ...traces2];
-  Plotly.newPlot("waveChart", traces, layout, {responsive: true});
+  Plotly.newPlot("waveChart", traces, layout, {displayModeBar: false, responsive: true});
 
 }
 
@@ -1654,7 +1599,7 @@ function mikeJ2SeriesChart(attrName, indexDs1, indexDs2) {
   };
 
   let chartName = attrName+"DetailChart";
-  Plotly.newPlot(chartName, [trace1, trace2], layout, {responsive: true});
+  Plotly.newPlot(chartName, [trace1, trace2], layout, {displayModeBar: false, responsive: true});
 }
 
 
@@ -1688,21 +1633,26 @@ function add2SeriesStat(attrName, stat1, stat2, prefix='', suffix='') {
 /*******************************************************************************
 *** ADD AUDIENCE TITLE *********************************************************
 *******************************************************************************/
-function add2AudienceTitles(targetAud1, targetAud2) {
+function addMultipleAudienceTitles(targetAud1, targetAud2, targetAud3 = null) {
   // remove existing titles, if any
   $( ".ds-audience-title h1" ).remove();
 
+  let threeString = (targetAud3 != null) ? (" VS <span class= 'ds-aud-title-3'>" + targetAud3.name + "</span>") : '';
   // add titles
   $( ".ds-audience-title" )
     .append("<h1><span class= 'ds-aud-title-1'>"
       + targetAud1.name
       + "</span> VS <span class= 'ds-aud-title-2'>"
-      + targetAud2.name
-      + "</span></h1>");
+      + targetAud2.name + "</span>"
+      + threeString
+      + "</h1>");
 
   // add color codes
   $(".ds-audience-title .ds-aud-title-1").css("color", colorSeries1);
   $(".ds-audience-title .ds-aud-title-2").css("color", colorSeries2);
+  if (targetAud3 != null) {
+    $(".ds-audience-title .ds-aud-title-3").css("color", colorSeries3);
+  }
 }
 
 
@@ -1712,8 +1662,8 @@ function add2AudienceTitles(targetAud1, targetAud2) {
 function drawComparisonCharts() {
   d3.selectAll(".ds-tooltip").remove()
   // add the audience titles
-  addAudienceLegend(compare=true);
-  add2AudienceTitles(targetAud, targetAud2);
+  addAudienceLegend(compare=2);
+  addMultipleAudienceTitles(targetAud, targetAud2);
 
   let indexCats = makeIndexCats();
   let demogAttributesList = Object.keys(indexCats);
@@ -1791,6 +1741,7 @@ function drawComparisonCharts() {
 
   wave2SeriesChart(indexes1, indexes2);
 
+  /* Clicking on bar in DNA chart takes you to corresponding chart for more info */
   var myPlot = document.getElementById('waveChart');
   myPlot.on('plotly_click', function(data){
     let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");

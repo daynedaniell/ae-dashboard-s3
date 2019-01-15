@@ -95,9 +95,8 @@ function wrap(text, width, sep = " ", type = "pie") {
 
 function barChartSetup(innerWidth=360) {
 	let margin = {top: 30, right: 0, bottom: 20, left: 30};
-	let width = innerWidth * DS_VIS_STORE['scaleWeight'] - margin.left - margin.right;
-  let height = 360 * DS_VIS_STORE['scaleWeight']
-  console.log(DS_VIS_STORE['scaleWeight']) - margin.top - margin.bottom;
+	let width = innerWidth - margin.left - margin.right;
+  let height = 360;
 	let barPadding = 1;
 
 	return {
@@ -118,8 +117,6 @@ function barChart(attrName, indexDs) {
       width = basics.width,
       height = basics.height,
   		barPadding = basics.barPadding;
-
-  console.log("width: " + width + ", height: " + height);
 
   let firstDatasetBarChart = indexDs;
 
@@ -909,10 +906,11 @@ function waveChart(ds) {
         width: 0.75,
         dash: 'dot'
       }
-    }]
+    }
+    ]
   };
 
-  Plotly.newPlot("waveChart", traces, layout, {responsive: true});
+  Plotly.newPlot("waveChart", traces, layout, {displayModeBar: false, responsive: true});
 
 }
 
@@ -1016,7 +1014,7 @@ function mikeJChart(attrName, indexDs) {
   };
 
   let chartName = attrName+"DetailChart";
-  Plotly.newPlot(chartName, [trace], layout, {responsive: true});
+  Plotly.newPlot(chartName, [trace], layout, {displayModeBar: false, responsive: true});
 }
 
 /*******************************************************************************
@@ -1036,10 +1034,9 @@ function addStat(attrName, stat, prefix='', suffix='') {
 /*******************************************************************************
 *** ADD AUDIENCE LEGEND ********************************************************
 *******************************************************************************/
-function addAudienceLegend(compare=false) {
-  // remove existing title, if any
-  // $( ".ds-audience-legend div" ).remove();
-  if (compare === false) {
+function addAudienceLegend(compare=null) {
+
+  if (compare === null) {
     $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorOverIndex)
     $("#dsAudienceLegend1 .ds-audience-legend-label span").text("Over-Index")
     $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorUnderIndex)
@@ -1047,21 +1044,23 @@ function addAudienceLegend(compare=false) {
     $("#dsAudienceLegend3 .ds-audience-legend-color").css({"background-color": colorZeroIndex, "display": "block"})
     $("#dsAudienceLegend3 .ds-audience-legend-label span").text("No Data")
     $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "block")
-  } else {
+  } else if (compare === 2) {
     $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorSeries1)
     $("#dsAudienceLegend1 .ds-audience-legend-label span").text(targetAud.name)
     $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorSeries2)
     $("#dsAudienceLegend2 .ds-audience-legend-label span").text(targetAud2.name)
     $("#dsAudienceLegend3 .ds-audience-legend-color").css("display", "none")
     $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "none")
+  } else if (compare === 3) {
+    $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorSeries1)
+    $("#dsAudienceLegend1 .ds-audience-legend-label span").text(targetAud.name)
+    $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorSeries2)
+    $("#dsAudienceLegend2 .ds-audience-legend-label span").text(targetAud2.name)
+    $("#dsAudienceLegend3 .ds-audience-legend-color").css({"background-color": colorSeries3, "display": "block"})
+    $("#dsAudienceLegend3 .ds-audience-legend-label span").text(targetAud3.name)
+    $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "block")
   }
 
-  // add audience title
-  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-row'></div>")
-  // $( ".ds-audience-legend-row" ).append("<div class='ds-audience-legend-color col-sm-4' style='background-color:" + colorOverIndex + "'></div>");
-  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-l1 col-sm-8'>Over-Index</div>");
-  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-color col-sm-4' style='background-color:" + colorUnderIndex + "'></div>");
-  // $( ".ds-audience-legend" ).append("<div class='ds-audience-legend-l2 col-sm-8'>Under-Index</div>");
 }
 
 /*******************************************************************************
@@ -1078,7 +1077,7 @@ function showActiveFilter(store) {
     $(".ds-filter-tip").css("display","");
     $(".ds-current-filter-remove").css("display", "none");
   }
-  $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "Click chart item to filter.");
+  $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "Click chart item to apply filter.");
 }
 
 function removeActiveFilter(store) {
@@ -1094,7 +1093,7 @@ function removeActiveFilter(store) {
 /* Remove filter by clicking remove icon in sidebar */
 $(".ds-current-filter-remove").click(function() {
   removeActiveFilter(DS_VIS_STORE);
-  $(".ds-current-filter").text("Click chart item to filter.");
+  $(".ds-current-filter").text("Click chart item to apply filter.");
   $(".ds-filter-tip").css("display","");
   $(this).css("display", "none");
 })
@@ -1121,7 +1120,7 @@ $(".ds-audience-selection-form").change(function(){
   }
 
   DS_VIS_STORE["activeFilter"] = null;
-  $(".ds-current-filter").text("Click chart item to filter.");
+  $(".ds-current-filter").text("Click chart item to apply filter.");
   $(".ds-filter-tip").css("display","");
   $(".ds-current-filter-remove").css("display", "none");
 });
