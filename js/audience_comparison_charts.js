@@ -17,7 +17,7 @@
 
 let colorSeries1 = "#4d3c96",
     colorSeries2 = "#0fbbc1",
-    colorSeries3 = "#dddddd",
+    colorSeries3 = "#ff9999",
 
     colorAudience11 = colorSeries1,
     colorAudience12 = colorSeries2,
@@ -25,9 +25,9 @@ let colorSeries1 = "#4d3c96",
     colorAudience21 = colorSeries1,
     colorAudience22 = colorSeries2;
 
-DS_VIS_STORE.stateColors = [colorSeries1,colorSeries2]; //Set colors to be indexable to active audience in toggle
-DS_VIS_STORE.interestsColors = [colorSeries1,colorSeries2]
-DS_VIS_STORE.retailColors = [colorSeries1,colorSeries2]
+DS_VIS_STORE.stateColors = [colorSeries1,colorSeries2,colorSeries3]; //Set colors to be indexable to active audience in toggle
+DS_VIS_STORE.interestsColors = [colorSeries1,colorSeries2,colorSeries3]
+DS_VIS_STORE.retailColors = [colorSeries1,colorSeries2,colorSeries3]
 
 /*******************************************************************************
 *** Main Toggle Function *******************************************************
@@ -797,7 +797,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 
     margin.left = 0;
 
-  let firstDatasetBarChart = indexDs1;
+  //let firstDatasetBarChart = indexDs1;
   let maxAttrLength = width / 2.25;
 
 	let yScale = d3.scaleLinear()
@@ -986,7 +986,6 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
 		     .attr("class", "yAxis");
 
 	/* Add ranking y labels to chart */
-
 	yLabels.selectAll("text.ranking")
 		     .data([ 1, 2, 3, 4, 5])
 		     .enter()
@@ -1313,7 +1312,7 @@ function wave2SeriesChart(ds1, ds2) {
       x: unpack(ds1[attrName], 'index'),
       y: unpack(ds1[attrName], 'target_pct'),
       base: unpack(ds1[attrName], 'target_pct').map(x => -x/2),
-      width: 6,
+      width: 4,
       type: 'bar',
       marker: {
         color: colorSeries1,
@@ -1337,7 +1336,7 @@ function wave2SeriesChart(ds1, ds2) {
       x: unpack(ds2[attrName], 'index'),
       y: unpack(ds2[attrName], 'target_pct'),
       base: unpack(ds2[attrName], 'target_pct').map(x => -x/2),
-      width: 8,
+      width: 4,
       type: 'bar',
       marker: {
         color: colorSeries2,

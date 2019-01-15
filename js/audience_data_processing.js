@@ -329,7 +329,10 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
 
 }
 
-function indexStatesTop5(indexDs1, indexDs2) {
+function indexStatesTop5(indexDs1, indexDs2, indexDs3 = null) {
+  let triple = indexDs3 != null;
+  console.log("triple")
+  console.log(triple)
   let a = [...indexDs1].filter( d => ( d["random_pct"] > 0 ) )
                       .sort(function(a,b){
                         if ( b.index != a.index ){
@@ -340,14 +343,17 @@ function indexStatesTop5(indexDs1, indexDs2) {
                       })
                       .slice(0, 5)
                       .map(function(d){
-                        let comp = [...indexDs2].filter(d2 => (d2.attrib_value === d.attrib_value))
+                        let comp = [...indexDs2].filter(d2 => (d2.attrib_value === d.attrib_value));
+                        let comp2 = triple ? [...indexDs3].filter(d3 => (d3.attrib_value === d.attrib_value)) : null;
                         return {
                           attrib_value: getStateName(d.attrib_value),
                           target_pct: d.target_pct,
                           random_pct: d.random_pct,
                           index: d.index,
                           compare_pct: comp[0].target_pct,
-                          compare_index: comp[0].index
+                          compare_index: comp[0].index,
+                          compare2_pct: triple ? comp2[0].target_pct : null,
+                          compare2_index: triple ? comp2[0].index : null
                        }
                      });
   let c = a.map(function(d) {
@@ -358,6 +364,20 @@ function indexStatesTop5(indexDs1, indexDs2) {
         index: d.compare_index
       }
   })
+
+  if (triple === true) {
+      let c2 = a.map(function(d) {
+        return {
+          attrib_value: d.attrib_value,
+          target_pct: d.compare2_pct,
+          random_pct: d.random_pct,
+          index: d.compare2_index,
+        }
+      });
+      console.log(JSON.stringify([a, c, c2]))
+      return [a, c, c2]
+  }
+
 
   return [a, c];
 }
