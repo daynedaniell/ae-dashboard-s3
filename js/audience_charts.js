@@ -1109,8 +1109,12 @@ $(".ds-audience-selection-form").change(function(){
     $(".ds-active-filters").css("top", "360px")
   }
 
-  if (selectedAudiences.length > 0 & selectedAudiences.length >= 2) {
-    DS_VIS_STORE["activeView"] = "compare";
+  if (selectedAudiences.length == 3) {
+    DS_VIS_STORE["activeView"] = "triple";
+    resetCompareAuds()
+  } else if (selectedAudiences.length == 2) {
+    DS_VIS_STORE["activeView"] = "double";
+    resetCompareAuds()
   } else if (selectedAudiences.length == 1){
     DS_VIS_STORE["activeView"] = "single";
   }
@@ -1123,6 +1127,7 @@ $(".ds-audience-selection-form").change(function(){
   $(".ds-current-filter").text("Click chart item to apply filter.");
   $(".ds-filter-tip").css("display","");
   $(".ds-current-filter-remove").css("display", "none");
+
 });
 
 /*******************************************************************************
@@ -1245,8 +1250,10 @@ function drawCharts() {
 function resetCharts() {
     if (DS_VIS_STORE["activeView"] == "single") {
         drawCharts();
-    } else if (DS_VIS_STORE["activeView"]) {
+    } else if (DS_VIS_STORE["activeView"] == "double") {
         drawComparisonCharts();
+    } else if (DS_VIS_STORE["activeView"] == "triple") {
+        draw3ComparisonCharts();
     }
 }
 

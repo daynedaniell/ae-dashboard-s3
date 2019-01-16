@@ -25,9 +25,16 @@ let colorSeries1 = "#4d3c96",
     colorAudience21 = colorSeries1,
     colorAudience22 = colorSeries2;
 
-DS_VIS_STORE.stateColors = [colorSeries1,colorSeries2,colorSeries3]; //Set colors to be indexable to active audience in toggle
-DS_VIS_STORE.interestsColors = [colorSeries1,colorSeries2,colorSeries3]
-DS_VIS_STORE.retailColors = [colorSeries1,colorSeries2,colorSeries3]
+function resetCompareAuds() {
+    DS_VIS_STORE.stateColors = [colorSeries1,colorSeries2,colorSeries3]; //Set colors to be indexable to active audience in toggle
+    DS_VIS_STORE.interestsColors = [colorSeries1,colorSeries2,colorSeries3]
+    DS_VIS_STORE.retailColors = [colorSeries1,colorSeries2,colorSeries3]
+    DS_VIS_STORE.interestsActive = [1,2,3]
+    DS_VIS_STORE.stateActive = [1,2,3]
+    DS_VIS_STORE.retailActive = [1,2,3]
+}
+
+
 
 /*******************************************************************************
 *** Main Toggle Function *******************************************************
@@ -2171,6 +2178,16 @@ function changeToggleColor(attrName, color) {
 
 function addCompareToggle(attrName) {
   $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
+  $("#"+attrName+"Chart .ds-toggle-button").toggleClass('active', false);
+  // $("#"+attrName+"Chart .ds-toggle-main").css("display", "");
+  // $("#"+attrName+"Chart .ds-toggle-after").css("display", "");
+  if ($("#"+attrName+"Chart .ds-toggle-main").length === 0) {
+      $("#"+attrName+"Chart .ds-toggle-button").append(
+        "<div class='ds-toggle-main'><div class='ds-toggle-after'></div></div>"
+      );
+  }
+
+  $("#"+attrName+"Chart .ds-triple-toggle").remove();
   $("#"+attrName+"Chart .ds-hbar-status").text(function() {
       //let cat = attrName.charAt(0).toUpperCase() + attrName.slice(1);
       let aud = DS_VIS_STORE[attrName+"Active"][0] === 1 ? targetAud.name : targetAud2.name;
@@ -2190,8 +2207,8 @@ function addCompareToggle(attrName) {
 
 function addTripleCompareToggle(attrName) {
   $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
-  $("#"+attrName+"Chart .ds-toggle-main").css("display", "none");
-  $("#"+attrName+"Chart .ds-toggle-after").css("display", "none");
+  $("#"+attrName+"Chart .ds-toggle-main").remove();
+  //$("#"+attrName+"Chart .ds-toggle-after").remove();
   $("#"+attrName+"Chart .ds-toggle-button").append(
     "<div class='ds-triple-toggle'><div class='ds-t1'></div><div class='ds-t2'></div><div class='ds-t3'></div></div>");
   $("#"+attrName+"Chart .ds-t1").css("background-color", colorSeries1);
