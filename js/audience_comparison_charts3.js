@@ -921,6 +921,9 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     $("#"+attrName+"Chart .ds-toggle-button .ds-t1").unbind().click(function() {
           DS_VIS_STORE[attrName+"Active"] = [1,2,3]
           DS_VIS_STORE[attrName+"Colors"] = [colorSeries1, colorSeries2, colorSeries3]
+          $(this).toggleClass("active")
+          $("#"+attrName+"Chart .ds-toggle-button .ds-t2").toggleClass("active",false)
+          $("#"+attrName+"Chart .ds-toggle-button .ds-t3").toggleClass("active",false)
           changeToggleText(1);
           toggleComparisonCharts(attrName, [trans[0],trans[1],trans[2]]);
       });
@@ -928,6 +931,9 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     $("#"+attrName+"Chart .ds-toggle-button .ds-t2").unbind().click(function() {
           DS_VIS_STORE[attrName+"Active"] = [2,1,3]
           DS_VIS_STORE[attrName+"Colors"] = [colorSeries2, colorSeries1, colorSeries3]
+          $(this).toggleClass("active")
+          $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",false)
+          $("#"+attrName+"Chart .ds-toggle-button .ds-t3").toggleClass("active",false)
           changeToggleText(2);
           toggleComparisonCharts(attrName, [trans[1],trans[0],trans[2]]);
       });
@@ -936,14 +942,105 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     $("#"+attrName+"Chart .ds-toggle-button .ds-t3").unbind().click(function() {
           DS_VIS_STORE[attrName+"Active"] = [3,1,2]
           DS_VIS_STORE[attrName+"Colors"] = [colorSeries3, colorSeries1, colorSeries2]
+          $(this).toggleClass("active")
+          $("#"+attrName+"Chart .ds-toggle-button .ds-t2").toggleClass("active",false)
+          $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",false)
           changeToggleText(3);
           toggleComparisonCharts(attrName, [trans[2],trans[0],trans[1]]);
       });
 
     function toggleComparisonCharts(attrName, out) {
-        d3.select("#"+attrName+"Chart svg").remove();
-        $("#"+attrName+"Chart .ds-toggle-button .ds-triple-toggle").remove();
-        hBar3SeriesChart(attrName,out[0],out[1],out[2]);
+        //d3.select("#"+attrName+"Chart svg").remove();
+        //$("#"+attrName+"Chart .ds-toggle-button .ds-triple-toggle").remove();
+        //hBar3SeriesChart(attrName,out[0],out[1],out[2]);
+        plot = d3.select("#"+attrName+"Chart");
+        addCompHbar(plot, "series1", out[0][0], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][0]);
+        addCompHbar(plot, "series2", out[0][1], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][1]);
+        addCompHbar(plot, "series3", out[0][2], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][2]);
+        addCompHbarText(plot, "series1", out[0][0], barHeight, barPadding, maxAttrLength);
+        addCompHbarText(plot, "series2", out[0][1], barHeight, barPadding, maxAttrLength);
+        addCompHbarText(plot, "series3", out[0][2], barHeight, barPadding, maxAttrLength);
+
+        function addCompHbar(plot, series, aud, maxAttrLength, barHeight, xScale, yScale, color) {
+          // index1 = indexDs1[0];
+          // index2 = indexDs1[1];
+          // index3 = indexDs1[2];
+          console.log(JSON.stringify(aud))
+          plot.selectAll("rect."+series)
+              .data(aud)
+              .transition()
+              .duration(600)
+              .attr("class", series)
+              .attr("x", function(d) {
+                   return maxAttrLength;
+              })
+              .attr("height", barHeight)
+              .attr("y", function(d, i) {
+                   return (series == "series1") ? yScale(i) : (series == "series2") ? yScale(i) + barHeight : yScale(i) + barHeight*2;
+              })
+              .attr("width", function(d) {
+                  return xScale(d.target_pct);
+              })
+              .attr("fill", function(d) {
+                  return color;
+              })
+              .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+              .attr("attrib-category", function(d) { return d.category; })
+              .attr("target-pct", function(d) { return d.target_pct; })
+              .attr("index", function(d) { return d.index; })
+              ;
+
+        }
+
+        function addCompHbarText(plot, series, aud, barHeight, barPadding, maxAttrLength) {
+          plot.selectAll("text."+series)
+              .data(aud)
+              .transition()
+              .duration(600)
+              .text(function(d) {
+                   return formatAsInteger(d3.format("d")(d.index));
+              })
+              .attr("class", series)
+              .attr("text-anchor", "middle")
+              /* Set y position to the top edge of each bar plus half the bar width */
+              .attr("y", function(d, i) {
+                  if (series == "series1") {
+                    return (i * 3 * (barHeight + barPadding) + barHeight / 2 + barPadding * 2);
+                  } else if (series == "series2") {
+                    return (i * 3 * (barHeight + barPadding) + barHeight * 1.5 + barPadding * 2);
+                  } else {
+                    return (i * 3 * (barHeight + barPadding) + barHeight + barHeight * 1.5 + barPadding * 2);
+                  }
+
+              })
+              .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
+              .attr("font-family", "sans-serif")
+              .attr("font-size", "11px")
+              .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+        }
+
+        plot.selectAll("text.yAxis")
+               .data(out[0][0])
+               .transition()
+               .duration(600)
+               .attr("class", "series1 yAxis")
+               .text(function(d) {
+                 console.log(d.attrib_value)
+                 let yLabel = d.attrib_value;
+                 if (d.attrib_value.length > 26) {
+                   yLabel = yLabel.slice(0, 26) + "...";
+                 }
+                 return yLabel;
+               })
+               .attr("fill", function(d) {
+                   return DS_VIS_STORE[attrName+"Colors"][0];
+               })
+               .attr("text-anchor", "start")
+               /* Set y position to the top edge of each bar plus half the bar width */
+               .attr("y", function(d, i) {
+                   return (i * 3 * (barHeight + barPadding) + barHeight * 1.5 + barPadding * 2);
+               })
+               .attr("x", 66);
     }
 
 

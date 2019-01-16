@@ -334,6 +334,10 @@ body {
   display: none;
 }
 
+.ds-t1.active, .ds-t2.active, .ds-t3.active {
+    border: 2px solid gold;
+}
+
 /* .ds-toggle-button-aud {
   width: 20px;
   height: 20px;

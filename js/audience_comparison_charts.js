@@ -2275,6 +2275,7 @@ function addTripleCompareToggle(attrName) {
   $("#"+attrName+"Chart .ds-t1").css("background-color", colorSeries1);
   $("#"+attrName+"Chart .ds-t2").css("background-color", colorSeries2);
   $("#"+attrName+"Chart .ds-t3").css("background-color", colorSeries3);
+  $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",true)
   $("#"+attrName+"Chart .ds-hbar-status").text(function() {
       //let cat = attrName.charAt(0).toUpperCase() + attrName.slice(1);
       let aud = DS_VIS_STORE[attrName+"Active"][0] === 1 ? targetAud.name : DS_VIS_STORE[attrName+"Active"][0] === 2 ? targetAud2.name : targetAud3.name;
