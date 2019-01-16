@@ -747,7 +747,7 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
   	    .attr("text-anchor", "middle")
   	    /* Set y position to the top edge of each bar plus half the bar width */
   	    .attr("y", function(d, i) {
-  			     return (i * 3 * (barHeight + barPadding) + barHeight / 2 + barPadding);
+  			     return (i * 3 * (barHeight + barPadding) + barHeight / 2 + barPadding * 2);
   	    })
   	    .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
   	    //.attr("class", "xAxis")
@@ -770,7 +770,7 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("text-anchor", "middle")
         /* Set y position to the top edge of each bar plus half the bar width */
         .attr("y", function(d, i) {
-             return (i * 3 * (barHeight + barPadding) + barHeight * 1.5 + barPadding);
+             return (i * 3 * (barHeight + barPadding) + barHeight * 1.5 + barPadding * 2);
         })
         .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
         //.attr("class", "xAxis")
@@ -793,7 +793,7 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("text-anchor", "middle")
         /* Set y position to the top edge of each bar plus half the bar width */
         .attr("y", function(d, i) {
-             return (i * 3 * (barHeight + barPadding) + barHeight + barHeight * 1.5 + barPadding);
+             return (i * 3 * (barHeight + barPadding) + barHeight + barHeight * 1.5 + barPadding * 2);
         })
         .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
         //.attr("class", "xAxis")
@@ -826,7 +826,7 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
            })
   		     .attr("text-anchor", "start")
            .attr("y", function(d, i) {
-                return (i * 3 * (barHeight + barPadding) + barHeight * 1.5 + barPadding);
+                return (i * 3 * (barHeight + barPadding) + barHeight * 1.5 + barPadding * 2);
            })
   		     .attr("x", 66)
   		     .attr("class", "yAxis");
@@ -851,6 +851,66 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
   		     .attr("class", "yAxis");
 
 
+    /* Add x-axis */
+    let xAxis = d3.axisBottom(xScale)
+        .tickSize(0)
+        .ticks(5)
+        .tickFormat(function (d) { return d + "%" });
+
+    let xAxisElement = svg.append("g")
+        .attr("class", "xAxis")
+        .attr("transform", "translate(" + (margin.left - 1 + maxAttrLength) + "," + (margin.top + height - 1) + ")")
+        .call(xAxis);
+
+    /* Remove vertical and extra horizontal gridlines */
+    svg.selectAll(".domain").remove();
+
+    addTripleCompareToggle(attrName);
+
+    function changeToggleText(audNumber) {
+        $("#"+attrName+"Chart .ds-hbar-status").text(function() {
+            let aud = (audNumber === 1) ? targetAud.name : audNumber === 2 ? targetAud2.name : targetAud3.name;
+            return "Top 5 for " + aud + " (by Index)";
+
+        });
+    }
+
+    let inp = [indexDs1,indexDs2,indexDs3]
+    let idx1 = DS_VIS_STORE[attrName+"Active"].indexOf(1)
+    let idx2 = DS_VIS_STORE[attrName+"Active"].indexOf(2)
+    let idx3 = DS_VIS_STORE[attrName+"Active"].indexOf(3)
+    let trans = [inp[idx1],inp[idx2],inp[idx3]]
+
+    /* Toggle Comparison Charts on click */
+    $("#"+attrName+"Chart .ds-toggle-button .ds-t1").unbind().click(function() {
+          DS_VIS_STORE[attrName+"Active"] = [1,2,3]
+          DS_VIS_STORE[attrName+"Colors"] = [colorSeries1, colorSeries2, colorSeries3]
+          console.log(idx1, idx2, idx3)
+          changeToggleText(1);
+          toggleComparisonCharts(attrName, [trans[0],trans[1],trans[2]]);
+      });
+
+    $("#"+attrName+"Chart .ds-toggle-button .ds-t2").unbind().click(function() {
+          DS_VIS_STORE[attrName+"Active"] = [2,1,3]
+          DS_VIS_STORE[attrName+"Colors"] = [colorSeries2, colorSeries1, colorSeries3]
+          changeToggleText(2);
+          toggleComparisonCharts(attrName, [trans[1],trans[0],trans[2]]);
+      });
+
+
+    $("#"+attrName+"Chart .ds-toggle-button .ds-t3").unbind().click(function() {
+          DS_VIS_STORE[attrName+"Active"] = [3,1,2]
+          DS_VIS_STORE[attrName+"Colors"] = [colorSeries3, colorSeries1, colorSeries2]
+          console.log(trans[1])
+          changeToggleText(3);
+          toggleComparisonCharts(attrName, [trans[2],trans[0],trans[1]]);
+      });
+
+    function toggleComparisonCharts(attrName, out) {
+        d3.select("#"+attrName+"Chart svg").remove();
+        $("#"+attrName+"Chart .ds-toggle-button .ds-triple-toggle").remove();
+        hBar3SeriesChart(attrName,out[0],out[1],out[2]);
+    }
 
 
 
@@ -881,6 +941,390 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
 
 }
 
+
+/*******************************************************************************
+*** WAVE 3-SERIES CHART ********************************************************
+*******************************************************************************/
+function wave3SeriesChart(ds1, ds2, ds3) {
+
+// tooltip values
+  function makeToolTips(indexDs, attrName) {
+    let attrFullName = {
+      age: "Age",
+      gender: "Gender",
+      ethnicity: "Ethnicity",
+      marital: "Marital status",
+      children: "Number of children",
+      education: "Education",
+      income: "Income",
+      state: "Location",
+      interests: "Interests",
+      retail: "Retail"
+    };
+    let t = indexDs.map(function(row) {
+      // the white spaces are needed here to create padding, b/c plotly
+      // doesn't seem to have padding options, and allows only inline html tags
+      // in the tooltip text string
+      return "<br>    " + "    <br>    "
+        + attrFullName[attrName]
+        + " = "
+        + row['attrib_value']
+        + "    <br>    Target Pct: "
+        + row['target_pct'].toString()
+        + "%    <br>    Index: "
+        + row['index'].toString()
+        + "    <br>    ";
+    });
+    return t;
+  }
+
+  let traces1 = [];
+  let traces2 = [];
+  let traces3 = [];
+  let attrNames = Object.keys(ds1);
+
+  attrNames.forEach(function(attrName, i){
+    traces1[i] = {
+      name: attrName,
+      x: unpack(ds1[attrName], 'index'),
+      y: unpack(ds1[attrName], 'target_pct'),
+      base: unpack(ds1[attrName], 'target_pct').map(x => -x/2),
+      width: 4,
+      type: 'bar',
+      marker: {
+        color: colorSeries1,
+        opacity: 0.5
+      },
+     hovertext: makeToolTips(ds1[attrName], attrName),
+     hoverinfo: 'text',
+      hoverlabel: {
+        bgcolor: '#fff',
+        bordercolor: 'lightgrey',
+        font: {
+          family: "Open Sans",
+          size: 15,
+          color: '#333'
+        }
+      }
+    };
+
+    traces2[i] = {
+      name: attrName,
+      x: unpack(ds2[attrName], 'index'),
+      y: unpack(ds2[attrName], 'target_pct'),
+      base: unpack(ds2[attrName], 'target_pct').map(x => -x/2),
+      width: 4,
+      type: 'bar',
+      marker: {
+        color: colorSeries2,
+        opacity: 0.5
+      },
+     hovertext: makeToolTips(ds2[attrName], attrName),
+     hoverinfo: 'text',
+      hoverlabel: {
+        bgcolor: '#fff',
+        bordercolor: 'lightgrey',
+        font: {
+          family: "Open Sans",
+          size: 15,
+          color: '#333'
+        }
+      }
+    };
+
+    traces3[i] = {
+      name: attrName,
+      x: unpack(ds3[attrName], 'index'),
+      y: unpack(ds3[attrName], 'target_pct'),
+      base: unpack(ds3[attrName], 'target_pct').map(x => -x/2),
+      width: 4,
+      type: 'bar',
+      marker: {
+        color: colorSeries3,
+        opacity: 0.5
+      },
+     hovertext: makeToolTips(ds3[attrName], attrName),
+     hoverinfo: 'text',
+      hoverlabel: {
+        bgcolor: '#fff',
+        bordercolor: 'lightgrey',
+        font: {
+          family: "Open Sans",
+          size: 15,
+          color: '#333'
+        }
+      }
+    };
+
+  });
+
+  let height = 150;
+	let width = 1260;
+
+  let layout = {
+    hovermode:'closest',
+    // height: height,
+    // width: width,
+    annotations: [{
+      x: 0,
+      y: -50,
+      xref: 'x',
+      yref: 'y',
+      text: '0',
+      showarrow: false,
+    },
+    {
+      x: 500,
+      y: -50,
+      xref: 'x',
+      yref: 'y',
+      text: '500',
+      showarrow: false,
+    }],
+    xaxis: {
+      range: [0, 500],
+      showgrid: false,
+      zeroline: false,
+      showline: false,
+      autotick: true,
+      ticks: '',
+      showticklabels: false
+    },
+    yaxis: {
+      autorange: true,
+      showgrid: false,
+      zeroline: false,
+      showline: false,
+      autotick: true,
+      ticks: '',
+      showticklabels: false
+    },
+    margin: {
+      l: 10,
+      r: 10,
+      b: 0,
+      t: 0,
+      pad: 1
+    },
+    paper_bgcolor: '#fafafa',
+    plot_bgcolor: '#fafafa',
+    showlegend: false,
+    shapes: [{
+      type: 'line',
+      x0: 120,
+      y0: 0,
+      x1: 120,
+      yref: 'paper',
+      y1: 1,
+      line: {
+        color: 'grey',
+        width: 1.5,
+        dash: 'dot'
+      }
+    },
+    {
+      type: 'line',
+      x0: 80,
+      y0: 0,
+      x1: 80,
+      yref: 'paper',
+      y1: 1,
+      line: {
+        color: 'grey',
+        width: 1.5,
+        dash: 'dot'
+      }
+    },
+    {
+      type: 'line',
+      x0: 0,
+      y0: 0.25,
+      x1: 0,
+      yref: 'paper',
+      y1: 0.75,
+      line: {
+        color: 'grey',
+        width: 0.75,
+        dash: 'dot'
+      }
+    },
+    {
+      type: 'line',
+      x0: 500,
+      y0: 0.25,
+      x1: 500,
+      yref: 'paper',
+      y1: 0.75,
+      line: {
+        color: 'grey',
+        width: 0.75,
+        dash: 'dot'
+      }
+    }]
+  };
+
+  let traces = [...traces1, ...traces2, ...traces3];
+  Plotly.newPlot("waveChart", traces, layout, {displayModeBar: false, responsive: true});
+
+}
+
+
+/*******************************************************************************
+*** 3-SERIES MIKEJ CHART *******************************************************
+*******************************************************************************/
+function mikeJ3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
+
+  // sort data alphabetically by category
+  indexDs1.sort((a, b) => b.category.localeCompare(a.category));
+  indexDs2.sort((a, b) => b.category.localeCompare(a.category));
+
+  // put together tooltip values
+  function getMikeJTooltipValues(ds){
+    toolTipValuesArray = ds.map(function(row) {
+      let toolTipBoxLength = Math.max(
+        row['attrib_value'].length,
+        row['target_pct'].toString().length + 12,
+        row['index'].toString().length + 7
+      );
+      // the white spaces are needed here to create padding, b/c plotly
+      // doesn't seem to have padding options, and allows only inline html tags
+      // in the tooltip text string
+      return "<br>    " + "  ".repeat(toolTipBoxLength) +"    <br>    "
+        + row['attrib_value']
+        + "    <br>    Target Pct: "
+        + row['target_pct'].toString()
+        + "%<br>    Index: "
+        + row['index'].toString()
+        + "<br>   ";
+    });
+    return toolTipValuesArray;
+  }
+
+  let trace1 = {
+    showlegend: false,
+    x: unpack(indexDs1, 'index'),
+    y: unpack(indexDs1, 'category'),
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+      size: unpack(indexDs1, 'target_pct').map(x => Math.sqrt(x)*5),
+      color: colorSeries1,
+      opacity: 0.5,
+      line: {width: 0}
+    },
+    hovertext: getMikeJTooltipValues(indexDs1),
+    hoverinfo: 'text',
+    hoverlabel: {
+      bgcolor: '#fff',
+      bordercolor: 'lightgrey',
+      font: {
+        family: "Open Sans",
+        size: 15,
+        color: '#333'
+      }
+    }
+  };
+
+  let trace2 = {
+    showlegend: false,
+    x: unpack(indexDs2, 'index'),
+    y: unpack(indexDs2, 'category'),
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+      size: unpack(indexDs2, 'target_pct').map(x => Math.sqrt(x)*5),
+      color: colorSeries2,
+      opacity: 0.5,
+      line: {width: 0}
+    },
+    hovertext: getMikeJTooltipValues(indexDs2),
+    hoverinfo: 'text',
+    hoverlabel: {
+      bgcolor: '#fff',
+      bordercolor: 'lightgrey',
+      font: {
+        family: "Open Sans",
+        size: 15,
+        color: '#333'
+      }
+    }
+  };
+
+  let trace3 = {
+    showlegend: false,
+    x: unpack(indexDs3, 'index'),
+    y: unpack(indexDs3, 'category'),
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+      size: unpack(indexDs3, 'target_pct').map(x => Math.sqrt(x)*5),
+      color: colorSeries3,
+      opacity: 0.5,
+      line: {width: 0}
+    },
+    hovertext: getMikeJTooltipValues(indexDs3),
+    hoverinfo: 'text',
+    hoverlabel: {
+      bgcolor: '#fff',
+      bordercolor: 'lightgrey',
+      font: {
+        family: "Open Sans",
+        size: 15,
+        color: '#333'
+      }
+    }
+  };
+
+
+  // calculate chart height based on the number of distinct categories
+//  let allCats = [...new Set( unpack(indexDs, 'category') )];
+  let allCats = [...new Set( [...unpack(indexDs1, 'category'), ...unpack(indexDs2, 'category')] )];
+  let height = allCats.length * 58;
+	let width = 1260;
+  let margin = 40;
+
+  // update the tile height to fit in the chart
+  $("#"+attrName+"DetailChart").parent().css("height", height + margin);
+
+
+  let layout = {
+    hovermode:'closest',
+    // height: height,
+    // width: width,
+    xaxis: {
+      range: [ 0, 520 ],
+      title: 'index'
+    },
+    yaxis: {
+      type: 'category'
+    },
+    margin: {
+      l: 140,
+      r: 40,
+      b: 100,
+      t: 20,
+      pad: 4
+    },
+    paper_bgcolor: '#fafafa',
+    plot_bgcolor: '#fafafa',
+    shapes: [{
+      type: 'line',
+      x0: 120,
+      y0: 0,
+      x1: 120,
+      yref: 'paper',
+      y1: 1,
+      line: {
+        color: 'grey',
+        width: 1.5,
+        dash: 'dot'
+      }
+    }]
+  };
+
+  let chartName = attrName+"DetailChart";
+  Plotly.newPlot(chartName, [trace1, trace2, trace3], layout, {displayModeBar: false, responsive: true});
+}
 
 
 
@@ -972,10 +1416,12 @@ function drawComparisonCharts3() {
   let stateIndexTop1 = indexStatesTop5(stateIndex1, stateIndex2, stateIndex3);
   let stateIndexTop2 = indexStatesTop5(stateIndex2,stateIndex1, stateIndex3);
   let stateIndexTop3 = indexStatesTop5(stateIndex3,stateIndex1, stateIndex2);
-  let interestsIndexTop1 = indexInterestsRetailTop5(interestsIndex1,interestsIndex2);
-  let interestsIndexTop2 = indexInterestsRetailTop5(interestsIndex2,interestsIndex1);
-  let retailIndexTop1 = indexInterestsRetailTop5(retailIndex1, retailIndex2);
-  let retailIndexTop2 = indexInterestsRetailTop5(retailIndex2, retailIndex1);
+  let interestsIndexTop1 = indexInterestsRetailTop5(interestsIndex1,interestsIndex2,interestsIndex3);
+  let interestsIndexTop2 = indexInterestsRetailTop5(interestsIndex2,interestsIndex1,interestsIndex3);
+  let interestsIndexTop3 = indexInterestsRetailTop5(interestsIndex3,interestsIndex1,interestsIndex2);
+  let retailIndexTop1 = indexInterestsRetailTop5(retailIndex1, retailIndex2, retailIndex3);
+  let retailIndexTop2 = indexInterestsRetailTop5(retailIndex2, retailIndex1, retailIndex3);
+  let retailIndexTop3 = indexInterestsRetailTop5(retailIndex3, retailIndex1, retailIndex2);
 
     let indexes1 = {
       age: ageIndex1,
@@ -985,9 +1431,9 @@ function drawComparisonCharts3() {
       children: childrenIndex1,
       education: educationIndex1,
       income: incomeIndex1,
-      state: stateIndex1
-      // interests: interestsIndexTop1[0],
-      // retail: retailIndexTop1[0]
+      state: stateIndex1,
+      interests: interestsIndexTop1[0],
+      retail: retailIndexTop1[0]
     };
     let indexes2 = {
       age: ageIndex2,
@@ -997,9 +1443,9 @@ function drawComparisonCharts3() {
       children: childrenIndex2,
       education: educationIndex2,
       income: incomeIndex2,
-      state: stateIndex2
-      // interests: interestsIndexTop2[0],
-      // retail: retailIndexTop2[0]
+      state: stateIndex2,
+      interests: interestsIndexTop2[0],
+      retail: retailIndexTop2[0]
     };
     let indexes3 = {
       age: ageIndex3,
@@ -1009,35 +1455,35 @@ function drawComparisonCharts3() {
       children: childrenIndex3,
       education: educationIndex3,
       income: incomeIndex3,
-      state: stateIndex3
-      // interests: interestsIndexTop3[0],
-      // retail: retailIndexTop3[0]
+      state: stateIndex3,
+      interests: interestsIndexTop3[0],
+      retail: retailIndexTop3[0]
     };
 
-    // wave3SeriesChart(indexes1, indexes2, indexes3);
+    wave3SeriesChart(indexes1, indexes2, indexes3);
 
-    // var myPlot = document.getElementById('waveChart');
-    // myPlot.on('plotly_click', function(data){
-    //   let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
-    //   d[0] = d[0][0].toLowerCase() + d[0].slice(1)
-    //   let mapping = {
-    //     "number of children": "children",
-    //     "age": "age",
-    //     "ethnicity": "ethnicity",
-    //     "gender": "gender",
-    //     "marital status": "marital",
-    //     "education": "education",
-    //     "income": "income",
-    //     "location": "state",
-    //     "interests": "interests",
-    //     "retail": "retail"
-    //   }
-    //
-    //
-    //   document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
-    //   $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
-    //   setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-    // });
+    var myPlot = document.getElementById('waveChart');
+    myPlot.on('plotly_click', function(data){
+      let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+      d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+      let mapping = {
+        "number of children": "children",
+        "age": "age",
+        "ethnicity": "ethnicity",
+        "gender": "gender",
+        "marital status": "marital",
+        "education": "education",
+        "income": "income",
+        "location": "state",
+        "interests": "interests",
+        "retail": "retail"
+      }
+
+
+      document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+      $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+      setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+    });
 
     bar3SeriesChart("age", ageIndex1, ageIndex2, ageIndex3);
     add3SeriesStat("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
@@ -1051,11 +1497,11 @@ function drawComparisonCharts3() {
     hBar3ParallelChart("marital", maritalIndex1, maritalIndex2, maritalIndex3);
 
     (DS_VIS_STORE["stateActive"][0] === 1) ? hBar3SeriesChart("state", stateIndexTop1, stateIndexTop2, stateIndexTop3) : hBar3SeriesChart("state", stateIndexTop2, stateIndexTop1, stateIndexTop3);
-    // (DS_VIS_STORE["interestsActive"][0] === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
-    // (DS_VIS_STORE["retailActive"][0] === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
+    (DS_VIS_STORE["interestsActive"][0] === 1) ? hBar3SeriesChart("interests", interestsIndexTop1, interestsIndexTop2, interestsIndexTop3) : hBar3SeriesChart("interests", interestsIndexTop2, interestsIndexTop1, interestsIndexTop3);
+    (DS_VIS_STORE["retailActive"][0] === 1) ? hBar3SeriesChart("retail", retailIndexTop1, retailIndexTop2, retailIndexTop3) : hBar3SeriesChart("retail", retailIndexTop2, retailIndexTop1, retailIndexTop3);
 
     $( ".tile" ).removeClass("selected-tile");
 
-    // mikeJ2SeriesChart('interests', interestsIndex1, interestsIndex2);
-    // mikeJ2SeriesChart('retail', retailIndex1, retailIndex2);
+    mikeJ3SeriesChart('interests', interestsIndex1, interestsIndex2, interestsIndex3);
+    mikeJ3SeriesChart('retail', retailIndex1, retailIndex2, retailIndex3);
 }

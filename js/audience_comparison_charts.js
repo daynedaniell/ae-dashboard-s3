@@ -787,7 +787,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
   let localColor1 = DS_VIS_STORE[attrName+"Colors"][0],
       localColor2 = DS_VIS_STORE[attrName+"Colors"][1];
 
-  let innerWidth = 630;
+  let innerWidth = 700;
 
   let basics = barChartSetup(innerWidth);
   let margin = basics.margin,
@@ -2185,5 +2185,29 @@ function addCompareToggle(attrName) {
   });
   $("#"+attrName+"Chart .ds-toggle-after").css("background-color", DS_VIS_STORE[attrName+"Colors"][0]);
 
+
+}
+
+function addTripleCompareToggle(attrName) {
+  $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
+  $("#"+attrName+"Chart .ds-toggle-main").css("display", "none");
+  $("#"+attrName+"Chart .ds-toggle-after").css("display", "none");
+  $("#"+attrName+"Chart .ds-toggle-button").append(
+    "<div class='ds-triple-toggle'><div class='ds-t1'></div><div class='ds-t2'></div><div class='ds-t3'></div></div>");
+  $("#"+attrName+"Chart .ds-t1").css("background-color", colorSeries1);
+  $("#"+attrName+"Chart .ds-t2").css("background-color", colorSeries2);
+  $("#"+attrName+"Chart .ds-t3").css("background-color", colorSeries3);
+  $("#"+attrName+"Chart .ds-hbar-status").text(function() {
+      //let cat = attrName.charAt(0).toUpperCase() + attrName.slice(1);
+      let aud = DS_VIS_STORE[attrName+"Active"][0] === 1 ? targetAud.name : DS_VIS_STORE[attrName+"Active"][0] === 2 ? targetAud2.name : targetAud3.name;
+      if (attrName === "interests") {
+          return "Top 5 for " + aud + " (by Index)";
+      } else if (attrName === "state") {
+          return "Top 5 for " + aud + " (by Index)";
+      } else {
+          return "Top 5 for " + aud + " (by Index)";
+      }
+
+  });
 
 }

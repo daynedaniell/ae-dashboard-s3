@@ -104,6 +104,7 @@ ul.ds-nav {
     display: grid;
     grid-gap: 10px;
     padding: 0 30px;
+    margin-bottom: 100px;
 }
 
 .ds-audience-header {
@@ -377,6 +378,17 @@ body {
 
 .toggle-label-off {
   color: #eee;
+}
+
+.ds-triple-toggle {
+  width: 150px;
+  height: 25px;
+}
+
+.ds-triple-toggle div {
+  height: 25px;
+  width: 25px;
+  float: left;
 }
 
 .active {

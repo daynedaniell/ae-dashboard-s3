@@ -1,8 +1,8 @@
 let DS_VIS_STORE = {
     activeFilter: null,
-    stateActive: [1,2],
-    interestsActive: [1,2],
-    retailActive: [1,2],
+    stateActive: [1,2,3],
+    interestsActive: [1,2,3],
+    retailActive: [1,2,3],
     activeView: "single",
     scaleWeight: 1
 }

@@ -270,7 +270,7 @@ function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
 
 
 /* for interests/retail, get the max indexing item for each category, and pick top 5 among that list */
-function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
+function indexInterestsRetailTop5(indexDs, indexDs2 = null, indexDs3 = null) {
   let f = indexDs.filter((d) => ( d.index <= 500 && d.target_pct >= 5))
 
   let a = d3.nest()
@@ -292,13 +292,19 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
           comp = indexDs2.filter(function(d2) { return d2.attrib_value === d.value.attrib_value })
         }
 
+        if (indexDs3 != null) {
+          comp2 = indexDs3.filter(function(d3) { return d3.attrib_value === d.value.attrib_value })
+        }
+
         return {
           category: d.key,
           attrib_value: d.value.attrib_value,
           target_pct: d.value.target_pct,
           index: d.value.index,
           compare_pct: (indexDs2 != null && comp[0] != undefined) ? comp[0].target_pct : 0,
-          compare_index: (indexDs2 != null && comp[0] != undefined) ? comp[0].index : 0
+          compare_index: (indexDs2 != null && comp[0] != undefined) ? comp[0].index : 0,
+          compare2_pct: (indexDs3 != null && comp2[0] != undefined) ? comp2[0].target_pct : 0,
+          compare2_index: (indexDs3 != null && comp2[0] != undefined) ? comp2[0].index : 0
         }
     })
     .sort(function(a,b){
@@ -310,6 +316,7 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
     })
     .slice(0, 5);
 
+
     if (indexDs2 != null) {
         let c = a.map(function(d) {
             return {
@@ -320,8 +327,22 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null) {
               index: d.compare_index
             }
         })
+        if (indexDs3 != null) {
+            let c2 = a.map(function(d) {
+                return {
+                  category: d.category,
+                  attrib_value: d.attrib_value,
+                  target_pct: d.compare2_pct,
+                  random_pct: d.random_pct,
+                  index: d.compare2_index
+                }
+            });
+            console.log(JSON.stringify([a, c, c2]))
+            return [a, c, c2]
+        } else {
+          return [a, c]
+        }
 
-        return [a, c];
     } else {
       return a;
     }
