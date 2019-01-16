@@ -885,7 +885,6 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     $("#"+attrName+"Chart .ds-toggle-button .ds-t1").unbind().click(function() {
           DS_VIS_STORE[attrName+"Active"] = [1,2,3]
           DS_VIS_STORE[attrName+"Colors"] = [colorSeries1, colorSeries2, colorSeries3]
-          console.log(idx1, idx2, idx3)
           changeToggleText(1);
           toggleComparisonCharts(attrName, [trans[0],trans[1],trans[2]]);
       });
@@ -901,7 +900,6 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     $("#"+attrName+"Chart .ds-toggle-button .ds-t3").unbind().click(function() {
           DS_VIS_STORE[attrName+"Active"] = [3,1,2]
           DS_VIS_STORE[attrName+"Colors"] = [colorSeries3, colorSeries1, colorSeries2]
-          console.log(trans[1])
           changeToggleText(3);
           toggleComparisonCharts(attrName, [trans[2],trans[0],trans[1]]);
       });
@@ -1410,8 +1408,6 @@ function drawComparisonCharts3() {
   let stateIndex3 = indexAttr("state", indexCats.state, targetDemog3, randomDemog);
   let interestsIndex3 = indexInterestsRetail("interests", targetInterests3, randomInterests);
   let retailIndex3 = indexInterestsRetail("retail", targetRetail3, randomRetail);
-
-  console.log('ageIndex3' + JSON.stringify(ageIndex3))
 
   let stateIndexTop1 = indexStatesTop5(stateIndex1, stateIndex2, stateIndex3);
   let stateIndexTop2 = indexStatesTop5(stateIndex2,stateIndex1, stateIndex3);

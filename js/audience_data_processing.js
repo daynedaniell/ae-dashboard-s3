@@ -337,7 +337,6 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null, indexDs3 = null) {
                   index: d.compare2_index
                 }
             });
-            console.log(JSON.stringify([a, c, c2]))
             return [a, c, c2]
         } else {
           return [a, c]
@@ -352,8 +351,6 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null, indexDs3 = null) {
 
 function indexStatesTop5(indexDs1, indexDs2, indexDs3 = null) {
   let triple = indexDs3 != null;
-  console.log("triple")
-  console.log(triple)
   let a = [...indexDs1].filter( d => ( d["random_pct"] > 0 ) )
                       .sort(function(a,b){
                         if ( b.index != a.index ){
@@ -395,7 +392,6 @@ function indexStatesTop5(indexDs1, indexDs2, indexDs3 = null) {
           index: d.compare2_index,
         }
       });
-      console.log(JSON.stringify([a, c, c2]))
       return [a, c, c2]
   }
 

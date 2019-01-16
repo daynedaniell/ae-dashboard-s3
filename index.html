@@ -275,7 +275,6 @@
 */
         async function f(audIds) {
             // setting these as globals for now
-            console.log('ids' + audIds);
             if (audIds.length > 0 & audIds.length <= 3) {
 
               randomDemog = await d3.tsv("data/random_audience/demographics_random.tsv");
@@ -299,7 +298,6 @@
 
                   drawComparisonCharts();
               } else if (audIds.length == 3) {
-                  console.log("Three")
                   targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
                   targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
                   targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
@@ -316,6 +314,8 @@
             }
         }
 
+        /* NOTE: This will NOT be needed in AE, we will need an implementation
+          to retrive the selected audiences */
         $(document).ready(function(){
           $(".ds-audience-selection-form").change(function(){
             let selectedAudiences =
@@ -324,10 +324,8 @@
                 .get();
 
             if (selectedAudiences.length > 0 & selectedAudiences.length <= 3) {
-              console.log(selectedAudiences)
               f(selectedAudiences);
             } else {
-              //console.log(DS_VIS_STORE)
               //$(this).after("<p class='ds-audience-select-alert'><em>Please select an audience!</em></p>");
               //$(".ds-active-filters").css("top", "400px")
               //alert("Please select 1 or 2 audiences for visualization.");
