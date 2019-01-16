@@ -2209,8 +2209,10 @@ function addTripleCompareToggle(attrName) {
   $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
   $("#"+attrName+"Chart .ds-toggle-main").remove();
   //$("#"+attrName+"Chart .ds-toggle-after").remove();
-  $("#"+attrName+"Chart .ds-toggle-button").append(
-    "<div class='ds-triple-toggle'><div class='ds-t1'></div><div class='ds-t2'></div><div class='ds-t3'></div></div>");
+  if ($("#"+attrName+"Chart .ds-triple-toggle").length === 0) {
+    $("#"+attrName+"Chart .ds-toggle-button").append(
+      "<div class='ds-triple-toggle'><div class='ds-t1'></div><div class='ds-t2'></div><div class='ds-t3'></div></div>");
+  }
   $("#"+attrName+"Chart .ds-t1").css("background-color", colorSeries1);
   $("#"+attrName+"Chart .ds-t2").css("background-color", colorSeries2);
   $("#"+attrName+"Chart .ds-t3").css("background-color", colorSeries3);
