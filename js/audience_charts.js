@@ -1221,22 +1221,19 @@ function drawCharts() {
       "interests": "interests",
       "retail": "retail"
     }
-
     document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
     $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
     setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-
-
   });
 
   barChart("age", ageIndex0);
-  addStat("age", ageMedianCat, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
+  addStat("age", ageMedianCat, prefix = "Median: ", suffix = " years");
   barChart("ethnicity", ethnicityIndex0);
   barChart("children", childrenIndex0);
-  addStat("children", childrenNonZeroPct, prefix = "<strong>Child present: </strong>", suffix = "%");
+  addStat("children", childrenNonZeroPct, prefix = "Child present: ", suffix = "%");
   barChart("education", educationIndex0);
   barChart("income", incomeIndex0);
-  addStat("income", incomeMedianCat, prefix = "<strong>Median: </strong>");
+  addStat("income", incomeMedianCat, prefix = "Median: ");
   pieChart("gender", genderIndex0);
   pieChart("marital", maritalIndex0);
   mapChart("state", stateIndex0);
@@ -1519,13 +1516,13 @@ function updateCharts(attrName, attrValue) {
       if (attrName != demogAttributeListName) {
         if (demogAttributeListName == "age") {
             let ageMedianCat = getMedianCategory(attrIndex);
-            addStat("age", ageMedianCat, prefix = "<strong>Median: </strong>", suffix = " years");
+            addStat("age", ageMedianCat, prefix = "Median: ", suffix = " years");
         } else if (demogAttributeListName == "children") {
             let childrenNonZeroPct = getNonZeroPct(attrIndex);
-            addStat("children", childrenNonZeroPct, prefix = "<strong>Child present: </strong>", suffix = "%");
+            addStat("children", childrenNonZeroPct, prefix = "Child present: ", suffix = "%");
         } else if (demogAttributeListName == "income") {
             let incomeMedianCat = getMedianCategory(attrIndex);
-            addStat("income", incomeMedianCat, prefix = "<strong>Median: </strong>");
+            addStat("income", incomeMedianCat, prefix = "Median: ");
         }
       }
 
@@ -1643,6 +1640,27 @@ function updateCharts(attrName, attrValue) {
 
   // update the wave chart
   waveChart(indexes);
+
+  let myPlot = document.getElementById('waveChart');
+  myPlot.on('plotly_click', function(data){
+    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+    let mapping = {
+      "number of children": "children",
+      "age": "age",
+      "ethnicity": "ethnicity",
+      "gender": "gender",
+      "marital status": "marital",
+      "education": "education",
+      "income": "income",
+      "location": "state",
+      "interests": "interests",
+      "retail": "retail"
+    }
+    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+  });
 
 
 

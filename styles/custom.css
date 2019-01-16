@@ -12,6 +12,10 @@ main {
     color: #252937;
 }
 
+h4.ds-chart-title {
+  font-size: 22px;
+}
+
 .ds-grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -119,12 +123,14 @@ ul.ds-nav {
     grid-gap: 30px;
     justify-content: space-evenly;
     margin-bottom: 30px;
+    padding: 10px;
 }
 
 .ds-grid-charts-big {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
     grid-gap: 30px;
+    padding: 10px;
 }
 
 .ds-grid-full {
@@ -195,9 +201,13 @@ ul.ds-nav {
 .tile-header .ds-stats strong {
     font-size: 1.1em;
 }
-.tile-header .ds-stats .ds-stat-2, .tile-header .ds-stats .ds-stat-3 {
-  clear: both;
-  float: right;
+.tile-header .ds-stats .ds-stat-1, .tile-header .ds-stats .ds-stat-2, .tile-header .ds-stats .ds-stat-3 {
+  float: left;
+}
+.tile-header .ds-stats .ds-stats-name {
+  float: left;
+  color: #505050;
+  margin-right: 3px;
 }
 
 .selected-tile {
@@ -309,7 +319,7 @@ body {
 }
 
 .ds-stats {
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .ds-hbar-status {

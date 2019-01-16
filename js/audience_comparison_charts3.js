@@ -1,5 +1,5 @@
 /*******************************************************************************
-*** ADD 2-SERIES STATS *********************************************************
+*** ADD 3-SERIES STATS *********************************************************
 *******************************************************************************/
 function add3SeriesStat(attrName, stat1, stat2, stat3, prefix='', suffix='') {
   // remove existing stats, if any
@@ -11,13 +11,15 @@ function add3SeriesStat(attrName, stat1, stat2, stat3, prefix='', suffix='') {
   // add in stats
   $( "#" + attrName + "Chart" )
     .prev(".tile-header")
-    .append("<div class='ds-stats'><div class='ds-stat-1'>"
-            + prefix + stat1 + suffix
-            + "</div><div class='ds-stat-2'>"
+    .append("<div class='ds-stats'><span class='ds-stats-name'>"
+            + prefix
+            + "</span><span class='ds-stat-1'>"
+            + stat1 + suffix
+            + "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-2'>"
             + stat2 + suffix
-            + "</div><div class='ds-stat-3'>"
+            + "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-3'>"
             + stat3 + suffix
-            + "</div></div>");
+            + "</span></div>");
 
   // color code the stats
   $("#" + attrName + "Chart").prev(".tile-header")
@@ -38,9 +40,9 @@ function bar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     	  innerWidth = 610;
     }
     let heightOffset = 0;
-    if (["age", "children", "income"].includes(attrName)) {
-      heightOffset = 20;
-    }
+    // if (["age", "children", "income"].includes(attrName)) {
+    //   heightOffset = 20;
+    // }
 
     let basics = barChartSetup(innerWidth);
   	let margin = basics.margin,
@@ -376,7 +378,12 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     let barHeight = height / 8;
-    let topPos = height / 4;
+    let paddingBottom = 30;
+    let barSpacing = 40;
+    let topPos = height - ((barHeight + barSpacing) * 3 + paddingBottom);
+    let lineStroke = 'steelblue';
+    let lineExtend = 12;
+    let lineStrokeWidth = 3;
 
     /* Attach index data and add the chart elems */
     /* 1st series */
@@ -397,7 +404,6 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .on("mousemove", mouseover)
         .attr("target-pct", function(d) { return d.target_pct; })
         .attr("index", function(d) { return d.index; })
-        .attr("stroke", "white")
         .on("click", up);
 
     plot.selectAll("rect.series2")
@@ -407,7 +413,7 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("class", "series2")
         .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
         .attr("width", function(d) { return xScale(d.target_pct)})
-        .attr("y", topPos + 30 + barHeight)
+        .attr("y", topPos + barSpacing + barHeight)
         .attr("height", function(d) { return barHeight ; })
         .attr("fill", colorSeries2)
         .attr("cursor", "pointer")
@@ -417,7 +423,6 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .on("mousemove", mouseover)
         .attr("target-pct", function(d) { return d.target_pct; })
         .attr("index", function(d) { return d.index; })
-        .attr("stroke", "white")
         .on("click", up);
 
     plot.selectAll("rect.series3")
@@ -427,7 +432,7 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("class", "series3")
         .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
         .attr("width", function(d) { return xScale(d.target_pct)})
-        .attr("y", topPos + 60 + barHeight*2)
+        .attr("y", topPos + barSpacing * 2 + barHeight*2)
         .attr("height", function(d) { return barHeight ; })
         .attr("fill", colorSeries3)
         .attr("cursor", "pointer")
@@ -437,8 +442,7 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .on("mousemove", mouseover)
         .attr("target-pct", function(d) { return d.target_pct; })
         .attr("index", function(d) { return d.index; })
-        .attr("stroke", "white")
-        .on("click", up);
+        .on("click", up)
 
     plot.selectAll("text.series1")
         .data(indexDs1)
@@ -471,7 +475,7 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("text-anchor", "middle")
         /* Set x position to the left edge of each bar plus half the bar width */
         .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
-        .attr("y", function(d) { return topPos + 33 + barHeight + (barHeight/2)})
+        .attr("y", function(d) { return topPos + barSpacing + 3 + barHeight + (barHeight/2)})
         .attr("class", "yAxis")
         .attr("font-family", "sans-serif")
     //    .attr("font-size", "8px")
@@ -491,7 +495,7 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("text-anchor", "middle")
         /* Set x position to the left edge of each bar plus half the bar width */
         .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
-        .attr("y", function(d) { return topPos + 63 + barHeight*2 + (barHeight/2)})
+        .attr("y", function(d) { return topPos + barSpacing * 2 + 3 + barHeight*2 + (barHeight/2)})
         .attr("class", "yAxis")
         .attr("font-family", "sans-serif")
     //    .attr("font-size", "8px")
@@ -511,19 +515,52 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("text-anchor", function(d, i) { return i ? "end" : "start";})
         /* Set x position to the left edge of each bar plus half the bar width */
         .attr("x",  function(d, i) { return i ? xScale(100 ) : 0})
-        .attr("y", function(d) { return topPos - 30 + (barHeight/2)})
+        .attr("y", function(d) { return topPos - 30})
         .attr("class", "yAxis")
         .attr("font-family", "sans-serif")
-        .attr("font-size", "24px")
+        .attr("font-size", "20px")
         .attr("fill", "#505050")
         .on("mouseover", mouseover)
         .on("mouseout", mouseup)
         .on("mousemove", mouseover);
 
+    var lineData1 = [{"x": xScale(indexDs1[0].target_pct), "y": topPos - lineExtend},
+                    {"x": xScale(indexDs1[0].target_pct), "y": topPos + barHeight + lineExtend}]
+
+    var line1 = d3.line()
+                 .x(function(d) {return d.x})
+                 .y(function(d) {return d.y});
+
+    var path1 = plot.append('path').attr('d', line1(lineData1)).attr("stroke", lineStroke)
+        .attr("stroke-width", lineStrokeWidth)
+        .attr("fill", "none");
+
+    var lineData2 = [{"x": xScale(indexDs2[0].target_pct), "y": topPos + barSpacing + barHeight - lineExtend},
+                    {"x": xScale(indexDs2[0].target_pct), "y": topPos + barSpacing + barHeight + barHeight + lineExtend}]
+
+    var line2 = d3.line()
+                 .x(function(d) {return d.x})
+                 .y(function(d) {return d.y});
+
+    var path2 = plot.append('path').attr('d', line2(lineData2)).attr("stroke", lineStroke)
+        .attr("stroke-width", lineStrokeWidth)
+        .attr("fill", "none");
+
+    var lineData3 = [{"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 - lineExtend},
+                    {"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 + barHeight + lineExtend}]
+
+    var line3 = d3.line()
+                 .x(function(d) {return d.x})
+                 .y(function(d) {return d.y});
+
+    var path3 = plot.append('path').attr('d', line3(lineData3)).attr("stroke", lineStroke)
+        .attr("stroke-width", lineStrokeWidth)
+        .attr("fill", "none");
+
     /* Add x-axis */
     let xAxis = d3.axisBottom(xScale)
         //.ticks(3)
-        .tickSize(5)
+        .tickSize(0)
         .tickValues(d3.range(0, 101, 25))
         .tickFormat(function (d) { return d + "%" });
 
@@ -531,6 +568,9 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("class", "xAxis")
         .attr("transform", "translate(" + (margin.left) + "," + (margin.top + height - 1) + ")")
         .call(xAxis);
+
+    /* Remove the axis line */
+    svg.selectAll(".domain").remove();
 
 
 
@@ -552,26 +592,22 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
     }
 
     function mouseover(d) {
-      // let ttipsvg = d3.select("#"+attrName+"Chart").node()
-      // let bound = ttipsvg.getBoundingClientRect();
-      let tipX = d3.mouse(this)[0] + 70;//d3.event.clientX - bound.x + 30;
-      let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
-      if (width - tipX < 50) {
-          tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
+      let e = window.event;
+      var x = e.clientX,
+          y = e.clientY;
+
+      let tipY = (y - 60) + 'px';
+      let tipX = (x) + 'px';
+      if  (window.innerWidth - x < 200) {
+        tipX = (x - 130) + 'px';
       }
-      // let e = window.event;
-      // var x = e.clientX,
-      //     y = e.clientY;
-      //
-      // let tipY = (y - 40) + 'px';
-      // let tipX = (x) + 'px';
 
       tooltip.transition()
           .duration(200)
       tooltip.html(d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
           .style("opacity", .9)
-          .style('left', `${(tipX)}px`)
-          .style('top', `${(tipY)}px`);
+          .style('left', `${(tipX)}`)
+          .style('top', `${(tipY)}`);
     }
 
     function mouseup(d) {
@@ -987,7 +1023,7 @@ function wave3SeriesChart(ds1, ds2, ds3) {
       x: unpack(ds1[attrName], 'index'),
       y: unpack(ds1[attrName], 'target_pct'),
       base: unpack(ds1[attrName], 'target_pct').map(x => -x/2),
-      width: 4,
+      width: 3,
       type: 'bar',
       marker: {
         color: colorSeries1,
@@ -1011,7 +1047,7 @@ function wave3SeriesChart(ds1, ds2, ds3) {
       x: unpack(ds2[attrName], 'index'),
       y: unpack(ds2[attrName], 'target_pct'),
       base: unpack(ds2[attrName], 'target_pct').map(x => -x/2),
-      width: 4,
+      width: 3,
       type: 'bar',
       marker: {
         color: colorSeries2,
@@ -1035,7 +1071,7 @@ function wave3SeriesChart(ds1, ds2, ds3) {
       x: unpack(ds3[attrName], 'index'),
       y: unpack(ds3[attrName], 'target_pct'),
       base: unpack(ds3[attrName], 'target_pct').map(x => -x/2),
-      width: 4,
+      width: 3,
       type: 'bar',
       marker: {
         color: colorSeries3,
@@ -1474,21 +1510,19 @@ function drawComparisonCharts3() {
         "interests": "interests",
         "retail": "retail"
       }
-
-
       document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
       $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
       setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
     });
 
     bar3SeriesChart("age", ageIndex1, ageIndex2, ageIndex3);
-    add3SeriesStat("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
+    add3SeriesStat("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
     bar3SeriesChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3);
     bar3SeriesChart("children", childrenIndex1, childrenIndex2, childrenIndex3);
-    add3SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "<span style='color: #000;'><strong>Child present: </strong></span>", suffix = "%");
+    add3SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
     bar3SeriesChart("education", educationIndex1, educationIndex2, educationIndex3);
     bar3SeriesChart("income", incomeIndex1, incomeIndex2, incomeIndex3);
-    add3SeriesStat("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "<span style='color: #000;'><strong>Median: </strong></span>");
+    add3SeriesStat("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
     hBar3ParallelChart("gender", genderIndex1, genderIndex2, genderIndex3);
     hBar3ParallelChart("marital", maritalIndex1, maritalIndex2, maritalIndex3);
 
@@ -1642,17 +1676,17 @@ function update3ComparisonCharts(attrName, attrValue) {
                 let ageMedianCat1 = getMedianCategory(attrIndex1);
                 let ageMedianCat2 = getMedianCategory(attrIndex2);
                 let ageMedianCat3 = getMedianCategory(attrIndex3);
-                add3SeriesStat("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "<span style='color: #000;'><strong>Median: </strong></span>", suffix = " years");
+                add3SeriesStat("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
             } else if (demogAttributeListName == "children") {
                 let childrenNonZeroPct1 = getNonZeroPct(attrIndex1);
                 let childrenNonZeroPct2 = getNonZeroPct(attrIndex2);
                 let childrenNonZeroPct3 = getNonZeroPct(attrIndex3);
-                add3SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "<span style='color: #000;'><strong>Child present: </strong></span>", suffix = "%");
+                add3SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child present: ", suffix = "%");
             } else if (demogAttributeListName == "income") {
                 let incomeMedianCat1 = getMedianCategory(attrIndex1);
                 let incomeMedianCat2 = getMedianCategory(attrIndex2);
                 let incomeMedianCat3 = getMedianCategory(attrIndex3);
-                add3SeriesStat("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "<span style='color: #000;'><strong>Median: </strong></span>");
+                add3SeriesStat("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
             }
         }
 
@@ -1862,6 +1896,27 @@ function update3ComparisonCharts(attrName, attrValue) {
 
     // update the wave chart
     wave3SeriesChart(indexes1, indexes2, indexes3);
+
+    var myPlot = document.getElementById('waveChart');
+    myPlot.on('plotly_click', function(data){
+      let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+      d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+      let mapping = {
+        "number of children": "children",
+        "age": "age",
+        "ethnicity": "ethnicity",
+        "gender": "gender",
+        "marital status": "marital",
+        "education": "education",
+        "income": "income",
+        "location": "state",
+        "interests": "interests",
+        "retail": "retail"
+      }
+      document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+      $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+      setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+    });
 
     /* Make the elems in selected chart opaque, except for the clicked chart elem */
     d3.selectAll("#" + attrName + "Chart svg rect")
