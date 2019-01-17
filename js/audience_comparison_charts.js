@@ -1611,7 +1611,7 @@ function mikeJ2SeriesChart(attrName, indexDs1, indexDs2) {
     // height: height,
     // width: width,
     xaxis: {
-      range: [ 0, 520 ],
+      range: [ 0, 320 ],
       title: 'index'
     },
     yaxis: {
@@ -1682,13 +1682,13 @@ function addMultipleAudienceTitles(targetAud1, targetAud2, targetAud3 = null) {
   // remove existing titles, if any
   $( ".ds-audience-title h1" ).remove();
 
-  let threeString = (targetAud3 != null) ? (" VS <span class= 'ds-aud-title-3'>" + targetAud3.name + "</span>") : '';
+  let threeString = (targetAud3 != null) ? ("<div class= 'ds-aud-title-3'> <span style='color:#505050;'> VS </span>" + targetAud3.name + "</div>") : '';
   // add titles
   $( ".ds-audience-title" )
-    .append("<h1><span class= 'ds-aud-title-1'>"
+    .append("<h1><div class= 'ds-aud-title-1'>"
       + targetAud1.name
-      + "</span> VS <span class= 'ds-aud-title-2'>"
-      + targetAud2.name + "</span>"
+      + "</div>  <div class= 'ds-aud-title-2'> <span style='color:#505050'> VS </span> "
+      + targetAud2.name + "</div>"
       + threeString
       + "</h1>");
 
@@ -2275,7 +2275,9 @@ function addTripleCompareToggle(attrName) {
   $("#"+attrName+"Chart .ds-t1").css("background-color", colorSeries1);
   $("#"+attrName+"Chart .ds-t2").css("background-color", colorSeries2);
   $("#"+attrName+"Chart .ds-t3").css("background-color", colorSeries3);
-  $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",true)
+  if (DS_VIS_STORE[attrName+"Active"][0] == 1) {
+      $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",true);
+  }
   $("#"+attrName+"Chart .ds-hbar-status").text(function() {
       //let cat = attrName.charAt(0).toUpperCase() + attrName.slice(1);
       let aud = DS_VIS_STORE[attrName+"Active"][0] === 1 ? targetAud.name : DS_VIS_STORE[attrName+"Active"][0] === 2 ? targetAud2.name : targetAud3.name;

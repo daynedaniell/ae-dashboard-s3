@@ -983,7 +983,7 @@ function mikeJChart(attrName, indexDs) {
     // height: height,
     // width: width,
     xaxis: {
-      range: [ 0, 520 ],
+      range: [ 0, 320 ],
       title: 'index'
     },
     yaxis: {

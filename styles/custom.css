@@ -220,9 +220,19 @@ ul.ds-nav {
   display: block;
 }
 
+/* .ds-audience-title {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+} */
 
 .ds-audience-title h1 {
     font-weight: bold;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.ds-aud-title-2, .ds-aud-title-3 {
+  margin-left: 15px;
 }
 
 

@@ -253,11 +253,11 @@ function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
 
     if (bubble == true) {
       let indexArray = targetCounts
-        .filter(d => ((d["index"] <= 500)))
+        .filter(d => ((d["index"] <= 300)))
       ;
     } else {
       let indexArray = targetCounts
-        .filter(d => (d["index"] >= 100) & (d["index"] <= 500) & (d["target_pct"] > 5) )
+        .filter(d => (d["index"] >= 100) & (d["index"] <= 300) & (d["target_pct"] > 5) )
       ;
     }
 
@@ -271,7 +271,7 @@ function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
 
 /* for interests/retail, get the max indexing item for each category, and pick top 5 among that list */
 function indexInterestsRetailTop5(indexDs, indexDs2 = null, indexDs3 = null) {
-  let f = indexDs.filter((d) => ( d.index <= 500 && d.target_pct >= 5))
+  let f = indexDs.filter((d) => ( d.index <= 300 && d.target_pct >= 5))
 
   let a = d3.nest()
     .key(function(d) { return d["category"]; })
@@ -289,11 +289,11 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null, indexDs3 = null) {
     .map(function(d) {
         let comp;
         if (indexDs2 != null) {
-          comp = indexDs2.filter(function(d2) { return d2.attrib_value === d.value.attrib_value })
+          comp = indexDs2.filter(function(d2) { return d2.index <= 300 && d2.attrib_value === d.value.attrib_value })
         }
 
         if (indexDs3 != null) {
-          comp2 = indexDs3.filter(function(d3) { return d3.attrib_value === d.value.attrib_value })
+          comp2 = indexDs3.filter(function(d3) { return d3.index <= 300 && d3.attrib_value === d.value.attrib_value })
         }
 
         return {

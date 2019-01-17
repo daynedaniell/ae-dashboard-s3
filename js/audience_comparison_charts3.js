@@ -1423,7 +1423,7 @@ function mikeJ3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     // height: height,
     // width: width,
     xaxis: {
-      range: [ 0, 520 ],
+      range: [ 0, 320 ],
       title: 'index'
     },
     yaxis: {
@@ -1469,11 +1469,11 @@ function add3AudienceTitles(targetAud1, targetAud2, targetAud3) {
   $( ".ds-audience-title" )
     .append("<h1><span class= 'ds-aud-title-1'>"
       + targetAud1.name
-      + "</span> VS <span class= 'ds-aud-title-2'>"
+      + "</span><span class= 'ds-aud-title-2'> VS "
       + targetAud2.name
-      + "</span> VS <span class= 'ds-aud-title-3'>"
+      + "</span> VS <span class= 'ds-aud-title-3'> VS "
       + targetAud3.name
-      + "</span></h1>");
+      + "</h1></span>");
 
   // add color codes
   $(".ds-audience-title .ds-aud-title-1").css("color", colorSeries1);
