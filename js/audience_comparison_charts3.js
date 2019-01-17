@@ -39,15 +39,11 @@ function bar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     if (attrName == "income") {
     	  innerWidth = 610;
     }
-    let heightOffset = 0;
-    // if (["age", "children", "income"].includes(attrName)) {
-    //   heightOffset = 20;
-    // }
 
     let basics = barChartSetup(innerWidth);
   	let margin = basics.margin,
         width = basics.width,
-        height = basics.height - heightOffset,
+        height = basics.height,
     		barPadding = basics.barPadding * 2;
 
     let xScale = d3.scaleLinear()
@@ -965,7 +961,6 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
           // index1 = indexDs1[0];
           // index2 = indexDs1[1];
           // index3 = indexDs1[2];
-          console.log(JSON.stringify(aud))
           plot.selectAll("rect."+series)
               .data(aud)
               .transition()
@@ -1025,7 +1020,6 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
                .duration(600)
                .attr("class", "series1 yAxis")
                .text(function(d) {
-                 console.log(d.attrib_value)
                  let yLabel = d.attrib_value;
                  if (d.attrib_value.length > 26) {
                    yLabel = yLabel.slice(0, 26) + "...";
@@ -1794,14 +1788,11 @@ function update3ComparisonCharts(attrName, attrValue) {
               if (demogAttributeListName == "income") {
               	  innerWidth = 610;
               }
-              let heightOffset = 0;
-              if (["age", "children", "income"].includes(demogAttributeListName) ) {
-                heightOffset = 20;
-              }
+
             	let basics = barChartSetup(innerWidth);
             	let margin = basics.margin,
                   width = basics.width,
-                  height = basics.height - heightOffset,
+                  height = basics.height,
               		barPadding = basics.barPadding * 2;
 
               let xScale = d3.scaleLinear()

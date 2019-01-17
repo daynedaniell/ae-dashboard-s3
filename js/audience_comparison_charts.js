@@ -57,14 +57,11 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
   if (attrName == "income") {
   	  innerWidth = 610;
   }
-  let heightOffset = 0;
-  // if (["age", "children", "income"].includes(attrName)) {
-  //   heightOffset = 20;
-  // }
+
 	let basics = barChartSetup(innerWidth);
 	let margin = basics.margin,
       width = basics.width,
-      height = basics.height - heightOffset,
+      height = basics.height,
   		barPadding = basics.barPadding * 2;
 
 	let xScale = d3.scaleLinear()
@@ -1263,7 +1260,7 @@ function hBar2SeriesChart(attrName, indexDs1, indexDs2) {
                .attr("y", function(d, i) {
                    return (i * 2 * (barHeight + barPadding) + barHeight + barPadding);
                })
-               .attr("x", width * 0.125);
+               .attr("x", 66);
     };
 
   function mouseover(d) {
@@ -2012,14 +2009,11 @@ function updateComparisonCharts(attrName, attrValue) {
             if (demogAttributeListName == "income") {
             	  innerWidth = 610;
             }
-            let heightOffset = 0;
-            if (["age", "children", "income"].includes(demogAttributeListName) ) {
-              heightOffset = 20;
-            }
+
           	let basics = barChartSetup(innerWidth);
           	let margin = basics.margin,
                 width = basics.width,
-                height = basics.height - heightOffset,
+                height = basics.height,
             		barPadding = basics.barPadding * 2;
 
 
