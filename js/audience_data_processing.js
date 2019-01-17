@@ -85,17 +85,6 @@ function makeIndexCats(){
       {attrib_value: 'Married', target_count: 0, random_count: 0},
       {attrib_value: 'Single', target_count: 0, random_count: 0}
   ];
-  // const childrenIndexCats = [
-  //     {attrib_value: '0', target_count: 0, random_count: 0},
-  //     {attrib_value: '1', target_count: 0, random_count: 0},
-  //     {attrib_value: '2', target_count: 0, random_count: 0},
-  //     {attrib_value: '3', target_count: 0, random_count: 0},
-  //     {attrib_value: '4', target_count: 0, random_count: 0},
-  //     {attrib_value: '5', target_count: 0, random_count: 0},
-  //     {attrib_value: '6', target_count: 0, random_count: 0},
-  //     {attrib_value: '7', target_count: 0, random_count: 0},
-  //     {attrib_value: '8+', target_count: 0, random_count: 0}
-  // ];
   const childrenIndexCats = [
       {attrib_value: '0', target_count: 0, random_count: 0},
       {attrib_value: '1', target_count: 0, random_count: 0},
@@ -260,10 +249,6 @@ function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
         .filter(d => (d["index"] >= 100) & (d["index"] <= 300) & (d["target_pct"] > 5) )
       ;
     }
-
-
-
-
 
     return targetCounts;
 }

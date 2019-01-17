@@ -1,3 +1,6 @@
+/*******************************************************************************
+*** STATE VARIABLE STORE *******************************************************
+*******************************************************************************/
 let DS_VIS_STORE = {
     activeFilter: null,
     stateActive: [1,2,3],
@@ -6,6 +9,8 @@ let DS_VIS_STORE = {
     activeView: "single",
     scaleWeight: 1
 }
+
+
 /*******************************************************************************
 *** COLORS AND FORMATS *********************************************************
 *******************************************************************************/
@@ -265,38 +270,30 @@ function barChart(attrName, indexDs) {
 
 
   function mouseover(d) {
-    // let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    // let bound = ttipsvg.getBoundingClientRect();
-    // let tipX = d3.event.clientX - bound.x + 130;
-    // let tipY = d3.event.clientY - bound.y + 320;
-    // var tooltipSpan = document.getElementById('tooltip-span');
-    let e = window.event;
-    var x = e.clientX,
-        y = e.clientY;
+      // Add tooltip based on position of the mouse
+      let e = window.event;
+      var x = e.clientX,
+          y = e.clientY;
 
-    let tipY = (y - 40) + 'px';
-    let tipX = (x) + 'px';
-    if  (window.innerWidth - x < 200) {
-      tipX = (x - 130) + 'px';
-    }
+      let tipY = (y - 40) + 'px';
+      let tipX = (x) + 'px';
 
-    tooltip.transition()
-        .duration(200)
-    tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-        .style("opacity", .9)
-        .style('left', `${tipX}`)
-        .style('top', `${tipY}`);
-    // };
-    // let tipX = d3.mouse(this)[0] + 10;//d3.event.clientX - bound.x + 30;
-    // let tipY = d3.mouse(this)[1] + 20;//d3.event.clientY - bound.y - 20;
-    // if (width - tipX < 50) {
-    //     tipX = d3.mouse(this)[0] - 60;//d3.event.clientX - bound.x - 100;
-    // }
+      // Move tooltip to the left of the cursor if it gets too close to right edge
+      if  (window.innerWidth - x < 200) {
+        tipX = (x - 130) + 'px';
+      }
 
+      tooltip.transition()
+          .duration(200)
+      tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+          .style("opacity", .9)
+          .style('left', `${tipX}`)
+          .style('top', `${tipY}`);
   }
 
   function mouseup(d) {
-    tooltip.style('opacity', 0);
+      // Hide tooltip when the mouse leaves the element
+      tooltip.style('opacity', 0);
   }
 }
 
@@ -475,46 +472,15 @@ function mapChart(attrName, indexDs) {
     ;
 
 
-/*
-// Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
-var legend = d3.select("body").append("svg")
-      			.attr("class", "legend")
-     			.attr("width", 140)
-    			.attr("height", 200)
-   				.selectAll("g")
-   				.data(color.domain().slice().reverse())
-   				.enter()
-   				.append("g")
-     			.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-  	legend.append("rect")
-   		  .attr("width", 18)
-   		  .attr("height", 18)
-   		  .style("fill", color);
-
-  	legend.append("text")
-  		  .data(legendText)
-      	  .attr("x", 24)
-      	  .attr("y", 9)
-      	  .attr("dy", ".35em")
-      	  .text(function(d) { return d; });
-	});
-*/
-
   function mouseover(d) {
-      //let ttipsvg = d3.select("#"+attrName+"Chart").node()
-      //let bound = ttipsvg.getBoundingClientRect();
-      // let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
-      // let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
-      // if (width - tipX < 50) {
-      //     tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
-      // }
-
+      // Add tooltip based on position of the mouse
       let e = window.event;
       var x = e.clientX,
           y = e.clientY;
       let tipY = (y - 60) + 'px';
       let tipX = (x) + 'px';
+
+      // Move tooltip to the left of the cursor if it gets too close to right edge
       if  (window.innerWidth - x < 200) {
         tipX = (x - 130) + 'px';
       }
@@ -526,6 +492,7 @@ var legend = d3.select("body").append("svg")
   }
 
   function mouseout() {
+      // Hide tooltip when the mouse leaves the element
       tooltip.style('opacity', 0);
   }
 
@@ -547,7 +514,6 @@ function hBarChart(attrName, indexDs) {
   		barPadding = basics.barPadding;
 
   let firstDatasetBarChart = indexDs;
-  //let maxAttrLength = d3.max(firstDatasetBarChart, function(d) { return d.attrib_value.length; }) * 9;
   let maxAttrLength = width / 2.25;
 
 	let yScale = d3.scaleLinear()
@@ -698,39 +664,32 @@ function hBarChart(attrName, indexDs) {
       .call(xAxis);
 
 
-
-  //xAxisElement.selectAll("text").remove()
-
   /* Remove vertical and extra horizontal gridlines */
   svg.selectAll(".domain").remove()
 
 
-
   function mouseover(d) {
-    //let ttipsvg = d3.select("#"+attrName+"Chart").node()
-    //let bound = ttipsvg.getBoundingClientRect();
-    // let tipX = d3.mouse(this)[0] + 50;//d3.event.clientX - bound.x + 30;
-    // let tipY = d3.mouse(this)[1] - 30;//d3.event.clientY - bound.y - 20;
-    // if (width - tipX < 50) {
-    //     tipX = d3.mouse(this)[0] - 80;//d3.event.clientX - bound.x - 100;
-    // }
-    let e = window.event;
-    var x = e.clientX,
-        y = e.clientY;
+      // Add tooltip based on position of the mouse
+      let e = window.event;
+      var x = e.clientX,
+          y = e.clientY;
 
-    let tipY = (y - 80) + 'px';
-    let tipX = (x) + 'px';
-    if  (window.innerWidth - x < 200) {
-      tipX = (x - 130) + 'px';
-    }
+      let tipY = (y - 80) + 'px';
+      let tipX = (x) + 'px';
 
-    tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-        .style("opacity", .9)
-        .style('left', `${(tipX)}`)
-        .style('top', `${(tipY)}`);
+      // Move tooltip to the left of the cursor if it gets too close to right edge
+      if  (window.innerWidth - x < 200) {
+        tipX = (x - 130) + 'px';
+      }
+
+      tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+          .style("opacity", .9)
+          .style('left', `${(tipX)}`)
+          .style('top', `${(tipY)}`);
   }
 
   function mouseout() {
+      // Hide tooltip when the mouse leaves the element
       tooltip.style('opacity', 0);
   }
 
@@ -742,7 +701,7 @@ function hBarChart(attrName, indexDs) {
 *******************************************************************************/
 function waveChart(ds) {
 
-// tooltip values
+  // tooltip values
   function makeToolTips(indexDs, attrName) {
     let attrFullName = {
       age: "Age",
@@ -1148,104 +1107,96 @@ function addAudienceTitle(targetAud) {
 *******************************************************************************/
 function drawCharts() {
 
-  // current_width = window.innerWidth;
-  //
-  // if (current_width >= 1550) {
-  //   console.log(current_width)
-  //     DS_VIS_STORE["scaleWeight"] = 1;
-  // } else if (current_width >= 960) {
-  //     DS_VIS_STORE["scaleWeight"] = 1;
-  // } else {
-  //     console.log(current_width)
-  //     DS_VIS_STORE["scaleWeight"] = 1;
-  // }
+    d3.selectAll('.ds-tooltip').remove()
+    // add the audience title
+    addAudienceTitle(targetAud);
+    addAudienceLegend();
+    showActiveFilter(DS_VIS_STORE);
 
-  d3.selectAll('.ds-tooltip').remove()
-  // add the audience title
-  addAudienceTitle(targetAud);
-  addAudienceLegend();
-  showActiveFilter(DS_VIS_STORE);
+    let indexCats = makeIndexCats();
+    let demogAttributesList = Object.keys(indexCats);
 
-  let indexCats = makeIndexCats();
-  let demogAttributesList = Object.keys(indexCats);
+    demogAttributesList.forEach(function(demogAttributeListName) {
+      d3.select("#"+demogAttributeListName+"Chart svg").remove();
+    });
 
-  demogAttributesList.forEach(function(demogAttributeListName) {
-    d3.select("#"+demogAttributeListName+"Chart svg").remove();
-  });
+    let ageIndex0 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
+    let ageMedianCat = getMedianCategory(ageIndex0);
+    let genderIndex0 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
+    let ethnicityIndex0 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
+    let maritalIndex0 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
+    let childrenIndex0 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
+    let childrenNonZeroPct = getNonZeroPct(childrenIndex0);
+    let educationIndex0 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
+    let incomeIndex0 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
+    let incomeMedianCat = getMedianCategory(incomeIndex0);
+    let stateIndex0 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
+    let interestsIndex0 = indexInterestsRetail("interests", targetInterests, randomInterests);
+    let interestsIndexBubble0 = indexInterestsRetail("interests", targetInterests, randomInterests, bubble=true);
+    let interestsIndexTop0 = indexInterestsRetailTop5(interestsIndex0);
+    let retailIndex0 = indexInterestsRetail("retail", targetRetail, randomRetail);
+    let retailIndexTop0 = indexInterestsRetailTop5(retailIndex0);
 
-  let ageIndex0 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
-  let ageMedianCat = getMedianCategory(ageIndex0);
-  let genderIndex0 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
-  let ethnicityIndex0 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
-  let maritalIndex0 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
-  let childrenIndex0 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
-  let childrenNonZeroPct = getNonZeroPct(childrenIndex0);
-  let educationIndex0 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
-  let incomeIndex0 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
-  let incomeMedianCat = getMedianCategory(incomeIndex0);
-  let stateIndex0 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
-  let interestsIndex0 = indexInterestsRetail("interests", targetInterests, randomInterests);
-  let interestsIndexBubble0 = indexInterestsRetail("interests", targetInterests, randomInterests, bubble=true);
-  let interestsIndexTop0 = indexInterestsRetailTop5(interestsIndex0);
-  let retailIndex0 = indexInterestsRetail("retail", targetRetail, randomRetail);
-  let retailIndexTop0 = indexInterestsRetailTop5(retailIndex0);
+    let indexes = {
+      age: ageIndex0,
+      gender: genderIndex0,
+      ethnicity: ethnicityIndex0,
+      marital: maritalIndex0,
+      children: childrenIndex0,
+      education: educationIndex0,
+      income: incomeIndex0,
+      state: stateIndex0,
+      interests: interestsIndexTop0,
+      retail: retailIndexTop0
+    };
 
-  let indexes = {
-    age: ageIndex0,
-    gender: genderIndex0,
-    ethnicity: ethnicityIndex0,
-    marital: maritalIndex0,
-    children: childrenIndex0,
-    education: educationIndex0,
-    income: incomeIndex0,
-    state: stateIndex0,
-    interests: interestsIndexTop0,
-    retail: retailIndexTop0
-  };
+    waveChart(indexes);
 
-  waveChart(indexes);
+    /* Take user to corresponding chart on bar click */
+    let myPlot = document.getElementById('waveChart');
+    myPlot.on('plotly_click', function(data){
+      let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+      d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+      let mapping = {
+        "number of children": "children",
+        "age": "age",
+        "ethnicity": "ethnicity",
+        "gender": "gender",
+        "marital status": "marital",
+        "education": "education",
+        "income": "income",
+        "location": "state",
+        "interests": "interests",
+        "retail": "retail"
+      }
+      document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+      $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+      setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+    });
 
-  let myPlot = document.getElementById('waveChart');
-  myPlot.on('plotly_click', function(data){
-    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
-    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
-    let mapping = {
-      "number of children": "children",
-      "age": "age",
-      "ethnicity": "ethnicity",
-      "gender": "gender",
-      "marital status": "marital",
-      "education": "education",
-      "income": "income",
-      "location": "state",
-      "interests": "interests",
-      "retail": "retail"
-    }
-    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
-    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
-    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-  });
+    barChart("age", ageIndex0);
+    addStat("age", ageMedianCat, prefix = "Median: ", suffix = " years");
+    barChart("ethnicity", ethnicityIndex0);
+    barChart("children", childrenIndex0);
+    addStat("children", childrenNonZeroPct, prefix = "Child present: ", suffix = "%");
+    barChart("education", educationIndex0);
+    barChart("income", incomeIndex0);
+    addStat("income", incomeMedianCat, prefix = "Median: ");
+    pieChart("gender", genderIndex0);
+    pieChart("marital", maritalIndex0);
+    mapChart("state", stateIndex0);
+    hBarChart("interests", interestsIndexTop0);
+    hBarChart("retail", retailIndexTop0);
 
-  barChart("age", ageIndex0);
-  addStat("age", ageMedianCat, prefix = "Median: ", suffix = " years");
-  barChart("ethnicity", ethnicityIndex0);
-  barChart("children", childrenIndex0);
-  addStat("children", childrenNonZeroPct, prefix = "Child present: ", suffix = "%");
-  barChart("education", educationIndex0);
-  barChart("income", incomeIndex0);
-  addStat("income", incomeMedianCat, prefix = "Median: ");
-  pieChart("gender", genderIndex0);
-  pieChart("marital", maritalIndex0);
-  mapChart("state", stateIndex0);
-  hBarChart("interests", interestsIndexTop0);
-  hBarChart("retail", retailIndexTop0);
+    $( ".tile" ).removeClass("selected-tile");
 
-  $( ".tile" ).removeClass("selected-tile");
-
-  mikeJChart('interests', interestsIndexBubble0);
-  mikeJChart('retail', retailIndex0);
+    mikeJChart('interests', interestsIndexBubble0);
+    mikeJChart('retail', retailIndex0);
 }
 
+/*******************************************************************************
+*** RESET CHARTS ***************************************************************
+*******************************************************************************/
 function resetCharts() {
     if (DS_VIS_STORE["activeView"] == "single") {
         drawCharts();
@@ -1282,22 +1233,6 @@ $("#dashboard-tab").click(function() {
 });
 
 
-
-
-//$("#dashboard-tab").click(function() {
-    //console.log(DS_VIS_STORE)
-    // if (DS_VIS_STORE["activeView"] == "single" && DS_VIS_STORE["activeFilter"] != null) {
-    //     DS_VIS_STORE.activeFilter = null;
-    //     drawCharts();
-    // } else if (DS_VIS_STORE["activeView"] && DS_VIS_STORE["activeFilter"] != null) {
-    //     DS_VIS_STORE.activeFilter = null;
-    //     drawComparisonCharts();
-    // }
-
-// })
-
-
-
 /*******************************************************************************
 *** UPDATE ALL CHARTS **********************************************************
 *******************************************************************************/
@@ -1321,372 +1256,256 @@ function orderedTargetFilter(targetData, filteredIds, filteredData) {
 
 /* updates bar charts when a value element is clicked on a chart */
 function updateCharts(attrName, attrValue) {
-  DS_VIS_STORE.activeFilter = [attrName, attrValue];
-  showActiveFilter(DS_VIS_STORE);
+    DS_VIS_STORE.activeFilter = [attrName, attrValue];
+    showActiveFilter(DS_VIS_STORE);
 
-  let attrIndex = [];
-  let indexCats = makeIndexCats();
-  let indexes = {};
+    let attrIndex = [];
+    let indexCats = makeIndexCats();
+    let indexes = {};
 
-  let demogAttributesList = Object.keys(indexCats);
-  let barChartAttributesList = ["age", "ethnicity", "children", "education", "income"]
-  let pieChartAttributesList = ["gender", "marital"]
-  let mapChartAttributesList = ["state"]
-  let hBarChartAttributesList = ["interests", "retail"]
+    let demogAttributesList = Object.keys(indexCats);
+    let barChartAttributesList = ["age", "ethnicity", "children", "education", "income"]
+    let pieChartAttributesList = ["gender", "marital"]
+    let mapChartAttributesList = ["state"]
+    let hBarChartAttributesList = ["interests", "retail"]
 
-  demogAttributesList.forEach(function(demogAttributeListName) {
-      if (attrName != demogAttributeListName) {
-        var t3 = performance.now();
-          /* reset opacity */
-          if ( barChartAttributesList.includes(demogAttributeListName) ) {
-            d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
-          } else if ( pieChartAttributesList.includes(demogAttributeListName) ) {
-            d3.selectAll("#"+demogAttributeListName+"Chart svg .slice path").style("opacity", 1);
-          } else if ( mapChartAttributesList.includes(demogAttributeListName) ) {
-            d3.selectAll("#"+demogAttributeListName+"Chart svg path").style("opacity", 1);
-          } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
-            d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
-          }
-
-
-
-
-          if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
-
-            let filteredData = [];
-            let filteredIds = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
-            if (demogAttributeListName == "interests"){
-              orderedTargetFilter(targetInterests, filteredIds, filteredData);
-              // let targetPos = 0;
-              //   filteredIds.forEach(function(id) {
-              //     while (+targetInterests[targetPos]["temp_id"] < id) {
-              //       targetPos++;
-              //     }
-              //     while (+targetInterests[targetPos]["temp_id"] == id) {
-              //       filteredData.push(targetInterests[targetPos]);
-              //       if (targetPos + 1 < targetInterests.length) {
-              //         targetPos++;
-              //       } else {
-              //         break;
-              //       }
-              //
-              //     }
-              //   });
-              //filteredData = targetInterests.filter(function(d) { return filteredIds.includes(d["temp_id"]); });
-              attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomInterests);
-            } else if (demogAttributeListName == "retail"){
-              var t0 = performance.now();
-
-              orderedTargetFilter(targetRetail, filteredIds, filteredData);
-
-              // let targetPos = 0;
-              //   filteredIds.forEach(function(id) {
-              //     while (+targetRetail[targetPos]["temp_id"] < id) {
-              //       targetPos++;
-              //     }
-              //     while (+targetRetail[targetPos]["temp_id"] == id) {
-              //       filteredData.push(targetRetail[targetPos]);
-              //       if (targetPos + 1 < targetRetail.length) {
-              //         targetPos++;
-              //       } else {
-              //         break;
-              //       }
-              //     }
-              //   });
-
-
-                // function objectsAreSame(x, y) {
-                //    var objectsAreSame = true;
-                //    for(var propertyName in x) {
-                //       if(x[propertyName] !== y[propertyName]) {
-                //          objectsAreSame = false;
-                //          break;
-                //       }
-                //    }
-                //    return objectsAreSame;
-                // }
-
-                /* old way */
-                // let filteredData2 = []
-                // filteredData2 = targetRetail.filter(function(d) {  return filteredIds.includes(d["temp_id"]); });
-                // console.log("These are the same: " + objectsAreSame(filteredData, filteredData2))
-
-              // filteredData = _.filter(targetRetail, (v) => _.includes(filteredIds, v.temp_id));
-              // function filter(a)
-              // {
-              //     var match = []
-              //
-              //     for (var i = 0; i < a.length; i++)
-              //     {
-              //
-              //         let tmp = filteredIds.find(function(element) {
-              //           return element === a[i]["temp_id"];
-              //         });
-              //         if ( tmp !== -1 ) match.push(a[i])
-              //     }
-              //
-              //     return match
-              // }
-
-              // filteredIds.forEach(function(id) {
-              //   filteredData.push(targetRetail.filter(x => x.temp_id === id))
-              // });
-
-
-              // filteredData = targetRetail.filter(function(d) {
-              //   return this.indexOf(d["temp_id"]) < 0;
-              // },
-              // filteredIds
-              // );
-              // const fastIntersection = (...arrays) => {
-              //   // if we process the arrays from shortest to longest
-              //   // then we will identify failure points faster, i.e. when
-              //   // one item is not in all arrays
-              //   const ordered = (arrays.length===1
-              //       ? arrays :
-              //       arrays.sort((a1,a2) => a1.length - a2.length)),
-              //     shortest = ordered[0],
-              //     set = new Set(), // used for bookeeping, Sets are faster
-              //     result = [], // the intersection, conversion from Set is slow
-              //   // for each item in the shortest array
-              //   for(let i=0;i<shortest.length;i++) {
-              //     const item = shortest[i];
-              //     // see if item is in every subsequent array
-              //     let every = true; // don't use ordered.every ... it is slow
-              //     for(let j=1;j<ordered.length;j++) {
-              //       if(ordered[j].includes(item)) continue;
-              //       every = false;
-              //       break;
-              //     }
-              //     // ignore if not in every other array, or if already captured
-              //     if(!every || set.has(item)) continue;
-              //     // otherwise, add to bookeeping set and the result
-              //     set.add(item);
-              //     result[result.length] = item;
-              //   }
-              //   return result;
-              // }
-              // let ids = fastIntersection()
-              var t1 = performance.now();
-
-              attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomRetail);
+    demogAttributesList.forEach(function(demogAttributeListName) {
+        if (attrName != demogAttributeListName) {
+            /* reset opacity */
+            if ( barChartAttributesList.includes(demogAttributeListName) ) {
+              d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
+            } else if ( pieChartAttributesList.includes(demogAttributeListName) ) {
+              d3.selectAll("#"+demogAttributeListName+"Chart svg .slice path").style("opacity", 1);
+            } else if ( mapChartAttributesList.includes(demogAttributeListName) ) {
+              d3.selectAll("#"+demogAttributeListName+"Chart svg path").style("opacity", 1);
+            } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+              d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
             }
 
-            attrIndexTop = indexInterestsRetailTop5(attrIndex);
+            if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
 
-          } else {
-            var t0 = performance.now();
-            let filteredData = filterAttr(targetDemog, attrName, attrValue);
-            var t1 = performance.now();
-            attrIndex = indexAttr(demogAttributeListName,
-                                  indexCats[demogAttributeListName],
-                                  filteredData,
-                                  randomDemog);
-          }
+                let filteredData = [];
+                let filteredIds = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
+                if (demogAttributeListName == "interests"){
+                    orderedTargetFilter(targetInterests, filteredIds, filteredData);
+                    attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomInterests);
+                } else if (demogAttributeListName == "retail"){
+                    orderedTargetFilter(targetRetail, filteredIds, filteredData);
+                    attrIndex = indexInterestsRetail(demogAttributeListName, filteredData, randomRetail);
+                }
 
-      } else {
-          if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
-            if (demogAttributeListName == "interests"){
-              attrIndex = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
-            } else if (demogAttributeListName == "retail"){
-              attrIndex = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
+                attrIndexTop = indexInterestsRetailTop5(attrIndex);
+
+            } else {
+                var t0 = performance.now();
+                let filteredData = filterAttr(targetDemog, attrName, attrValue);
+                var t1 = performance.now();
+                attrIndex = indexAttr(demogAttributeListName,
+                                      indexCats[demogAttributeListName],
+                                      filteredData,
+                                      randomDemog);
             }
-            attrIndexTop = indexInterestsRetailTop5(attrIndex);
-          } else {
-            attrIndex = indexAttr(demogAttributeListName,
-                                  indexCats[demogAttributeListName],
-                                  targetDemog,
-                                  randomDemog);
-          }
-      }
-      var t4 = performance.now();
 
-      // update the wave chart data
-      if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
-        indexes[demogAttributeListName] = attrIndexTop;
-      } else {
-        indexes[demogAttributeListName] = attrIndex;
-      }
-
-      // update stats
-      $( "#" + demogAttributeListName + "Chart" )
-        .prev(".tile-header")
-        .find(".ds-stats")
-        .remove();
-      if (attrName != demogAttributeListName) {
-        if (demogAttributeListName == "age") {
-            let ageMedianCat = getMedianCategory(attrIndex);
-            addStat("age", ageMedianCat, prefix = "Median: ", suffix = " years");
-        } else if (demogAttributeListName == "children") {
-            let childrenNonZeroPct = getNonZeroPct(attrIndex);
-            addStat("children", childrenNonZeroPct, prefix = "Child present: ", suffix = "%");
-        } else if (demogAttributeListName == "income") {
-            let incomeMedianCat = getMedianCategory(attrIndex);
-            addStat("income", incomeMedianCat, prefix = "Median: ");
+        } else {
+            if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+                if (demogAttributeListName == "interests"){
+                    attrIndex = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
+                } else if (demogAttributeListName == "retail"){
+                    attrIndex = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
+                }
+                attrIndexTop = indexInterestsRetailTop5(attrIndex);
+            } else {
+              attrIndex = indexAttr(demogAttributeListName,
+                                    indexCats[demogAttributeListName],
+                                    targetDemog,
+                                    randomDemog);
+            }
         }
-      }
 
+        // update the wave chart data
+        if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+          indexes[demogAttributeListName] = attrIndexTop;
+        } else {
+          indexes[demogAttributeListName] = attrIndex;
+        }
 
-
-      // update charts
-      if ( barChartAttributesList.includes(demogAttributeListName) ) {
-          // update bar chart
-          var currentDatasetBarChart = attrIndex;
-          let innerWidth = 400;
-          if (demogAttributeListName == "income") {
-          	  innerWidth = 610;
+        // update stats
+        $( "#" + demogAttributeListName + "Chart" )
+          .prev(".tile-header")
+          .find(".ds-stats")
+          .remove();
+        if (attrName != demogAttributeListName) {
+          if (demogAttributeListName == "age") {
+              let ageMedianCat = getMedianCategory(attrIndex);
+              addStat("age", ageMedianCat, prefix = "Median: ", suffix = " years");
+          } else if (demogAttributeListName == "children") {
+              let childrenNonZeroPct = getNonZeroPct(attrIndex);
+              addStat("children", childrenNonZeroPct, prefix = "Child present: ", suffix = "%");
+          } else if (demogAttributeListName == "income") {
+              let incomeMedianCat = getMedianCategory(attrIndex);
+              addStat("income", incomeMedianCat, prefix = "Median: ");
           }
-        	let basics = barChartSetup(innerWidth);
-        	let margin = basics.margin,
-              width = basics.width,
-              height = basics.height,
-          		barPadding = basics.barPadding;
+        }
 
-          let xScale = d3.scaleLinear()
-                         .domain([0, currentDatasetBarChart.length])
-                         .range([0, width]);
+        // update charts
+        if ( barChartAttributesList.includes(demogAttributeListName) ) {
+            // update bar chart
+            var currentDatasetBarChart = attrIndex;
+            let innerWidth = 400;
+            if (demogAttributeListName == "income") {
+            	  innerWidth = 610;
+            }
+          	let basics = barChartSetup(innerWidth);
+          	let margin = basics.margin,
+                width = basics.width,
+                height = basics.height,
+            		barPadding = basics.barPadding;
 
-          let yScale = d3.scaleLinear()
-                         .domain([0, d3.max(currentDatasetBarChart, function(d) { return d.target_pct; })])
-                         .range([height,0]);
+            let xScale = d3.scaleLinear()
+                           .domain([0, currentDatasetBarChart.length])
+                           .range([0, width]);
 
-          let svg = d3.select("#"+demogAttributeListName+"Chart svg");
+            let yScale = d3.scaleLinear()
+                           .domain([0, d3.max(currentDatasetBarChart, function(d) { return d.target_pct; })])
+                           .range([height,0]);
 
-          /* Transition grid lines */
-          let t = d3.transition()
-                .duration(500)
+            let svg = d3.select("#"+demogAttributeListName+"Chart svg");
 
-          function make_y_gridlines() {
-              return d3.axisLeft(yScale)
-                  .ticks(5)
-          }
+            /* Transition grid lines */
+            let t = d3.transition()
+                  .duration(500)
 
-          svg.select(".grid")
-              .transition(t)
-              .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
-              .call(make_y_gridlines()
-                  .tickSize(-width)
-                  .tickFormat("")
-              )
+            function make_y_gridlines() {
+                return d3.axisLeft(yScale)
+                    .ticks(5)
+            }
 
-         let axis = d3.axisLeft(yScale)
-             .ticks(5)
-             .tickFormat(function (d) { return d + "%" })
-             .tickSize(0);
+            svg.select(".grid")
+                .transition(t)
+                .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+                .call(make_y_gridlines()
+                    .tickSize(-width)
+                    .tickFormat("")
+                )
 
-         svg.select(".axis")
-               .transition(t)
-               .call(axis)
+           let axis = d3.axisLeft(yScale)
+               .ticks(5)
+               .tickFormat(function (d) { return d + "%" })
+               .tickSize(0);
 
-          svg.selectAll(".domain").remove()
+           svg.select(".axis")
+                 .transition(t)
+                 .call(axis)
+
+            svg.selectAll(".domain").remove()
 
 
-          let plot = d3.select("#"+demogAttributeListName+"ChartPlot");
+            let plot = d3.select("#"+demogAttributeListName+"ChartPlot");
 
-          /* Select existing bars and update them */
-          plot.selectAll("rect")
-              .data(currentDatasetBarChart)
-              .transition()
-              .duration(750)
-              .attr("x", function(d, i) {
-                return xScale(i);
-              })
-              .attr("width", width / currentDatasetBarChart.length - barPadding)
-              .attr("y", function(d) {
-                return yScale(d.target_pct);
-              })
-              .attr("height", function(d) {
-                return height-yScale(d.target_pct);
-              })
-              .attr("cursor", "pointer")
-              .attr("attrib-value", function(d) { return d.attrib_value; })    /* updating the Acxiom attrib value on the element */
-              .attr("target-pct", function(d) { return d.target_pct; })
-              .attr("index", function(d) { return d.index; })
-              .attr("fill", function(d) {
-                return colorByIndexBar(d.index);
-              });
+            /* Select existing bars and update them */
+            plot.selectAll("rect")
+                .data(currentDatasetBarChart)
+                .transition()
+                .duration(750)
+                .attr("x", function(d, i) {
+                  return xScale(i);
+                })
+                .attr("width", width / currentDatasetBarChart.length - barPadding)
+                .attr("y", function(d) {
+                  return yScale(d.target_pct);
+                })
+                .attr("height", function(d) {
+                  return height-yScale(d.target_pct);
+                })
+                .attr("cursor", "pointer")
+                .attr("attrib-value", function(d) { return d.attrib_value; })    /* updating the Acxiom attrib value on the element */
+                .attr("target-pct", function(d) { return d.target_pct; })
+                .attr("index", function(d) { return d.index; })
+                .attr("fill", function(d) {
+                  return colorByIndexBar(d.index);
+                });
 
-          /* Update the text labels on bars */
-          function textInside(d) { return (height - yScale(d.target_pct)) > 20 }; // Display text inside if bar is big enough
+            /* Update the text labels on bars */
+            function textInside(d) { return (height - yScale(d.target_pct)) > 20 }; // Display text inside if bar is big enough
 
-          plot.selectAll("text.yAxis")
-              .data(currentDatasetBarChart)
-              .transition()
-              .duration(750)
-              .attr("text-anchor", "middle")
-              .attr("x", function(d, i) {
-                 return (i * (width / currentDatasetBarChart.length)) + ((width / currentDatasetBarChart.length - barPadding) / 2);
-              })
-              .attr("y", function(d) {
-                 return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-              })
-              .text(function(d) {
-               return formatAsInteger(d3.format("d")(d.index));
-              })
-              .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-              .attr("class", "yAxis");
-      } else if ( pieChartAttributesList.includes(demogAttributeListName) ) {
-          d3.select("#"+demogAttributeListName+"Chart svg").remove();
-          pieChart(demogAttributeListName, attrIndex);
-      } else if ( mapChartAttributesList.includes(demogAttributeListName) ) {
-          d3.select("#"+demogAttributeListName+"Chart svg").remove();
-          mapChart(demogAttributeListName, attrIndex);
-      } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
-          d3.select("#"+demogAttributeListName+"Chart svg").remove();
-          hBarChart(demogAttributeListName, attrIndexTop);
+            plot.selectAll("text.yAxis")
+                .data(currentDatasetBarChart)
+                .transition()
+                .duration(750)
+                .attr("text-anchor", "middle")
+                .attr("x", function(d, i) {
+                   return (i * (width / currentDatasetBarChart.length)) + ((width / currentDatasetBarChart.length - barPadding) / 2);
+                })
+                .attr("y", function(d) {
+                   return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
+                })
+                .text(function(d) {
+                 return formatAsInteger(d3.format("d")(d.index));
+                })
+                .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+                .attr("class", "yAxis");
+        } else if ( pieChartAttributesList.includes(demogAttributeListName) ) {
+            d3.select("#"+demogAttributeListName+"Chart svg").remove();
+            pieChart(demogAttributeListName, attrIndex);
+        } else if ( mapChartAttributesList.includes(demogAttributeListName) ) {
+            d3.select("#"+demogAttributeListName+"Chart svg").remove();
+            mapChart(demogAttributeListName, attrIndex);
+        } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+            d3.select("#"+demogAttributeListName+"Chart svg").remove();
+            hBarChart(demogAttributeListName, attrIndexTop);
+        }
+
+    });
+
+    // update the wave chart
+    waveChart(indexes);
+
+    /* Take user to corresponding chart on bar click */
+    let myPlot = document.getElementById('waveChart');
+    myPlot.on('plotly_click', function(data){
+      let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+      d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+      let mapping = {
+        "number of children": "children",
+        "age": "age",
+        "ethnicity": "ethnicity",
+        "gender": "gender",
+        "marital status": "marital",
+        "education": "education",
+        "income": "income",
+        "location": "state",
+        "interests": "interests",
+        "retail": "retail"
       }
+      document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+      $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+      setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+    });
 
-  });
 
-  // update the wave chart
-  waveChart(indexes);
-
-  let myPlot = document.getElementById('waveChart');
-  myPlot.on('plotly_click', function(data){
-    let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
-    d[0] = d[0][0].toLowerCase() + d[0].slice(1)
-    let mapping = {
-      "number of children": "children",
-      "age": "age",
-      "ethnicity": "ethnicity",
-      "gender": "gender",
-      "marital status": "marital",
-      "education": "education",
-      "income": "income",
-      "location": "state",
-      "interests": "interests",
-      "retail": "retail"
+    /* Make the elems in selected chart opaque, except for the clicked chart elem */
+    if ( barChartAttributesList.includes(attrName) | hBarChartAttributesList.includes(attrName) ) {
+        d3.selectAll("#" + attrName + "Chart svg rect")
+          .style("opacity", 0.25)
+          .attr("selected", "no")
+          ;
+        d3.selectAll("#" + attrName + "Chart svg [attrib-value='" + attrValue + "']")
+          .style("opacity", 1)
+          .attr("selected", "yes")
+          ;
+    } else if ( pieChartAttributesList.includes(attrName) ) {
+        d3.selectAll("#" + attrName + "Chart svg .slice path")
+          .style("opacity", 0.25)
+          .attr("selected", "no")
+          ;
+        d3.selectAll("#" + attrName + "Chart svg .slice [attrib-value=" + attrValue + "]")
+          .style("opacity", 1)
+          .attr("selected", "yes")
+          ;
     }
-    document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
-    $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
-    setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-  });
 
-
-
-  /* Make the elems in selected chart opaque, except for the clicked chart elem */
-  if ( barChartAttributesList.includes(attrName) | hBarChartAttributesList.includes(attrName) ) {
-      d3.selectAll("#" + attrName + "Chart svg rect")
-        .style("opacity", 0.25)
-        .attr("selected", "no")
-        ;
-      d3.selectAll("#" + attrName + "Chart svg [attrib-value='" + attrValue + "']")
-        .style("opacity", 1)
-        .attr("selected", "yes")
-        ;
-  } else if ( pieChartAttributesList.includes(attrName) ) {
-      d3.selectAll("#" + attrName + "Chart svg .slice path")
-        .style("opacity", 0.25)
-        .attr("selected", "no")
-        ;
-      d3.selectAll("#" + attrName + "Chart svg .slice [attrib-value=" + attrValue + "]")
-        .style("opacity", 1)
-        .attr("selected", "yes")
-        ;
-  }
-
-  /* Highlight the selected tile */
-  $( ".tile" ).removeClass("selected-tile");
-  $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
+    /* Highlight the selected tile */
+    $( ".tile" ).removeClass("selected-tile");
+    $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
 
 }

@@ -191,7 +191,6 @@ function bar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
   	    .attr("y", function(d) {
   			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
   	    })
-  	  //  .attr("class", "yAxis")
   	    .attr("font-family", "sans-serif")
   	    .attr("font-size", fontSize)
   	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
@@ -217,7 +216,6 @@ function bar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
           .attr("y", function(d) {
                return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
     	    })
-      //    .attr("class", "yAxis")
           .attr("font-family", "sans-serif")
           .attr("font-size", fontSize)
           .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
@@ -243,7 +241,6 @@ function bar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
           .attr("y", function(d) {
                return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
     	    })
-      //    .attr("class", "yAxis")
           .attr("font-family", "sans-serif")
           .attr("font-size", fontSize)
           .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
@@ -299,23 +296,18 @@ function bar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     	}
 
       function mouseover(d) {
-        // let ttipsvg = d3.select("#"+attrName+"Chart").node()
-        // let bound = ttipsvg.getBoundingClientRect();
-        // let tipX = d3.event.clientX - bound.x + 30;
-        // let tipY = d3.event.clientY - bound.y - 10;
-        // if (width - tipX < 50) {
-        //   tipX = d3.event.clientX - bound.x - 100;
-        // }
+        // Add tooltip based on position of the mouse
         let e = window.event;
         var x = e.clientX,
             y = e.clientY;
 
         let tipY = (y - 40) + 'px';
         let tipX = (x) + 'px';
+
+        // Move tooltip to the left of the cursor if it gets too close to right edge
         if  (window.innerWidth - x < 200) {
           tipX = (x - 130) + 'px';
         }
-
 
         tooltip.transition()
             .duration(200)
@@ -326,6 +318,7 @@ function bar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
       }
 
       function mouseup(d) {
+        // Hide tooltip when the mouse leaves the element
         tooltip.style('opacity', 0);
       }
 
@@ -449,12 +442,11 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
              return formatAsInteger(d3.format("d")(d.index));
         })
         .attr("text-anchor", "middle")
-        /* Set x position to the left edge of each bar plus half the bar width */
+        /* Set x position to be inside corresponding edge of the bar */
         .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
         .attr("y", function(d) { return topPos + 3 + (barHeight/2)})
         .attr("class", "yAxis")
         .attr("font-family", "sans-serif")
-    //    .attr("font-size", "8px")
         .attr("fill", "white")
         .on("mouseover", mouseover)
         .on("mouseout", mouseup)
@@ -469,12 +461,11 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
              return formatAsInteger(d3.format("d")(d.index));
         })
         .attr("text-anchor", "middle")
-        /* Set x position to the left edge of each bar plus half the bar width */
+        /* Set x position to be inside corresponding edge of the bar */
         .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
         .attr("y", function(d) { return topPos + barSpacing + 3 + barHeight + (barHeight/2)})
         .attr("class", "yAxis")
         .attr("font-family", "sans-serif")
-    //    .attr("font-size", "8px")
         .attr("fill", "white")
         .on("mouseover", mouseover)
         .on("mouseout", mouseup)
@@ -489,12 +480,11 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
              return formatAsInteger(d3.format("d")(d.index));
         })
         .attr("text-anchor", "middle")
-        /* Set x position to the left edge of each bar plus half the bar width */
+        /* Set x position to be inside corresponding edge of the bar */
         .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
         .attr("y", function(d) { return topPos + barSpacing * 2 + 3 + barHeight*2 + (barHeight/2)})
         .attr("class", "yAxis")
         .attr("font-family", "sans-serif")
-    //    .attr("font-size", "8px")
         .attr("fill", "white")
         .on("mouseover", mouseover)
         .on("mouseout", mouseup)
@@ -509,7 +499,6 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
              return d.attrib_value;
         })
         .attr("text-anchor", function(d, i) { return i ? "end" : "start";})
-        /* Set x position to the left edge of each bar plus half the bar width */
         .attr("x",  function(d, i) { return i ? xScale(100 ) : 0})
         .attr("y", function(d) { return topPos - 30})
         .attr("class", "yAxis")
@@ -519,6 +508,9 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .on("mouseover", mouseover)
         .on("mouseout", mouseup)
         .on("mousemove", mouseover);
+
+
+    /* Draw in the indicator line marking the appropriate position on the bars */
 
     var lineData1 = [{"x": xScale(indexDs1[0].target_pct), "y": topPos - lineExtend},
                     {"x": xScale(indexDs1[0].target_pct), "y": topPos + barHeight + lineExtend}]
@@ -553,9 +545,9 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("stroke-width", lineStrokeWidth)
         .attr("fill", "none");
 
+
     /* Add x-axis */
     let xAxis = d3.axisBottom(xScale)
-        //.ticks(3)
         .tickSize(0)
         .tickValues(d3.range(0, 101, 25))
         .tickFormat(function (d) { return d + "%" });
@@ -569,10 +561,9 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
     svg.selectAll(".domain").remove();
 
 
-
     function up(d, i) {
 
-      tooltip.style('opacity', 0);
+       tooltip.style('opacity', 0);
 
        /* update all charts when user selects a single bar in this chart */
        /* if clicking on already selected item, then reset the charts */
@@ -588,12 +579,15 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
     }
 
     function mouseover(d) {
+      // Add tooltip based on position of the mouse
       let e = window.event;
-      var x = e.clientX,
+      let x = e.clientX,
           y = e.clientY;
 
       let tipY = (y - 60) + 'px';
       let tipX = (x) + 'px';
+
+      // Move tooltip to the left of the cursor if it gets too close to right edge
       if  (window.innerWidth - x < 200) {
         tipX = (x - 130) + 'px';
       }
@@ -607,6 +601,7 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
     }
 
     function mouseup(d) {
+      // Hide tooltip when the mouse leaves the element
       tooltip.style('opacity', 0);
     }
 
@@ -671,6 +666,7 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
             .tickSize(-height)
             .tickFormat("")
         )
+
 
     let plot = svg.append("g")
   		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -763,7 +759,7 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("index", function(d) { return d.index; })
         ;
 
-    /* Will set x position and color dependent on size of bar */
+    /* Set x position and color dependent on size of bar */
     function textInside(d) { return xScale(d.target_pct) > 30};
 
     /* Add y labels to plot */
@@ -782,7 +778,6 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
   			     return (i * 3 * (barHeight + barPadding) + barHeight / 2 + barPadding * 2);
   	    })
   	    .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
-  	    //.attr("class", "xAxis")
   	    .attr("font-family", "sans-serif")
   	    .attr("font-size", "11px")
   	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
@@ -805,7 +800,6 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
              return (i * 3 * (barHeight + barPadding) + barHeight * 1.5 + barPadding * 2);
         })
         .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
-        //.attr("class", "xAxis")
         .attr("font-family", "sans-serif")
         .attr("font-size", "11px")
         .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
@@ -828,7 +822,6 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
              return (i * 3 * (barHeight + barPadding) + barHeight + barHeight * 1.5 + barPadding * 2);
         })
         .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
-        //.attr("class", "xAxis")
         .attr("font-family", "sans-serif")
         .attr("font-size", "11px")
         .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
@@ -897,9 +890,11 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     /* Remove vertical and extra horizontal gridlines */
     svg.selectAll(".domain").remove();
 
+    /* Add the toggle button */
     addTripleCompareToggle(attrName);
 
     function changeToggleText(audNumber) {
+        // Change the toggle text to represent the selected audience
         $("#"+attrName+"Chart .ds-hbar-status").text(function() {
             let aud = (audNumber === 1) ? targetAud.name : audNumber === 2 ? targetAud2.name : targetAud3.name;
             return "Top 5 for " + aud + " (by Index)";
@@ -907,6 +902,7 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
         });
     }
 
+    /* Organize the data based on the current selected audience */
     let inp = [indexDs1,indexDs2,indexDs3]
     let idx1 = DS_VIS_STORE[attrName+"Active"].indexOf(1)
     let idx2 = DS_VIS_STORE[attrName+"Active"].indexOf(2)
@@ -934,7 +930,6 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
           toggleComparisonCharts(attrName, [trans[1],trans[0],trans[2]]);
       });
 
-
     $("#"+attrName+"Chart .ds-toggle-button .ds-t3").unbind().click(function() {
           DS_VIS_STORE[attrName+"Active"] = [3,1,2]
           DS_VIS_STORE[attrName+"Colors"] = [colorSeries3, colorSeries1, colorSeries2]
@@ -946,10 +941,17 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
       });
 
     function toggleComparisonCharts(attrName, out) {
-        //d3.select("#"+attrName+"Chart svg").remove();
-        //$("#"+attrName+"Chart .ds-toggle-button .ds-triple-toggle").remove();
-        //hBar3SeriesChart(attrName,out[0],out[1],out[2]);
+        /*
+          The toggle is currently set to transition to the newly selected audience.
+          If we don't want this, we can just redraw using the below for an instant transition.
+            d3.select("#"+attrName+"Chart svg").remove();
+            $("#"+attrName+"Chart .ds-toggle-button .ds-triple-toggle").remove();
+            hBar3SeriesChart(attrName,out[0],out[1],out[2]);
+        */
+
         plot = d3.select("#"+attrName+"Chart");
+
+        /* Draw in the required bars and text with the functions below */
         addCompHbar(plot, "series1", out[0][0], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][0]);
         addCompHbar(plot, "series2", out[0][1], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][1]);
         addCompHbar(plot, "series3", out[0][2], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][2]);
@@ -958,9 +960,6 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
         addCompHbarText(plot, "series3", out[0][2], barHeight, barPadding, maxAttrLength);
 
         function addCompHbar(plot, series, aud, maxAttrLength, barHeight, xScale, yScale, color) {
-          // index1 = indexDs1[0];
-          // index2 = indexDs1[1];
-          // index3 = indexDs1[2];
           plot.selectAll("rect."+series)
               .data(aud)
               .transition()
@@ -1037,30 +1036,28 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
                .attr("x", 66);
     }
 
-
-
-
-
-
     function mouseover(d) {
+        // Add tooltip based on position of the mouse
+        let e = window.event;
+        var x = e.clientX,
+            y = e.clientY;
 
-      let e = window.event;
-      var x = e.clientX,
-          y = e.clientY;
+        let tipY = (y - 80) + 'px';
+        let tipX = (x) + 'px';
 
-      let tipY = (y - 80) + 'px';
-      let tipX = (x) + 'px';
-      if  (window.innerWidth - x < 200) {
-        tipX = (x - 130) + 'px';
-      }
+        // Move tooltip to the left of the cursor if it gets too close to right edge
+        if  (window.innerWidth - x < 200) {
+          tipX = (x - 130) + 'px';
+        }
 
-      tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-          .style("opacity", .9)
-          .style('left', `${(tipX)}`)
-          .style('top', `${(tipY)}`);
+        tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+            .style("opacity", .9)
+            .style('left', `${(tipX)}`)
+            .style('top', `${(tipY)}`);
     }
 
     function mouseout() {
+        // Hide tooltip when the mouse leaves the element
         tooltip.style('opacity', 0);
     }
 
@@ -1072,7 +1069,7 @@ function hBar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
 *******************************************************************************/
 function wave3SeriesChart(ds1, ds2, ds3) {
 
-// tooltip values
+  // tooltip values
   function makeToolTips(indexDs, attrName) {
     let attrFullName = {
       age: "Age",
@@ -1402,7 +1399,6 @@ function mikeJ3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
 
 
   // calculate chart height based on the number of distinct categories
-//  let allCats = [...new Set( unpack(indexDs, 'category') )];
   let allCats = [...new Set( [...unpack(indexDs1, 'category'), ...unpack(indexDs2, 'category')] )];
   let height = allCats.length * 58;
 	let width = 1260;
@@ -1452,99 +1448,79 @@ function mikeJ3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
 }
 
 
-
-
-
-function add3AudienceTitles(targetAud1, targetAud2, targetAud3) {
-  // remove existing titles, if any
-  $( ".ds-audience-title h1" ).remove();
-
-  // add titles
-  $( ".ds-audience-title" )
-    .append("<h1><span class= 'ds-aud-title-1'>"
-      + targetAud1.name
-      + "</span><span class= 'ds-aud-title-2'> VS "
-      + targetAud2.name
-      + "</span> VS <span class= 'ds-aud-title-3'> VS "
-      + targetAud3.name
-      + "</h1></span>");
-
-  // add color codes
-  $(".ds-audience-title .ds-aud-title-1").css("color", colorSeries1);
-  $(".ds-audience-title .ds-aud-title-2").css("color", colorSeries2);
-  $(".ds-audience-title .ds-aud-title-3").css("color", colorSeries3);
-}
-
+/*******************************************************************************
+*** DRAW TRIPLE COMPARISON CHARTS **********************************************
+*******************************************************************************/
 function drawComparisonCharts3() {
-  /* Remove any active tooltips */
-  d3.selectAll(".ds-tooltip").remove();
+    /* Remove any active tooltips */
+    d3.selectAll(".ds-tooltip").remove();
 
-  /* View setup */
-  addAudienceLegend(compare=3);
-  addMultipleAudienceTitles(targetAud, targetAud2, targetAud3);
+    /* View setup */
+    addAudienceLegend(compare=3);
+    addMultipleAudienceTitles(targetAud, targetAud2, targetAud3);
 
-  let indexCats = makeIndexCats();
-  let demogAttributesList = Object.keys(indexCats);
+    let indexCats = makeIndexCats();
+    let demogAttributesList = Object.keys(indexCats);
 
-  /* Remove the current svg from each chart div */
-  demogAttributesList.forEach(function(demogAttributeListName) {
-    d3.select("#"+demogAttributeListName+"Chart svg").remove();
-  });
+    /* Remove the current svg from each chart div */
+    demogAttributesList.forEach(function(demogAttributeListName) {
+      d3.select("#"+demogAttributeListName+"Chart svg").remove();
+    });
 
-  let audName1 = targetAud.name;
-  let ageIndex1 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
-  let ageMedianCat1 = getMedianCategory(ageIndex1);
-  let genderIndex1 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
-  let ethnicityIndex1 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
-  let maritalIndex1 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
-  let childrenIndex1 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
-  let childrenNonZeroPct1 = getNonZeroPct(childrenIndex1);
-  let educationIndex1 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
-  let incomeIndex1 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
-  let incomeMedianCat1 = getMedianCategory(incomeIndex1);
-  let stateIndex1 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
-  let interestsIndex1 = indexInterestsRetail("interests", targetInterests, randomInterests);
-  let retailIndex1 = indexInterestsRetail("retail", targetRetail, randomRetail);
+    let audName1 = targetAud.name;
+    let ageIndex1 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
+    let ageMedianCat1 = getMedianCategory(ageIndex1);
+    let genderIndex1 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
+    let ethnicityIndex1 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
+    let maritalIndex1 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
+    let childrenIndex1 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
+    let childrenNonZeroPct1 = getNonZeroPct(childrenIndex1);
+    let educationIndex1 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
+    let incomeIndex1 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
+    let incomeMedianCat1 = getMedianCategory(incomeIndex1);
+    let stateIndex1 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
+    let interestsIndex1 = indexInterestsRetail("interests", targetInterests, randomInterests);
+    let retailIndex1 = indexInterestsRetail("retail", targetRetail, randomRetail);
 
-  let audName2 = targetAud2.name;
-  let ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
-  let ageMedianCat2 = getMedianCategory(ageIndex2);
-  let genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
-  let ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
-  let maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
-  let childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
-  let childrenNonZeroPct2 = getNonZeroPct(childrenIndex2);
-  let educationIndex2 = indexAttr("education", indexCats.education, targetDemog2, randomDemog);
-  let incomeIndex2 = indexAttr("income", indexCats.income, targetDemog2, randomDemog);
-  let incomeMedianCat2 = getMedianCategory(incomeIndex2);
-  let stateIndex2 = indexAttr("state", indexCats.state, targetDemog2, randomDemog);
-  let interestsIndex2 = indexInterestsRetail("interests", targetInterests2, randomInterests);
-  let retailIndex2 = indexInterestsRetail("retail", targetRetail2, randomRetail);
+    let audName2 = targetAud2.name;
+    let ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
+    let ageMedianCat2 = getMedianCategory(ageIndex2);
+    let genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
+    let ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
+    let maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
+    let childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
+    let childrenNonZeroPct2 = getNonZeroPct(childrenIndex2);
+    let educationIndex2 = indexAttr("education", indexCats.education, targetDemog2, randomDemog);
+    let incomeIndex2 = indexAttr("income", indexCats.income, targetDemog2, randomDemog);
+    let incomeMedianCat2 = getMedianCategory(incomeIndex2);
+    let stateIndex2 = indexAttr("state", indexCats.state, targetDemog2, randomDemog);
+    let interestsIndex2 = indexInterestsRetail("interests", targetInterests2, randomInterests);
+    let retailIndex2 = indexInterestsRetail("retail", targetRetail2, randomRetail);
 
-  let audName3 = targetAud3.name;
-  let ageIndex3 = indexAttr("age", indexCats.age, targetDemog3, randomDemog);
-  let ageMedianCat3 = getMedianCategory(ageIndex3);
-  let genderIndex3 = indexAttr("gender", indexCats.gender, targetDemog3, randomDemog);
-  let ethnicityIndex3 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog3, randomDemog);
-  let maritalIndex3 = indexAttr("marital", indexCats.marital, targetDemog3, randomDemog);
-  let childrenIndex3 = indexAttr("children", indexCats.children, targetDemog3, randomDemog);
-  let childrenNonZeroPct3 = getNonZeroPct(childrenIndex3);
-  let educationIndex3 = indexAttr("education", indexCats.education, targetDemog3, randomDemog);
-  let incomeIndex3 = indexAttr("income", indexCats.income, targetDemog3, randomDemog);
-  let incomeMedianCat3 = getMedianCategory(incomeIndex3);
-  let stateIndex3 = indexAttr("state", indexCats.state, targetDemog3, randomDemog);
-  let interestsIndex3 = indexInterestsRetail("interests", targetInterests3, randomInterests);
-  let retailIndex3 = indexInterestsRetail("retail", targetRetail3, randomRetail);
+    let audName3 = targetAud3.name;
+    let ageIndex3 = indexAttr("age", indexCats.age, targetDemog3, randomDemog);
+    let ageMedianCat3 = getMedianCategory(ageIndex3);
+    let genderIndex3 = indexAttr("gender", indexCats.gender, targetDemog3, randomDemog);
+    let ethnicityIndex3 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog3, randomDemog);
+    let maritalIndex3 = indexAttr("marital", indexCats.marital, targetDemog3, randomDemog);
+    let childrenIndex3 = indexAttr("children", indexCats.children, targetDemog3, randomDemog);
+    let childrenNonZeroPct3 = getNonZeroPct(childrenIndex3);
+    let educationIndex3 = indexAttr("education", indexCats.education, targetDemog3, randomDemog);
+    let incomeIndex3 = indexAttr("income", indexCats.income, targetDemog3, randomDemog);
+    let incomeMedianCat3 = getMedianCategory(incomeIndex3);
+    let stateIndex3 = indexAttr("state", indexCats.state, targetDemog3, randomDemog);
+    let interestsIndex3 = indexInterestsRetail("interests", targetInterests3, randomInterests);
+    let retailIndex3 = indexInterestsRetail("retail", targetRetail3, randomRetail);
 
-  let stateIndexTop1 = indexStatesTop5(stateIndex1, stateIndex2, stateIndex3);
-  let stateIndexTop2 = indexStatesTop5(stateIndex2,stateIndex1, stateIndex3);
-  let stateIndexTop3 = indexStatesTop5(stateIndex3,stateIndex1, stateIndex2);
-  let interestsIndexTop1 = indexInterestsRetailTop5(interestsIndex1,interestsIndex2,interestsIndex3);
-  let interestsIndexTop2 = indexInterestsRetailTop5(interestsIndex2,interestsIndex1,interestsIndex3);
-  let interestsIndexTop3 = indexInterestsRetailTop5(interestsIndex3,interestsIndex1,interestsIndex2);
-  let retailIndexTop1 = indexInterestsRetailTop5(retailIndex1, retailIndex2, retailIndex3);
-  let retailIndexTop2 = indexInterestsRetailTop5(retailIndex2, retailIndex1, retailIndex3);
-  let retailIndexTop3 = indexInterestsRetailTop5(retailIndex3, retailIndex1, retailIndex2);
+    let stateIndexTop1 = indexStatesTop5(stateIndex1, stateIndex2, stateIndex3);
+    let stateIndexTop2 = indexStatesTop5(stateIndex2,stateIndex1, stateIndex3);
+    let stateIndexTop3 = indexStatesTop5(stateIndex3,stateIndex1, stateIndex2);
+    let interestsIndexTop1 = indexInterestsRetailTop5(interestsIndex1,interestsIndex2,interestsIndex3);
+    let interestsIndexTop2 = indexInterestsRetailTop5(interestsIndex2,interestsIndex1,interestsIndex3);
+    let interestsIndexTop3 = indexInterestsRetailTop5(interestsIndex3,interestsIndex1,interestsIndex2);
+    let retailIndexTop1 = indexInterestsRetailTop5(retailIndex1, retailIndex2, retailIndex3);
+    let retailIndexTop2 = indexInterestsRetailTop5(retailIndex2, retailIndex1, retailIndex3);
+    let retailIndexTop3 = indexInterestsRetailTop5(retailIndex3, retailIndex1, retailIndex2);
 
     let indexes1 = {
       age: ageIndex1,
@@ -1625,6 +1601,7 @@ function drawComparisonCharts3() {
 
     mikeJ3SeriesChart('interests', interestsIndex1, interestsIndex2, interestsIndex3);
     mikeJ3SeriesChart('retail', retailIndex1, retailIndex2, retailIndex3);
+
 }
 
 
@@ -1834,7 +1811,6 @@ function update3ComparisonCharts(attrName, attrValue) {
                  .tickFormat(function (d) { return d + "%" })
                  .tickSize(0);
 
-
               svg.select(".axis")
                    .transition(t)
                    .call(axis)
@@ -1985,6 +1961,7 @@ function update3ComparisonCharts(attrName, attrValue) {
     // update the wave chart
     wave3SeriesChart(indexes1, indexes2, indexes3);
 
+    /* Make clicking on a bar take you to the corresponding chart below */
     var myPlot = document.getElementById('waveChart');
     myPlot.on('plotly_click', function(data){
       let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
