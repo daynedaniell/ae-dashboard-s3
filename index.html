@@ -23,226 +23,221 @@
 
 </head>
 <body>
-    <nav class="navbar navbar-dark navbar-fixed-top bg-dark flex-md-nowrap p-0 shadow col-sm-3 col-md-2">
+    <!-- <nav class="navbar navbar-dark navbar-fixed-top bg-dark flex-md-nowrap p-0 shadow col-sm-3 col-md-2 ds-grid-brand">
       <a class="navbar-brand mr-0" href="#">AE Insights</a>
-    </nav>
+    </nav> -->
 
+    <div class="ds-grid-nav">
+        <div class="ds-nav-logo">
 
-
-    <div class="container-fluid">
-      <div class="row">
-        <nav class="col-sm-1">
-            <ul class="nav">
-              <li class="nav-item">
+        </div>
+        <div class="ds-nav-middle">
+          <nav>
+            <ul class="ds-nav">
+              <li class="ds-nav-item1">
                 <a class="nav-link active" id="dashboard-tab" data-toggle="tab" href="#dashboard">
                   <i class="fas fa-columns"></i>
                   Dashboard <span class="sr-only">(current)</span>
                 </a>
               </li>
-              <li class="nav-item">
+              <li class="ds-nav-item2">
                 <a class="nav-link" id="interests-tab" data-toggle="tab" href="#interests">
                   <i class="fas fa-heart"></i>
                   Interests
                 </a>
               </li>
-              <li class="nav-item">
+              <li class="ds-nav-item3">
                 <a class="nav-link" id="retail-tab" data-toggle="tab" href="#retail">
                   <i class="fas fa-shopping-cart"></i>
                   Retail
                 </a>
               </li>
             </ul>
-            <div class="aud-nav">
-              <hr>
-                <form class="ds-audience-selection-form">
-                  <div class="checkbox">
-                    <label><input type="checkbox" value="1" checked>New Car Buyers</label>
-                  </div>
-                  <div class="checkbox">
-                    <label><input type="checkbox" value="2">Nissan Competitive Set</label>
-                  </div>
-                </form>
-            </div>
-            <div class="ds-active-filters">
-              <hr>
-              <span>
-                <!-- <i class="fas fa-filter"></i>  -->
-                <!-- Active Filter -->
-              </span>
-              <div><span class="ds-current-filter-remove"><i class="fas fa-times"></i></span><span class="ds-current-filter"></span></div>
-            </div>
-        </nav>
-
-        <main role="main" class="col-sm-10">
-
-          <div class="row ds-audience-header">
-            <div class="col-sm-12">
-
-                <div class="ds-audience-title col-sm-8">
-                </div>
-                <div class="ds-audience-legend col-sm-4">
-                  <div class='ds-audience-legend-row' id="dsAudienceLegend1">
-                    <div class="ds-audience-legend-color col-sm-4"></div>
-                    <div class="ds-audience-legend-label col-sm-8"><span></span></div>
-                  </div>
-                  <div class='ds-audience-legend-row' id="dsAudienceLegend2">
-                    <div class="ds-audience-legend-color col-sm-4"></div>
-                    <div class="ds-audience-legend-label col-sm-8"><span></span></div>
-                  </div>
-                  <div class='ds-audience-legend-row' id="dsAudienceLegend3">
-                    <div class="ds-audience-legend-color col-sm-4"></div>
-                    <div class="ds-audience-legend-label col-sm-8"><span></span></div>
-                  </div>
-                </div>
-                <div style="float:none;width:100%;overflow:auto;"></div>
-                <div class="well">
-                    <div id="waveChart"></div>
-                </div>
-            </div>
+          </nav>
         </div>
-        <div class="tab-content relative">
-          <div class="tab-pane active" id="dashboard" role="tabpanel">
-            <div class="row">
+        <div class="ds-nav-end">
 
-            <div class="col-sm-4">
-                <div class="well tile">
-                    <div class="tile-header">
-                        <h4>Age</h4>
-                    </div>
-                    <div id="ageChart"></div>
+          <div class="ds-active-filters">
+            <span>
+
+            <!-- <i class="fas fa-filter"></i>  -->
+            <!-- Active Filter -->
+            </span>
+
+            <div style="font-style:italic;"><span class="ds-filter-tip"><i class="fas fa-lightbulb"></i></span><span class="ds-current-filter-remove">Active filter: <br/><i class="fas fa-times"></i></span><span class="ds-current-filter"></span></div>
+          </div>
+          <div class="aud-nav">
+              <form class="ds-audience-selection-form">
+                <div class="checkbox">
+                  <label><input type="checkbox" value="1" checked>1</label>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="well tile">
-                    <div class="tile-header">
-                        <h4>Gender</h4>
-                    </div>
-                    <div id="genderChart"></div>
+                <div class="checkbox">
+                  <label><input type="checkbox" value="2">2</label>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="well tile">
-                    <div class="tile-header">
-                        <h4>Ethnicity</h4>
-                    </div>
-                    <div id="ethnicityChart"></div>
+                <div class="checkbox">
+                  <label><input type="checkbox" value="3">3</label>
                 </div>
-            </div>
+              </form>
           </div>
 
-            <div class="row">
-            <div class="col-sm-4">
-                <div class="well tile">
-                    <div class="tile-header">
-                        <h4>Marital status</h4>
-                    </div>
-                    <div id="maritalChart"></div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="well tile">
-                    <div class="tile-header">
-                        <h4>Number of children</h4>
-                    </div>
-                    <div id="childrenChart"></div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="well tile">
-                    <div class="tile-header">
-                        <h4>Education</h4>
-                    </div>
-                    <div id="educationChart"></div>
-                </div>
-            </div>
-          </div>
+        </div>
+    </div>
 
-            <div class="row">
-            <div class="col-sm-6">
-              <div class="well tile">
-                  <div class="tile-header">
-                      <h4>Income</h4>
-                  </div>
-                  <div id="incomeChart"></div>
+
+
+
+
+    <div class="ds-grid-container">
+      <!-- <div class="row"> -->
+
+
+
+        <main role="main" class="ds-grid-main">
+
+          <div class="ds-audience-header">
+
+              <div class="ds-audience-title">
               </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="well tile">
-                  <div class="tile-header col-sm-2">
-                      <h4>Location</h4>
+              <div class="ds-audience-legend">
+                <div class='ds-audience-legend-row' id="dsAudienceLegend1">
+                  <div class="ds-audience-legend-color"></div>
+                  <div class="ds-audience-legend-label"><span></span></div>
+                </div>
+                <div class='ds-audience-legend-row' id="dsAudienceLegend2">
+                  <div class="ds-audience-legend-color"></div>
+                  <div class="ds-audience-legend-label"><span></span></div>
+                </div>
+                <div class='ds-audience-legend-row' id="dsAudienceLegend3">
+                  <div class="ds-audience-legend-color"></div>
+                  <div class="ds-audience-legend-label"><span></span></div>
+                </div>
+              </div>
+              <!-- <div style="float:none;width:100%;overflow:auto;"></div> -->
+              <div class="well ds-grid-full">
+                  <div id="waveChart" style="width:100%;height:150px;"></div>
+              </div>
+        </div>
+        <div class="tab-content relative ds-grid-tabs">
+          <div class="tab-pane active" id="dashboard" role="tabpanel">
+            <div class="ds-grid-charts">
+
+            <div class="ds-chart well tile">
+                  <div class="tile-header">
+                      <h4 class="ds-chart-title">Age</h4>
                   </div>
-                  <div id="stateChart">
+                  <div id="ageChart"></div>
+            </div>
+            <div class="ds-chart well tile">
+                  <div class="tile-header">
+                      <h4 class="ds-chart-title">Gender</h4>
+                  </div>
+                  <div id="genderChart"></div>
+            </div>
+            <div class="ds-chart well tile">
+                  <div class="tile-header">
+                      <h4 class="ds-chart-title">Ethnicity</h4>
+                  </div>
+                  <div id="ethnicityChart"></div>
+            </div>
+          <!-- </div> -->
+
+
+            <div class="ds-chart well tile">
+                  <div class="tile-header">
+                      <h4 class="ds-chart-title">Marital status</h4>
+                  </div>
+                  <div id="maritalChart"></div>
+            </div>
+            <div class="ds-chart well tile">
+                  <div class="tile-header">
+                      <h4 class="ds-chart-title">Number of children</h4>
+                  </div>
+                  <div id="childrenChart"></div>
+            </div>
+            <div class="ds-chart well tile">
+                  <div class="tile-header">
+                      <h4 class="ds-chart-title">Education</h4>
+                  </div>
+                  <div id="educationChart"></div>
+            </div>
+            </div>
+
+            <div class="ds-grid-charts-big">
+            <div class="ds-chart-big well tile">
+                <div class="tile-header">
+                    <h4 class="ds-chart-title">Income</h4>
+                </div>
+                <div id="incomeChart"></div>
+            </div>
+            <div class="ds-chart-big well tile">
+                <div class="tile-header col-sm-2">
+                    <h4 class="ds-chart-title">Location</h4>
+                </div>
+                <div id="stateChart">
+                  <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
+                  <div class="ds-toggle-button col-sm-2">
+                      <!-- <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div> -->
+                      <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
+                      <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
+                  </div>
+                </div>
+            </div>
+
+
+
+              <div class="ds-chart-big well tile">
+                  <div class="tile-header col-sm-2">
+                      <h4 class="ds-chart-title">Interests</h4>
+                  </div>
+                  <div id="interestsChart">
+                    <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
+                    <div class="ds-toggle-button col-sm-2">
+                        <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
+
+
+                        <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
+                        <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
+                    </div>
+                  </div>
+              </div>
+              <div class="ds-chart-big well tile">
+                  <div class="tile-header col-sm-2">
+                      <h4 class="ds-chart-title">Retail</h4>
+                  </div>
+                  <div id="retailChart">
                     <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
                     <div class="ds-toggle-button col-sm-2">
                         <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
                         <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
                         <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
                     </div>
-                  </div>
-              </div>
-            </div>
-          </div>
-
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="well tile">
-                    <div class="tile-header col-sm-2">
-                        <h4>Interests</h4>
-                    </div>
-                    <div id="interestsChart">
-                      <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
-                      <div class="ds-toggle-button col-sm-2">
-                          <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
-
-
-                          <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
-                          <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
-                      </div>
-                    </div>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="well tile">
-                    <div class="tile-header col-sm-2">
-                        <h4>Retail</h4>
-                    </div>
-                    <div id="retailChart">
-                      <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
-                      <div class="ds-toggle-button col-sm-2">
-                          <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
-                          <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
-                          <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
-                      </div>
-                    </div>
                 </div>
               </div>
             </div>
           </div>
+
 
           <div class="tab-pane" id="interests" role="tabpanel">
-            <div class="col-sm-12">
-              <div class="well tile">
+              <div class="well tile ds-grid-full">
                   <div class="tile-header">
-                      <h4>Interests</h4>
+                      <h4 class="ds-chart-title">Interests</h4>
                   </div>
-                  <div id="interestsDetailChart" class="mikej-chart"></div>
+                  <div id="interestsDetailChart" class="mikej-chart" style="width:1260px;height:1334px;"></div>
               </div>
-            </div>
           </div>
           <div class="tab-pane" id="retail" role="tabpanel">
-            <div class="col-sm-12">
-              <div class="well tile">
+              <div class="well tile ds-grid-full">
                   <div class="tile-header">
-                      <h4>Retail</h4>
+                      <h4 class="ds-chart-title">Retail</h4>
                   </div>
-                  <div id="retailDetailChart" class="mikej-chart"></div>
+                  <div id="retailDetailChart" class="mikej-chart" style="width:1260px;height:1334px;"></div>
               </div>
-            </div>
+
           </div>
         </div>
+      </div>
 
         </main>
-      </div>
     </div>
 
 
@@ -268,6 +263,7 @@
     <script src="js/audience_data_processing.js"></script>
     <script src="js/audience_charts.js"></script>
     <script src="js/audience_comparison_charts.js"></script>
+    <script src="js/audience_comparison_charts3.js"></script>
 
 
     <script>
@@ -279,7 +275,7 @@
 */
         async function f(audIds) {
             // setting these as globals for now
-            if (audIds.length > 0 & audIds.length <= 2) {
+            if (audIds.length > 0 & audIds.length <= 3) {
 
               randomDemog = await d3.tsv("data/random_audience/demographics_random.tsv");
               randomInterests = await d3.tsv("data/random_audience/interests_random.tsv");
@@ -301,11 +297,25 @@
                   targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
 
                   drawComparisonCharts();
+              } else if (audIds.length == 3) {
+                  targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
+                  targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
+                  targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
+                  targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
+
+                  targetAud3 = await d3.json("data/target_aud_" + audIds[2] + "/audience.json");
+                  targetDemog3 = await d3.tsv("data/target_aud_" + audIds[2] + "/demographics_target.tsv");
+                  targetInterests3 = await d3.tsv("data/target_aud_" + audIds[2] + "/interests_target.tsv");
+                  targetRetail3 = await d3.tsv("data/target_aud_" + audIds[2] + "/retail_target.tsv");
+
+                  drawComparisonCharts3();
               }
 
             }
         }
 
+        /* NOTE: This will NOT be needed in AE, we will need an implementation
+          to retrive the selected audiences */
         $(document).ready(function(){
           $(".ds-audience-selection-form").change(function(){
             let selectedAudiences =
@@ -313,10 +323,12 @@
                 .map(function() { return $(this).val(); })
                 .get();
 
-            if (selectedAudiences.length > 0 & selectedAudiences.length <= 2) {
+            if (selectedAudiences.length > 0 & selectedAudiences.length <= 3) {
               f(selectedAudiences);
             } else {
-              alert("Please select 1 or 2 audiences for visualization.");
+              //$(this).after("<p class='ds-audience-select-alert'><em>Please select an audience!</em></p>");
+              //$(".ds-active-filters").css("top", "400px")
+              //alert("Please select 1 or 2 audiences for visualization.");
             }
           }).change(); // fires on load and on form change
         });
