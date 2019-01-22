@@ -1716,9 +1716,9 @@ function drawComparisonCharts() {
   hBarParallelChart("gender", audName1, genderIndex1, audName2, genderIndex2);
   hBarParallelChart("marital", audName1, maritalIndex1, audName2, maritalIndex2);
 
-  (DS_VIS_STORE["stateActive"][0] === 1) ? hBar2SeriesChart("state", stateIndexTop1, stateIndexTop2) : hBar2SeriesChart("state", stateIndexTop2, stateIndexTop1);
-  (DS_VIS_STORE["interestsActive"][0] === 1) ? hBar2SeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBar2SeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
-  (DS_VIS_STORE["retailActive"][0] === 1) ? hBar2SeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBar2SeriesChart("retail", retailIndexTop2, retailIndexTop1);
+  (DS_VIS_STORE["stateActive"][0] === 1) ? hBarMultiSeriesChart("state", stateIndexTop1, stateIndexTop2) : hBarMultiSeriesChart("state", stateIndexTop2, stateIndexTop1);
+  (DS_VIS_STORE["interestsActive"][0] === 1) ? hBarMultiSeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBarMultiSeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
+  (DS_VIS_STORE["retailActive"][0] === 1) ? hBarMultiSeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBarMultiSeriesChart("retail", retailIndexTop2, retailIndexTop1);
 
   $( ".tile" ).removeClass("selected-tile");
 
@@ -2046,7 +2046,7 @@ function updateComparisonCharts(attrName, attrValue) {
             d3.select("#"+demogAttributeListName+"Chart svg").remove();
             target = DS_VIS_STORE[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop1 : attrIndexTop2;
             compare = DS_VIS_STORE[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop2 : attrIndexTop1;
-            hBar2SeriesChart(demogAttributeListName, target, compare);
+            hBarMultiSeriesChart(demogAttributeListName, target, compare);
 
       }
 
@@ -2104,44 +2104,55 @@ $('.ds-toggle-button').on('click', function(event){
   $(this).toggleClass('active');
 });
 
+// function addCompareToggle(attrName) {
+//   $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
+//   if (DS_VIS_STORE[attrName+"Active"][0] == 2) {
+//       $("#"+attrName+"Chart .ds-toggle-button").toggleClass("active",true);
+//   }
+//
+//   if ($("#"+attrName+"Chart .ds-toggle-main").length === 0) {
+//       $("#"+attrName+"Chart .ds-toggle-button").append(
+//         "<div class='ds-toggle-main'><div class='ds-toggle-after'></div></div>"
+//       );
+//   }
+//
+//   $("#"+attrName+"Chart .ds-triple-toggle").remove();
+//   $("#"+attrName+"Chart .ds-hbar-status").text(function() {
+//       let aud = DS_VIS_STORE[attrName+"Active"][0] === 1 ? targetAud.name : targetAud2.name;
+//       if (attrName === "interests") {
+//           return "Top 5 for " + aud + " (by Index)";
+//       } else if (attrName === "state") {
+//           return "Top 5 for " + aud + " (by Index)";
+//       } else {
+//           return "Top 5 for " + aud + " (by Index)";
+//       }
+//   });
+//
+//   $("#"+attrName+"Chart .ds-toggle-after").css("background-color", DS_VIS_STORE[attrName+"Colors"][0]);
+//
+// }
+
 function addCompareToggle(attrName) {
-  $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
-  if (DS_VIS_STORE[attrName+"Active"][0] == 2) {
-      $("#"+attrName+"Chart .ds-toggle-button").toggleClass("active",true);
-  }
+  let numSeries = DS_VIS_STORE.activeView;
 
-  if ($("#"+attrName+"Chart .ds-toggle-main").length === 0) {
-      $("#"+attrName+"Chart .ds-toggle-button").append(
-        "<div class='ds-toggle-main'><div class='ds-toggle-after'></div></div>"
-      );
-  }
-
-  $("#"+attrName+"Chart .ds-triple-toggle").remove();
-  $("#"+attrName+"Chart .ds-hbar-status").text(function() {
-      let aud = DS_VIS_STORE[attrName+"Active"][0] === 1 ? targetAud.name : targetAud2.name;
-      if (attrName === "interests") {
-          return "Top 5 for " + aud + " (by Index)";
-      } else if (attrName === "state") {
-          return "Top 5 for " + aud + " (by Index)";
-      } else {
-          return "Top 5 for " + aud + " (by Index)";
-      }
-  });
-
-  $("#"+attrName+"Chart .ds-toggle-after").css("background-color", DS_VIS_STORE[attrName+"Colors"][0]);
-
-}
-
-function addTripleCompareToggle(attrName) {
   $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
   $("#"+attrName+"Chart .ds-toggle-main").remove();
-  if ($("#"+attrName+"Chart .ds-triple-toggle").length === 0) {
-    $("#"+attrName+"Chart .ds-toggle-button").append(
-      "<div class='ds-triple-toggle'><div class='ds-t1'></div><div class='ds-t2'></div><div class='ds-t3'></div></div>");
+  if (numSeries == 2 && ($("#"+attrName+"Chart .ds-t2").length === 0 || $("#"+attrName+"Chart .ds-t3").length === 1)) {
+      $("#"+attrName+"Chart .ds-triple-toggle").remove();
+      $("#"+attrName+"Chart .ds-toggle-button").append(
+        "<div class='ds-triple-toggle'><div class='ds-t1'></div><div class='ds-t2'></div></div>");
+  } else if (numSeries == 3 && $("#"+attrName+"Chart .ds-t3").length === 0) {
+      $("#"+attrName+"Chart .ds-triple-toggle").remove();
+      $("#"+attrName+"Chart .ds-toggle-button").append(
+        "<div class='ds-triple-toggle'><div class='ds-t1'></div><div class='ds-t2'></div><div class='ds-t3'></div></div>");
   }
+
   $("#"+attrName+"Chart .ds-t1").css("background-color", colorSeries1);
   $("#"+attrName+"Chart .ds-t2").css("background-color", colorSeries2);
-  $("#"+attrName+"Chart .ds-t3").css("background-color", colorSeries3);
+  if (numSeries == 3) {
+      $("#"+attrName+"Chart .ds-t3").css("background-color", colorSeries3);
+  }
+
   if (DS_VIS_STORE[attrName+"Active"][0] == 1) {
       $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",true);
   }
