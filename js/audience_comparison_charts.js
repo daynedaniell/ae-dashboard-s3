@@ -1680,7 +1680,7 @@ function drawComparisonCharts() {
     };
 
 
-    wave2SeriesChart(indexes1, indexes2);
+    dnaChart(indexes1, indexes2);
 
     /* Clicking on bar in DNA chart takes you to corresponding chart for more info */
     var myPlot = document.getElementById('waveChart');
@@ -2052,7 +2052,7 @@ function updateComparisonCharts(attrName, attrValue) {
 
 
   // update the wave chart
-  wave2SeriesChart(indexes1, indexes2);
+  dnaChart(indexes1, indexes2);
 
   /* Clicking on bar in DNA chart takes you to corresponding chart for more info */
   var myPlot = document.getElementById('waveChart');

@@ -1150,7 +1150,7 @@ function drawCharts() {
       retail: retailIndexTop0
     };
 
-    waveChart(indexes);
+    dnaChart(indexes);
 
     /* Take user to corresponding chart on bar click */
     let myPlot = document.getElementById('waveChart');
@@ -1459,7 +1459,7 @@ function updateCharts(attrName, attrValue) {
     });
 
     // update the wave chart
-    waveChart(indexes);
+    dnaChart(indexes);
 
     /* Take user to corresponding chart on bar click */
     let myPlot = document.getElementById('waveChart');

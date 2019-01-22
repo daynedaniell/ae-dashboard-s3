@@ -1069,7 +1069,17 @@ function hBarMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
 /*******************************************************************************
 *** WAVE 3-SERIES CHART ********************************************************
 *******************************************************************************/
-function wave3SeriesChart(ds1, ds2, ds3) {
+function dnaChart(ds1, ds2, ds3) {
+  let numSeries = DS_VIS_STORE.activeView;
+
+  let barWidth = 4;
+
+  if (numSeries == 2) {
+      barWidth = 3;
+  } else if (numSeries == 3) {
+      barWidth = 2;
+  }
+
 
   // tooltip values
   function makeToolTips(indexDs, attrName) {
@@ -1113,10 +1123,10 @@ function wave3SeriesChart(ds1, ds2, ds3) {
       x: unpack(ds1[attrName], 'index'),
       y: unpack(ds1[attrName], 'target_pct'),
       base: unpack(ds1[attrName], 'target_pct').map(x => -x/2),
-      width: 2,
+      width: barWidth,
       type: 'bar',
       marker: {
-        color: colorSeries1,
+        color: numSeries == 1 ? unpack(ds1[attrName], 'index').map(x => colorByIndexBar(x)) : colorSeries1,
         opacity: 0.5
       },
      hovertext: makeToolTips(ds1[attrName], attrName),
@@ -1131,54 +1141,58 @@ function wave3SeriesChart(ds1, ds2, ds3) {
         }
       }
     };
+    if (numSeries > 1) {
+        traces2[i] = {
+          name: attrName,
+          x: unpack(ds2[attrName], 'index'),
+          y: unpack(ds2[attrName], 'target_pct'),
+          base: unpack(ds2[attrName], 'target_pct').map(x => -x/2),
+          width: barWidth,
+          type: 'bar',
+          marker: {
+            color: colorSeries2,
+            opacity: 0.5
+          },
+         hovertext: makeToolTips(ds2[attrName], attrName),
+         hoverinfo: 'text',
+          hoverlabel: {
+            bgcolor: '#fff',
+            bordercolor: 'lightgrey',
+            font: {
+              family: "Open Sans",
+              size: 15,
+              color: '#333'
+            }
+          }
+        };
+    }
 
-    traces2[i] = {
-      name: attrName,
-      x: unpack(ds2[attrName], 'index'),
-      y: unpack(ds2[attrName], 'target_pct'),
-      base: unpack(ds2[attrName], 'target_pct').map(x => -x/2),
-      width: 2,
-      type: 'bar',
-      marker: {
-        color: colorSeries2,
-        opacity: 0.5
-      },
-     hovertext: makeToolTips(ds2[attrName], attrName),
-     hoverinfo: 'text',
-      hoverlabel: {
-        bgcolor: '#fff',
-        bordercolor: 'lightgrey',
-        font: {
-          family: "Open Sans",
-          size: 15,
-          color: '#333'
-        }
-      }
-    };
+    if (numSeries > 2) {
+        traces3[i] = {
+          name: attrName,
+          x: unpack(ds3[attrName], 'index'),
+          y: unpack(ds3[attrName], 'target_pct'),
+          base: unpack(ds3[attrName], 'target_pct').map(x => -x/2),
+          width: barWidth,
+          type: 'bar',
+          marker: {
+            color: colorSeries3,
+            opacity: 0.5
+          },
+         hovertext: makeToolTips(ds3[attrName], attrName),
+         hoverinfo: 'text',
+          hoverlabel: {
+            bgcolor: '#fff',
+            bordercolor: 'lightgrey',
+            font: {
+              family: "Open Sans",
+              size: 15,
+              color: '#333'
+            }
+          }
+        };
+    }
 
-    traces3[i] = {
-      name: attrName,
-      x: unpack(ds3[attrName], 'index'),
-      y: unpack(ds3[attrName], 'target_pct'),
-      base: unpack(ds3[attrName], 'target_pct').map(x => -x/2),
-      width: 2,
-      type: 'bar',
-      marker: {
-        color: colorSeries3,
-        opacity: 0.5
-      },
-     hovertext: makeToolTips(ds3[attrName], attrName),
-     hoverinfo: 'text',
-      hoverlabel: {
-        bgcolor: '#fff',
-        bordercolor: 'lightgrey',
-        font: {
-          family: "Open Sans",
-          size: 15,
-          color: '#333'
-        }
-      }
-    };
 
   });
 
@@ -1561,7 +1575,7 @@ function drawComparisonCharts3() {
       retail: retailIndexTop3[0]
     };
 
-    wave3SeriesChart(indexes1, indexes2, indexes3);
+    dnaChart(indexes1, indexes2, indexes3);
 
     var myPlot = document.getElementById('waveChart');
     myPlot.on('plotly_click', function(data){
@@ -1925,7 +1939,7 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
     });
 
     // update the wave chart
-    wave3SeriesChart(indexes1, indexes2, indexes3);
+    dnaChart(indexes1, indexes2, indexes3);
 
     /* Make clicking on a bar take you to the corresponding chart below */
     var myPlot = document.getElementById('waveChart');
