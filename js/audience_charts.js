@@ -1025,6 +1025,7 @@ function addAudienceLegend(compare=null) {
 *** SHOW ACTIVE FILTERS ********************************************************
 *******************************************************************************/
 function showActiveFilter(store) {
+  console.log(JSON.stringify(store))
   let cat = null;
   if (store["activeFilter"] != null) {
       cat = store["activeFilter"][0];

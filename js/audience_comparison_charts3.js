@@ -331,7 +331,9 @@ function add3SeriesStat(attrName, stat1, stat2, stat3, prefix='', suffix='') {
 /*******************************************************************************
 *** 3-SERIES Parallel CHART ****************************************************
 *******************************************************************************/
-function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
+function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
+    let numSeries = DS_VIS_STORE.activeView;
+
     let innerWidth = 400;
 
     let basics = barChartSetup(innerWidth);
@@ -369,129 +371,177 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
     let plot = svg.append("g")
                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    let barHeight = height / 8;
-    let paddingBottom = 30;
+    let barHeight = numSeries == 3 ? 50 : 60;
+    let paddingBottom = numSeries == 3 ? 30 : 60;
     let barSpacing = 40;
-    let topPos = height - ((barHeight + barSpacing) * 3 + paddingBottom);
+    let topPos = height - ((barHeight + barSpacing) * numSeries + paddingBottom);
     let lineStroke = 'steelblue';
     let lineExtend = 12;
     let lineStrokeWidth = 8;
 
     /* Attach index data and add the chart elems */
     /* 1st series */
-    plot.selectAll("rect.series1")
-        .data(indexDs1)
-        .enter()
-        .append("rect")
-        .attr("class", "series1")
-        .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
-        .attr("width", function(d) { return xScale(d.target_pct)})
-        .attr("y", function(d) { return topPos })
-        .attr("height", function(d) { return barHeight ; })
-        .attr("fill", colorSeries1)
-        .attr("cursor", "pointer")
-        .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseup)
-        .on("mousemove", mouseover)
-        .attr("target-pct", function(d) { return d.target_pct; })
-        .attr("index", function(d) { return d.index; })
-        .on("click", up);
+    function addPBar(data, series, color) {
+        plot.selectAll("rect." + series)
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", series)
+            .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
+            .attr("width", function(d) { return xScale(d.target_pct)})
+            .attr("y", function() {
+                if (series == "series1") {
+                    return topPos
+                } else if (series == "series2") {
+                    return topPos + barSpacing + barHeight
+                } else if (series == "series3") {
+                    return topPos + barSpacing * 2 + barHeight*2
+                }
+            })
+            .attr("height", function(d) { return barHeight ; })
+            .attr("fill", color)
+            .attr("cursor", "pointer")
+            .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseup)
+            .on("mousemove", mouseover)
+            .attr("target-pct", function(d) { return d.target_pct; })
+            .attr("index", function(d) { return d.index; })
+            .on("click", up);
+    }
+    addPBar(indexDs1, "series1", colorSeries1)
+    addPBar(indexDs2, "series2", colorSeries2)
+    if (numSeries > 2) {
+      addPBar(indexDs3, "series3", colorSeries3)
+    }
+    // plot.selectAll("rect.series1")
+    //     .data(indexDs1)
+    //     .enter()
+    //     .append("rect")
+    //     .attr("class", "series1")
+    //     .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
+    //     .attr("width", function(d) { return xScale(d.target_pct)})
+    //     .attr("y", function(d) { return topPos })
+    //     .attr("height", function(d) { return barHeight ; })
+    //     .attr("fill", colorSeries1)
+    //     .attr("cursor", "pointer")
+    //     .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+    //     .on("mouseover", mouseover)
+    //     .on("mouseout", mouseup)
+    //     .on("mousemove", mouseover)
+    //     .attr("target-pct", function(d) { return d.target_pct; })
+    //     .attr("index", function(d) { return d.index; })
+    //     .on("click", up);
+    //
+    // plot.selectAll("rect.series2")
+    //     .data(indexDs2)
+    //     .enter()
+    //     .append("rect")
+    //     .attr("class", "series2")
+    //     .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
+    //     .attr("width", function(d) { return xScale(d.target_pct)})
+    //     .attr("y", topPos + barSpacing + barHeight)
+    //     .attr("height", function(d) { return barHeight ; })
+    //     .attr("fill", colorSeries2)
+    //     .attr("cursor", "pointer")
+    //     .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+    //     .on("mouseover", mouseover)
+    //     .on("mouseout", mouseup)
+    //     .on("mousemove", mouseover)
+    //     .attr("target-pct", function(d) { return d.target_pct; })
+    //     .attr("index", function(d) { return d.index; })
+    //     .on("click", up);
+    //
+    // plot.selectAll("rect.series3")
+    //     .data(indexDs3)
+    //     .enter()
+    //     .append("rect")
+    //     .attr("class", "series3")
+    //     .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
+    //     .attr("width", function(d) { return xScale(d.target_pct)})
+    //     .attr("y", topPos + barSpacing * 2 + barHeight*2)
+    //     .attr("height", function(d) { return barHeight ; })
+    //     .attr("fill", colorSeries3)
+    //     .attr("cursor", "pointer")
+    //     .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+    //     .on("mouseover", mouseover)
+    //     .on("mouseout", mouseup)
+    //     .on("mousemove", mouseover)
+    //     .attr("target-pct", function(d) { return d.target_pct; })
+    //     .attr("index", function(d) { return d.index; })
+    //     .on("click", up)
+    function addPbarText(data, series) {
+        plot.selectAll("text."+series)
+            .data(data)
+            .enter()
+            .append("text")
+            .attr("class", series)
+            .text(function(d) {
+                 return formatAsInteger(d3.format("d")(d.index));
+            })
+            .attr("text-anchor", "middle")
+            /* Set x position to be inside corresponding edge of the bar */
+            .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
+            .attr("y", function() {
+                if (series == "series1") {
+                  return topPos + 3 + (barHeight/2)
+                } else if (series == "series2") {
+                  return topPos + barSpacing + 3 + barHeight + (barHeight/2)
+                } else if (series == "series3") {
+                  return topPos + barSpacing * 2 + 3 + barHeight*2 + (barHeight/2)
+                }
+            })
+            .attr("class", "yAxis")
+            .attr("font-family", "sans-serif")
+            .attr("fill", "white")
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseup)
+            .on("mousemove", mouseover);
+    }
 
-    plot.selectAll("rect.series2")
-        .data(indexDs2)
-        .enter()
-        .append("rect")
-        .attr("class", "series2")
-        .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
-        .attr("width", function(d) { return xScale(d.target_pct)})
-        .attr("y", topPos + barSpacing + barHeight)
-        .attr("height", function(d) { return barHeight ; })
-        .attr("fill", colorSeries2)
-        .attr("cursor", "pointer")
-        .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseup)
-        .on("mousemove", mouseover)
-        .attr("target-pct", function(d) { return d.target_pct; })
-        .attr("index", function(d) { return d.index; })
-        .on("click", up);
+    addPbarText(indexDs1, "series1");
+    addPbarText(indexDs2, "series2");
+    if (numSeries > 2) {
+        addPbarText(indexDs3, "series3");
+    }
 
-    plot.selectAll("rect.series3")
-        .data(indexDs3)
-        .enter()
-        .append("rect")
-        .attr("class", "series3")
-        .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
-        .attr("width", function(d) { return xScale(d.target_pct)})
-        .attr("y", topPos + barSpacing * 2 + barHeight*2)
-        .attr("height", function(d) { return barHeight ; })
-        .attr("fill", colorSeries3)
-        .attr("cursor", "pointer")
-        .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseup)
-        .on("mousemove", mouseover)
-        .attr("target-pct", function(d) { return d.target_pct; })
-        .attr("index", function(d) { return d.index; })
-        .on("click", up)
+    // plot.selectAll("text.series2")
+    //     .data(indexDs2)
+    //     .enter()
+    //     .append("text")
+    //     .attr("class", "series2")
+    //     .text(function(d) {
+    //          return formatAsInteger(d3.format("d")(d.index));
+    //     })
+    //     .attr("text-anchor", "middle")
+    //     /* Set x position to be inside corresponding edge of the bar */
+    //     .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
+    //     .attr("y", function(d) { return topPos + barSpacing + 3 + barHeight + (barHeight/2)})
+    //     .attr("class", "yAxis")
+    //     .attr("font-family", "sans-serif")
+    //     .attr("fill", "white")
+    //     .on("mouseover", mouseover)
+    //     .on("mouseout", mouseup)
+    //     .on("mousemove", mouseover);
 
-    plot.selectAll("text.series1")
-        .data(indexDs1)
-        .enter()
-        .append("text")
-        .attr("class", "series1")
-        .text(function(d) {
-             return formatAsInteger(d3.format("d")(d.index));
-        })
-        .attr("text-anchor", "middle")
-        /* Set x position to be inside corresponding edge of the bar */
-        .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
-        .attr("y", function(d) { return topPos + 3 + (barHeight/2)})
-        .attr("class", "yAxis")
-        .attr("font-family", "sans-serif")
-        .attr("fill", "white")
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseup)
-        .on("mousemove", mouseover);
-
-    plot.selectAll("text.series2")
-        .data(indexDs2)
-        .enter()
-        .append("text")
-        .attr("class", "series2")
-        .text(function(d) {
-             return formatAsInteger(d3.format("d")(d.index));
-        })
-        .attr("text-anchor", "middle")
-        /* Set x position to be inside corresponding edge of the bar */
-        .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
-        .attr("y", function(d) { return topPos + barSpacing + 3 + barHeight + (barHeight/2)})
-        .attr("class", "yAxis")
-        .attr("font-family", "sans-serif")
-        .attr("fill", "white")
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseup)
-        .on("mousemove", mouseover);
-
-    plot.selectAll("text.series3")
-        .data(indexDs3)
-        .enter()
-        .append("text")
-        .attr("class", "series3")
-        .text(function(d) {
-             return formatAsInteger(d3.format("d")(d.index));
-        })
-        .attr("text-anchor", "middle")
-        /* Set x position to be inside corresponding edge of the bar */
-        .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
-        .attr("y", function(d) { return topPos + barSpacing * 2 + 3 + barHeight*2 + (barHeight/2)})
-        .attr("class", "yAxis")
-        .attr("font-family", "sans-serif")
-        .attr("fill", "white")
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseup)
-        .on("mousemove", mouseover);
+    // plot.selectAll("text.series3")
+    //     .data(indexDs3)
+    //     .enter()
+    //     .append("text")
+    //     .attr("class", "series3")
+    //     .text(function(d) {
+    //          return formatAsInteger(d3.format("d")(d.index));
+    //     })
+    //     .attr("text-anchor", "middle")
+    //     /* Set x position to be inside corresponding edge of the bar */
+    //     .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
+    //     .attr("y", function(d) { return topPos + barSpacing * 2 + 3 + barHeight*2 + (barHeight/2)})
+    //     .attr("class", "yAxis")
+    //     .attr("font-family", "sans-serif")
+    //     .attr("fill", "white")
+    //     .on("mouseover", mouseover)
+    //     .on("mouseout", mouseup)
+    //     .on("mousemove", mouseover);
 
     plot.selectAll("text.labels")
         .data(indexDs1)
@@ -537,16 +587,19 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
         .attr("stroke-width", lineStrokeWidth)
         .attr("fill", "none");
 
-    var lineData3 = [{"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 - lineExtend},
-                    {"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 + barHeight + lineExtend}]
+    if (numSeries > 2) {
+        var lineData3 = [{"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 - lineExtend},
+                        {"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 + barHeight + lineExtend}]
 
-    var line3 = d3.line()
-                 .x(function(d) {return d.x})
-                 .y(function(d) {return d.y});
+        var line3 = d3.line()
+                     .x(function(d) {return d.x})
+                     .y(function(d) {return d.y});
 
-    var path3 = plot.append('path').attr('d', line3(lineData3)).attr("stroke", lineStroke)
-        .attr("stroke-width", lineStrokeWidth)
-        .attr("fill", "none");
+        var path3 = plot.append('path').attr('d', line3(lineData3)).attr("stroke", lineStroke)
+            .attr("stroke-width", lineStrokeWidth)
+            .attr("fill", "none");
+    }
+
 
 
     /* Add x-axis */
@@ -573,10 +626,18 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
        isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
        if (isSelected){
          DS_VIS_STORE["activeFilter"] = null;
-         drawComparisonCharts3();
+         if (numSeries == 2) {
+            drawComparisonCharts();
+         } else if (numSeries == 3) {
+            drawComparisonCharts3();
+         }
          showActiveFilter(DS_VIS_STORE);
        } else {
-         update3ComparisonCharts(attrName, d.attrib_value);
+         if (numSeries == 2) {
+            updateComparisonCharts(attrName, d.attrib_value);
+         } else if (numSeries == 3) {
+            update3ComparisonCharts(attrName, d.attrib_value);
+         }
          showActiveFilter(DS_VIS_STORE);
        }
     }

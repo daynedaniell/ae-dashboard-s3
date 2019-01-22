@@ -1713,8 +1713,8 @@ function drawComparisonCharts() {
   drawBarChart("education", educationIndex1, educationIndex2);
   drawBarChart("income", incomeIndex1, incomeIndex2);
   add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "Median: ");
-  hBarParallelChart("gender", audName1, genderIndex1, audName2, genderIndex2);
-  hBarParallelChart("marital", audName1, maritalIndex1, audName2, maritalIndex2);
+  hBar3ParallelChart("gender", genderIndex1, genderIndex2);
+  hBar3ParallelChart("marital", maritalIndex1, maritalIndex2);
 
   (DS_VIS_STORE["stateActive"][0] === 1) ? hBarMultiSeriesChart("state", stateIndexTop1, stateIndexTop2) : hBarMultiSeriesChart("state", stateIndexTop2, stateIndexTop1);
   (DS_VIS_STORE["interestsActive"][0] === 1) ? hBarMultiSeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBarMultiSeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
@@ -2038,9 +2038,7 @@ function updateComparisonCharts(attrName, attrValue) {
 
         } else if ( sBarChartAttributesList.includes(demogAttributeListName) ) {
             d3.select("#"+demogAttributeListName+"Chart svg").remove();
-            hBarParallelChart(demogAttributeListName,
-              targetAud.name, attrIndex1,
-              targetAud2.name, attrIndex2);
+            hBar3ParallelChart(demogAttributeListName,attrIndex1,attrIndex2);
 
         } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
             d3.select("#"+demogAttributeListName+"Chart svg").remove();
