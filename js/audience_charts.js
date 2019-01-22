@@ -93,7 +93,7 @@ function wrap(text, width, sep = " ", type = "pie") {
     });
 }
 
-d3.select(window).on('resize', console.log(window.innerWidth))
+//d3.select(window).on('resize', console.log(window.innerWidth))
 /*******************************************************************************
 *** BAR CHART ******************************************************************
 *******************************************************************************/

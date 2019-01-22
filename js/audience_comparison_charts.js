@@ -38,7 +38,8 @@ function toggleFromStore(store, key) {
 *** 2-SERIES BAR CHART *********************************************************
 *******************************************************************************/
 
-function bar2SeriesChart(attrName, indexDs1, indexDs2) {
+
+function barMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null, numSeries = 2) {
   let innerWidth = 400;
   if (attrName == "income") {
   	  innerWidth = 610;
@@ -57,7 +58,8 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 	let yScale = d3.scaleLinear()
 		             .domain([0, Math.max(
                       d3.max(indexDs1, function(d) { return d.target_pct; }),
-                      d3.max(indexDs2, function(d) { return d.target_pct; })
+                      d3.max(indexDs2, function(d) { return d.target_pct; }),
+                      indexDs3 != null ? d3.max(indexDs3, function(d) { return d.target_pct; }) : 0
                     )
                  ])
 		             .range([height, 0]);
@@ -95,24 +97,30 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
   function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
 
 
-  /* Attach index data and add the chart elems */
-  /* 1st series */
-    plot.selectAll("rect.series1")
-        .data(indexDs1)
+  function addBar(data,series,color) {
+    plot.selectAll("rect."+series)
+        .data(data)
           .enter()
           .append("rect")
-        .attr("class", "series1")
-        	.attr("x", function(d, i) {
-        	     return xScale(i);
-        	})
-          .attr("width", width / (indexDs1.length * 2) - barPadding)
-        	.attr("y", function(d) {
-        	     return yScale(d.target_pct);
-        	})
-        	.attr("height", function(d) {
-        	    return height-yScale(d.target_pct);
-        	})
-        	.attr("fill", colorSeries1)
+        .attr("class", series)
+          .attr("x", function(d, i) {
+              if (series == "series1") {
+                return xScale(i);
+              } else if (series == "series2") {
+                return xScale(i) + width / (indexDs1.length * numSeries) - barPadding;
+              } else if (series == "series3") {
+                return xScale(i) + width / (indexDs1.length * 1.5) - barPadding * 2;
+              }
+
+          })
+          .attr("width", width / (indexDs1.length * numSeries) - barPadding)
+          .attr("y", function(d) {
+               return yScale(d.target_pct);
+          })
+          .attr("height", function(d) {
+              return height-yScale(d.target_pct);
+          })
+          .attr("fill", color)
         .attr("cursor", "pointer")
         .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
         .on("mouseover", mouseover)
@@ -121,86 +129,169 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
         .attr("target-pct", function(d) { return d.target_pct; })
         .attr("index", function(d) { return d.index; })
         .on("click", up);
+  }
+
+
+  /* Attach index data and add the chart elems */
+  /* 1st series */
+    // plot.selectAll("rect.series1")
+    //     .data(indexDs1)
+    //       .enter()
+    //       .append("rect")
+    //     .attr("class", "series1")
+    //     	.attr("x", function(d, i) {
+    //     	     return xScale(i);
+    //     	})
+    //       .attr("width", width / (indexDs1.length * 2) - barPadding)
+    //     	.attr("y", function(d) {
+    //     	     return yScale(d.target_pct);
+    //     	})
+    //     	.attr("height", function(d) {
+    //     	    return height-yScale(d.target_pct);
+    //     	})
+    //     	.attr("fill", colorSeries1)
+    //     .attr("cursor", "pointer")
+    //     .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+    //     .on("mouseover", mouseover)
+    //     .on("mouseout", mouseup)
+    //     .on("mousemove", mouseover)
+    //     .attr("target-pct", function(d) { return d.target_pct; })
+    //     .attr("index", function(d) { return d.index; })
+    //     .on("click", up);
+
+    addBar(indexDs1,"series1",colorSeries1);
+    addBar(indexDs2,"series2",colorSeries2);
+    if (indexDs3 != null) {
+      addBar(indexDs3,"series3",colorSeries3);
+    }
 
   /* 2nd series */
-    plot.selectAll("rect.series2")
-      .data(indexDs2)
-		  .enter()
-		  .append("rect")
-      .attr("class", "series2")
-			.attr("x", function(d, i) {
-			     return xScale(i) + width / (indexDs1.length * 2) - barPadding;
-			})
-		  .attr("width", width / (indexDs1.length * 2) - barPadding)
-			.attr("y", function(d) {
-			     return yScale(d.target_pct);
-			})
-			.attr("height", function(d) {
-			    return height-yScale(d.target_pct);
-			})
-			.attr("fill", colorSeries2)
-      .attr("cursor", "pointer")
-      .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-      .on("mouseover", mouseover)
-      .on("mouseout", mouseup)
-      .on("mousemove", mouseover)
-      .attr("target-pct", function(d) { return d.target_pct; })
-      .attr("index", function(d) { return d.index; })
-      .on("click", up);
+    // plot.selectAll("rect.series2")
+    //   .data(indexDs2)
+		//   .enter()
+		//   .append("rect")
+    //   .attr("class", "series2")
+		// 	.attr("x", function(d, i) {
+		// 	     return xScale(i) + width / (indexDs1.length * 2) - barPadding;
+		// 	})
+		//   .attr("width", width / (indexDs1.length * 2) - barPadding)
+		// 	.attr("y", function(d) {
+		// 	     return yScale(d.target_pct);
+		// 	})
+		// 	.attr("height", function(d) {
+		// 	    return height-yScale(d.target_pct);
+		// 	})
+		// 	.attr("fill", colorSeries2)
+    //   .attr("cursor", "pointer")
+    //   .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+    //   .on("mouseover", mouseover)
+    //   .on("mouseout", mouseup)
+    //   .on("mousemove", mouseover)
+    //   .attr("target-pct", function(d) { return d.target_pct; })
+    //   .attr("index", function(d) { return d.index; })
+    //   .on("click", up);
 
 	/* Add y labels to plot */
-  let fontSize = "12px";
-  if (attrName == "children") { fontSize = "10px" ;}
+
+
+  function addBarText(data, series) {
+      let fontSize = "10px";
+      if (numSeries == 2 && attrName != "children") {
+          fontSize = "12px";
+      }  else if (numSeries == 3 && attrName == "children") {
+          fontSize = "9px";
+      }
+
+      plot.selectAll("text."+series)
+    	    .data(data)
+    	    .enter()
+    	    .append("text")
+          .attr("class", series)
+          .text(function(d) {
+           return formatAsInteger(d3.format("d")(d.index));
+          })
+    	    .attr("text-anchor", "middle")
+    	    /* Set x position to the left edge of each bar plus half the bar width */
+    	    .attr("x", function(d, i) {
+              if (series == "series1") {
+                  return ( i * (width / indexDs1.length) )
+                    + ( (width / (indexDs1.length * numSeries) - barPadding) / 2 );
+              } else if (series == "series2") {
+                  return ( i * (width / indexDs1.length) )
+                           + ( (width / (indexDs1.length * numSeries) - barPadding) ) * 1.5 ;
+              } else if (series == "series3") {
+                  return ( i * (width / indexDs1.length) )
+                      + ( (width / (indexDs1.length * 3) - barPadding) ) * 2.5 ;
+              }
+
+    	    })
+    	    .attr("y", function(d) {
+    			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
+    	    })
+    	  //  .attr("class", "yAxis")
+    	    .attr("font-family", "sans-serif")
+    	    .attr("font-size", fontSize)
+    	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseup)
+          .on("mousemove", mouseover);
+  }
+
+  addBarText(indexDs1,"series1");
+  addBarText(indexDs2,"series2");
+  if (indexDs3 != null) {
+      addBarText(indexDs3,"series3");
+  }
   /* 1st series */
-	plot.selectAll("text.series1")
-	    .data(indexDs1)
-	    .enter()
-	    .append("text")
-      .attr("class", "series1")
-      .text(function(d) {
-       return formatAsInteger(d3.format("d")(d.index));
-      })
-	    .attr("text-anchor", "middle")
-	    /* Set x position to the left edge of each bar plus half the bar width */
-	    .attr("x", function(d, i) {
-			     return ( i * (width / indexDs1.length) )
-             + ( (width / (indexDs1.length * 2) - barPadding) / 2 );
-	    })
-	    .attr("y", function(d) {
-			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-	    })
-	  //  .attr("class", "yAxis")
-	    .attr("font-family", "sans-serif")
-	    .attr("font-size", fontSize)
-	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-      .on("mouseover", mouseover)
-      .on("mouseout", mouseup)
-      .on("mousemove", mouseover);
+	// plot.selectAll("text.series1")
+	//     .data(indexDs1)
+	//     .enter()
+	//     .append("text")
+  //     .attr("class", "series1")
+  //     .text(function(d) {
+  //      return formatAsInteger(d3.format("d")(d.index));
+  //     })
+	//     .attr("text-anchor", "middle")
+	//     /* Set x position to the left edge of each bar plus half the bar width */
+	//     .attr("x", function(d, i) {
+	// 		     return ( i * (width / indexDs1.length) )
+  //            + ( (width / (indexDs1.length * 2) - barPadding) / 2 );
+	//     })
+	//     .attr("y", function(d) {
+	// 		     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
+	//     })
+	//   //  .attr("class", "yAxis")
+	//     .attr("font-family", "sans-serif")
+	//     .attr("font-size", fontSize)
+	//     .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+  //     .on("mouseover", mouseover)
+  //     .on("mouseout", mouseup)
+  //     .on("mousemove", mouseover);
 
   /* 2nd series */
-  plot.selectAll("text.series2")
-      .data(indexDs2)
-      .enter()
-      .append("text")
-      .attr("class", "series2")
-      .text(function(d) {
-       return formatAsInteger(d3.format("d")(d.index));
-      })
-      .attr("text-anchor", "middle")
-      /* Set x position to the left edge of each bar plus half the bar width */
-      .attr("x", function(d, i) {
-           return ( i * (width / indexDs1.length) )
-             + ( (width / (indexDs1.length * 2) - barPadding) ) * 1.5 ;
-      })
-      .attr("y", function(d) {
-           return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-	    })
-      .attr("font-family", "sans-serif")
-      .attr("font-size", fontSize)
-      .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-      .on("mouseover", mouseover)
-      .on("mouseout", mouseup)
-      .on("mousemove", mouseover);
+  // plot.selectAll("text.series2")
+  //     .data(indexDs2)
+  //     .enter()
+  //     .append("text")
+  //     .attr("class", "series2")
+  //     .text(function(d) {
+  //      return formatAsInteger(d3.format("d")(d.index));
+  //     })
+  //     .attr("text-anchor", "middle")
+  //     /* Set x position to the left edge of each bar plus half the bar width */
+  //     .attr("x", function(d, i) {
+  //          return ( i * (width / indexDs1.length) )
+  //            + ( (width / (indexDs1.length * 2) - barPadding) ) * 1.5 ;
+  //     })
+  //     .attr("y", function(d) {
+  //          return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
+	//     })
+  //     .attr("font-family", "sans-serif")
+  //     .attr("font-size", fontSize)
+  //     .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+  //     .on("mouseover", mouseover)
+  //     .on("mouseout", mouseup)
+  //     .on("mousemove", mouseover);
 
 	/* Add x labels to chart */
 	let xLabels = svg.append("g")
@@ -241,9 +332,18 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
      if (isSelected){
        DS_VIS_STORE["activeFilter"] = null;
        drawComparisonCharts();
+       if (numSeries == 2) {
+          drawComparisonCharts();
+       } else if (numSeries == 3) {
+          drawComparisonCharts3();
+       }
        showActiveFilter(DS_VIS_STORE);
      } else {
-       updateComparisonCharts(attrName, d.attrib_value);
+       if (numSeries == 2) {
+          updateComparisonCharts(attrName, d.attrib_value, numSeries);
+       } else if (numSeries == 3) {
+          update3ComparisonCharts(attrName, d.attrib_value, numSeries);
+       }
        showActiveFilter(DS_VIS_STORE);
      }
 	}
@@ -1599,13 +1699,13 @@ function drawComparisonCharts() {
         setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
     });
 
-  bar2SeriesChart("age", ageIndex1, ageIndex2);
+  barMultiSeriesChart("age", ageIndex1, ageIndex2);
   add2SeriesStat("age", ageMedianCat1, ageMedianCat2, prefix = "Median: ", suffix = " years");
-  bar2SeriesChart("ethnicity", ethnicityIndex1, ethnicityIndex2);
-  bar2SeriesChart("children", childrenIndex1, childrenIndex2);
+  barMultiSeriesChart("ethnicity", ethnicityIndex1, ethnicityIndex2);
+  barMultiSeriesChart("children", childrenIndex1, childrenIndex2);
   add2SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, prefix = "Child present: ", suffix = "%");
-  bar2SeriesChart("education", educationIndex1, educationIndex2);
-  bar2SeriesChart("income", incomeIndex1, incomeIndex2);
+  barMultiSeriesChart("education", educationIndex1, educationIndex2);
+  barMultiSeriesChart("income", incomeIndex1, incomeIndex2);
   add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "Median: ");
   hBarParallelChart("gender", audName1, genderIndex1, audName2, genderIndex2);
   hBarParallelChart("marital", audName1, maritalIndex1, audName2, maritalIndex2);
@@ -1627,7 +1727,10 @@ function drawComparisonCharts() {
 *******************************************************************************/
 
 /* updates bar charts when a value element is clicked on a chart */
-function updateComparisonCharts(attrName, attrValue) {
+function updateComparisonCharts(attrName, attrValue, numSeries = 2) {
+    if (DS_VIS_STORE.activeView == "triple") {
+        numSeries = 3;
+    }
     DS_VIS_STORE.activeFilter = [attrName, attrValue];
 
     let attrIndex = [];
@@ -1766,7 +1869,8 @@ function updateComparisonCharts(attrName, attrValue) {
           let yScale = d3.scaleLinear()
                          .domain([0, Math.max(
                               d3.max(attrIndex1, function(d) { return d.target_pct; }),
-                              d3.max(attrIndex2, function(d) { return d.target_pct; })
+                              d3.max(attrIndex2, function(d) { return d.target_pct; }),
+                              numSeries == 3 ? d3.max(attrIndex3, function(d) { return d.target_pct; }) : 0
                             )
                          ])
                          .range([height,0]);
@@ -1804,89 +1908,129 @@ function updateComparisonCharts(attrName, attrValue) {
 
            svg.selectAll(".domain").remove()
 
-            /* Select existing bars and update them */
-            /* 1st series */
-            plot.selectAll("rect.series1")
-                .data(attrIndex1)
-                .transition()
-                .duration(750)
-                .attr("x", function(d, i) {
-                  return xScale(i);
-                })
-                .attr("width", width / (attrIndex1.length * 2) - barPadding)
-                .attr("y", function(d) {
-                  return yScale(d.target_pct);
-                })
-                .attr("height", function(d) {
-                  return height - yScale(d.target_pct);
-                })
-                .attr("cursor", "pointer")
-                .attr("attrib-value", function(d) { return d.attrib_value; })    /* updating the Acxiom attrib value on the element */
-                .attr("target-pct", function(d) { return d.target_pct; })
-                .attr("index", function(d) { return d.index; })
-                .attr("fill", colorSeries1);
 
-            plot.selectAll("rect.series2")
-                .data(attrIndex2)
-                .transition()
-                .duration(750)
-                .attr("x", function(d, i) {
-                     return xScale(i) + width / (attrIndex2.length * 2) - barPadding;
-          			})
-                .attr("width", width / (attrIndex2.length * 2) - barPadding)
-                .attr("y", function(d) {
-                  return yScale(d.target_pct);
-                })
-                .attr("height", function(d) {
-                  return height-yScale(d.target_pct);
-                })
-                .attr("cursor", "pointer")
-                .attr("attrib-value", function(d) { return d.attrib_value; })    /* updating the Acxiom attrib value on the element */
-                .attr("target-pct", function(d) { return d.target_pct; })
-                .attr("index", function(d) { return d.index; })
-                .attr("fill", colorSeries2);
+
+            /* Select existing bars and update them */
+            function updateBar(data,series,color) {
+              plot.selectAll("rect."+series)
+                  .data(data)
+                  .transition()
+                  .duration(750)
+                    .attr("x", function(d, i) {
+                        if (series == "series1") {
+                          return xScale(i);
+                        } else if (series == "series2") {
+                          return xScale(i) + width / (data.length * numSeries) - barPadding;
+                        } else if (series == "series3") {
+                          return xScale(i) + width / (data.length * 1.5) - barPadding * 2;
+                        }
+
+                    })
+                    .attr("width", width / (data.length * numSeries) - barPadding)
+                    .attr("y", function(d) {
+                         return yScale(d.target_pct);
+                    })
+                    .attr("height", function(d) {
+                        return height-yScale(d.target_pct);
+                    })
+                    .attr("fill", color)
+                  .attr("cursor", "pointer")
+                  .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+                  .attr("target-pct", function(d) { return d.target_pct; })
+                  .attr("index", function(d) { return d.index; });
+            }
+            updateBar(attrIndex1,"series1",colorSeries1)
+            updateBar(attrIndex2,"series2",colorSeries2)
+            if (numSeries == 3) {
+              updateBar(attrIndex3,"series3",colorSeries3)
+            }
+
 
             /* Update the text labels on bars */
             function textInside(d) { return (height - yScale(d.target_pct)) > 20 }; // Display text inside if bar is big enough
-            /* 1st series */
-            plot.selectAll("text.series1")
-                .data(attrIndex1)
-                .transition()
-                .duration(750)
-                .attr("text-anchor", "middle")
-                .attr("x", function(d, i) {
-                   return ( i * (width / attrIndex1.length) )
-                     + ( (width / (attrIndex1.length * 2) - barPadding) / 2 );
-          	    })
-                .attr("y", function(d) {
-                   return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-                })
-                .text(function(d) {
-                 return formatAsInteger(d3.format("d")(d.index));
-                })
-                .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-                .attr("class", "yAxis")
-                .attr("class", "series1")
-                ;
 
-            plot.selectAll("text.series2")
-                .data(attrIndex2)
-                .transition()
-                .duration(750)
-                .attr("text-anchor", "middle")
-                .attr("x", function(d, i) {
-                       return ( i * (width / attrIndex1.length) )
-                         + ( (width / (attrIndex1.length * 2) - barPadding) ) * 1.5 ;
-                })
-                .attr("y", function(d) {
-                   return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-                })
-                .text(function(d) {
-                 return formatAsInteger(d3.format("d")(d.index));
-                })
-                .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-                .attr("class", "yAxis")
-                .attr("class", "series2");
+            function updateBarText(data, series) {
+                let fontSize = "10px";
+                if (numSeries == 2 && attrName != "children") {
+                    fontSize = "12px";
+                }  else if (numSeries == 3 && attrName == "children") {
+                    fontSize = "9px";
+                }
+
+                plot.selectAll("text."+series)
+              	    .data(data)
+              	    .transition()
+                    .duration(750)
+                    .text(function(d) {
+                     return formatAsInteger(d3.format("d")(d.index));
+                    })
+              	    .attr("text-anchor", "middle")
+              	    /* Set x position to the left edge of each bar plus half the bar width */
+              	    .attr("x", function(d, i) {
+                        if (series == "series1") {
+                            return ( i * (width / data.length) )
+                              + ( (width / (data.length * numSeries) - barPadding) / 2 );
+                        } else if (series == "series2") {
+                            return ( i * (width / data.length) )
+                                     + ( (width / (data.length * numSeries) - barPadding) ) * 1.5 ;
+                        } else if (series == "series3") {
+                            return ( i * (width / data.length) )
+                                + ( (width / (data.length * 3) - barPadding) ) * 2.5 ;
+                        }
+
+              	    })
+              	    .attr("y", function(d) {
+              			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
+              	    })
+              	  //  .attr("class", "yAxis")
+              	    .attr("font-family", "sans-serif")
+              	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+            }
+
+            updateBarText(attrIndex1, "series1");
+            updateBarText(attrIndex2, "series2");
+            if (numSeries == 3) {
+                updateBarText(attrIndex3, "series3");
+            }
+            /* 1st series */
+            // plot.selectAll("text.series1")
+            //     .data(attrIndex1)
+            //     .transition()
+            //     .duration(750)
+            //     .attr("text-anchor", "middle")
+            //     .attr("x", function(d, i) {
+            //        return ( i * (width / attrIndex1.length) )
+            //          + ( (width / (attrIndex1.length * 2) - barPadding) / 2 );
+          	//     })
+            //     .attr("y", function(d) {
+            //        return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
+            //     })
+            //     .text(function(d) {
+            //      return formatAsInteger(d3.format("d")(d.index));
+            //     })
+            //     .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+            //     .attr("class", "yAxis")
+            //     .attr("class", "series1")
+            //     ;
+            //
+            // plot.selectAll("text.series2")
+            //     .data(attrIndex2)
+            //     .transition()
+            //     .duration(750)
+            //     .attr("text-anchor", "middle")
+            //     .attr("x", function(d, i) {
+            //            return ( i * (width / attrIndex1.length) )
+            //              + ( (width / (attrIndex1.length * 2) - barPadding) ) * 1.5 ;
+            //     })
+            //     .attr("y", function(d) {
+            //        return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
+            //     })
+            //     .text(function(d) {
+            //      return formatAsInteger(d3.format("d")(d.index));
+            //     })
+            //     .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+            //     .attr("class", "yAxis")
+            //     .attr("class", "series2");
 
         } else if ( sBarChartAttributesList.includes(demogAttributeListName) ) {
             d3.select("#"+demogAttributeListName+"Chart svg").remove();
