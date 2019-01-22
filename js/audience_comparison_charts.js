@@ -1722,8 +1722,8 @@ function drawComparisonCharts() {
 
   $( ".tile" ).removeClass("selected-tile");
 
-  mikeJ2SeriesChart('interests', interestsIndex1, interestsIndex2);
-  mikeJ2SeriesChart('retail', retailIndex1, retailIndex2);
+  mikeJBubbleChart('interests', interestsIndex1, interestsIndex2);
+  mikeJBubbleChart('retail', retailIndex1, retailIndex2);
 
 }
 

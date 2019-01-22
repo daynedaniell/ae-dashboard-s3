@@ -1191,8 +1191,8 @@ function drawCharts() {
 
     $( ".tile" ).removeClass("selected-tile");
 
-    mikeJChart('interests', interestsIndexBubble0);
-    mikeJChart('retail', retailIndex0);
+    mikeJBubbleChart('interests', interestsIndexBubble0);
+    mikeJBubbleChart('retail', retailIndex0);
 }
 
 /*******************************************************************************

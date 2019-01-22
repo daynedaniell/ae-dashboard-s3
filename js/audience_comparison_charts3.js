@@ -1310,11 +1310,22 @@ function dnaChart(ds1, ds2, ds3) {
 /*******************************************************************************
 *** 3-SERIES MIKEJ CHART *******************************************************
 *******************************************************************************/
-function mikeJ3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
+function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
+
+  let numSeries = DS_VIS_STORE.activeView;
 
   // sort data alphabetically by category
   indexDs1.sort((a, b) => b.category.localeCompare(a.category));
-  indexDs2.sort((a, b) => b.category.localeCompare(a.category));
+  if (numSeries > 1) {
+      indexDs2.sort((a, b) => b.category.localeCompare(a.category));
+  }
+  if (numSeries > 2) {
+      indexDs3.sort((a, b) => b.category.localeCompare(a.category));
+  }
+
+  let trace1 = [];
+  let trace2 = [];
+  let trace3 = [];
 
   // put together tooltip values
   function getMikeJTooltipValues(ds){
@@ -1338,7 +1349,7 @@ function mikeJ3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     return toolTipValuesArray;
   }
 
-  let trace1 = {
+  trace1 = {
     showlegend: false,
     x: unpack(indexDs1, 'index'),
     y: unpack(indexDs1, 'category'),
@@ -1346,7 +1357,7 @@ function mikeJ3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     type: 'scatter',
     marker: {
       size: unpack(indexDs1, 'target_pct').map(x => Math.sqrt(x)*5),
-      color: colorSeries1,
+      color: numSeries == 1 ? unpack(indexDs1, 'index').map(x => colorByIndexBar(x)) : colorSeries1,
       opacity: 0.5,
       line: {width: 0}
     },
@@ -1363,59 +1374,65 @@ function mikeJ3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     }
   };
 
-  let trace2 = {
-    showlegend: false,
-    x: unpack(indexDs2, 'index'),
-    y: unpack(indexDs2, 'category'),
-    mode: 'markers',
-    type: 'scatter',
-    marker: {
-      size: unpack(indexDs2, 'target_pct').map(x => Math.sqrt(x)*5),
-      color: colorSeries2,
-      opacity: 0.5,
-      line: {width: 0}
-    },
-    hovertext: getMikeJTooltipValues(indexDs2),
-    hoverinfo: 'text',
-    hoverlabel: {
-      bgcolor: '#fff',
-      bordercolor: 'lightgrey',
-      font: {
-        family: "Open Sans",
-        size: 15,
-        color: '#333'
-      }
-    }
-  };
+  if (numSeries > 1) {
+      trace2 = {
+        showlegend: false,
+        x: unpack(indexDs2, 'index'),
+        y: unpack(indexDs2, 'category'),
+        mode: 'markers',
+        type: 'scatter',
+        marker: {
+          size: unpack(indexDs2, 'target_pct').map(x => Math.sqrt(x)*5),
+          color: colorSeries2,
+          opacity: 0.5,
+          line: {width: 0}
+        },
+        hovertext: getMikeJTooltipValues(indexDs2),
+        hoverinfo: 'text',
+        hoverlabel: {
+          bgcolor: '#fff',
+          bordercolor: 'lightgrey',
+          font: {
+            family: "Open Sans",
+            size: 15,
+            color: '#333'
+          }
+        }
+      };
+  }
 
-  let trace3 = {
-    showlegend: false,
-    x: unpack(indexDs3, 'index'),
-    y: unpack(indexDs3, 'category'),
-    mode: 'markers',
-    type: 'scatter',
-    marker: {
-      size: unpack(indexDs3, 'target_pct').map(x => Math.sqrt(x)*5),
-      color: colorSeries3,
-      opacity: 0.5,
-      line: {width: 0}
-    },
-    hovertext: getMikeJTooltipValues(indexDs3),
-    hoverinfo: 'text',
-    hoverlabel: {
-      bgcolor: '#fff',
-      bordercolor: 'lightgrey',
-      font: {
-        family: "Open Sans",
-        size: 15,
-        color: '#333'
-      }
-    }
-  };
+  if (numSeries > 2) {
+      trace3 = {
+        showlegend: false,
+        x: unpack(indexDs3, 'index'),
+        y: unpack(indexDs3, 'category'),
+        mode: 'markers',
+        type: 'scatter',
+        marker: {
+          size: unpack(indexDs3, 'target_pct').map(x => Math.sqrt(x)*5),
+          color: colorSeries3,
+          opacity: 0.5,
+          line: {width: 0}
+        },
+        hovertext: getMikeJTooltipValues(indexDs3),
+        hoverinfo: 'text',
+        hoverlabel: {
+          bgcolor: '#fff',
+          bordercolor: 'lightgrey',
+          font: {
+            family: "Open Sans",
+            size: 15,
+            color: '#333'
+          }
+        }
+      };
+  }
+
 
 
   // calculate chart height based on the number of distinct categories
-  let allCats = [...new Set( [...unpack(indexDs1, 'category'), ...unpack(indexDs2, 'category')] )];
+  // let allCats = [...new Set( [...unpack(indexDs1, 'category'), ...unpack(indexDs2, 'category')] )];
+  let allCats = [...new Set( [...unpack(indexDs1, 'category')] )];
   let height = allCats.length * 58;
 	let width = 1260;
   let margin = 40;
@@ -1619,8 +1636,8 @@ function drawComparisonCharts3() {
 
     $( ".tile" ).removeClass("selected-tile");
 
-    mikeJ3SeriesChart('interests', interestsIndex1, interestsIndex2, interestsIndex3);
-    mikeJ3SeriesChart('retail', retailIndex1, retailIndex2, retailIndex3);
+    mikeJBubbleChart('interests', interestsIndex1, interestsIndex2, interestsIndex3);
+    mikeJBubbleChart('retail', retailIndex1, retailIndex2, retailIndex3);
 
 }
 
