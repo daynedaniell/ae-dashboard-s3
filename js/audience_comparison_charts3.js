@@ -1585,17 +1585,17 @@ function drawComparisonCharts3() {
       setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
     });
 
-    barMultiSeriesChart("age", ageIndex1, ageIndex2, ageIndex3, numSeries = 3);
+    drawBarChart("age", ageIndex1, ageIndex2, ageIndex3, numSeries = 3);
     add3SeriesStat("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
     //bar3SeriesChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3);
-    barMultiSeriesChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3, numSeries = 3);
+    drawBarChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3, numSeries = 3);
     // bar3SeriesChart("children", childrenIndex1, childrenIndex2, childrenIndex3);
-    barMultiSeriesChart("children", childrenIndex1, childrenIndex2, childrenIndex3, numSeries = 3);
+    drawBarChart("children", childrenIndex1, childrenIndex2, childrenIndex3, numSeries = 3);
     add3SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
     // bar3SeriesChart("education", educationIndex1, educationIndex2, educationIndex3);
-    barMultiSeriesChart("education", educationIndex1, educationIndex2, educationIndex3, numSeries = 3);
+    drawBarChart("education", educationIndex1, educationIndex2, educationIndex3, numSeries = 3);
     // bar3SeriesChart("income", incomeIndex1, incomeIndex2, incomeIndex3);
-    barMultiSeriesChart("income", incomeIndex1, incomeIndex2, incomeIndex3, numSeries = 3);
+    drawBarChart("income", incomeIndex1, incomeIndex2, incomeIndex3, numSeries = 3);
     add3SeriesStat("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
     hBar3ParallelChart("gender", genderIndex1, genderIndex2, genderIndex3);
     hBar3ParallelChart("marital", maritalIndex1, maritalIndex2, maritalIndex3);

@@ -39,7 +39,9 @@ function toggleFromStore(store, key) {
 *******************************************************************************/
 
 
-function barMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null, numSeries = 2) {
+function drawBarChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
+  let numSeries = DS_VIS_STORE.activeView;
+
   let innerWidth = 400;
   if (attrName == "income") {
   	  innerWidth = 610;
@@ -55,13 +57,12 @@ function barMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null, numS
                  .domain([0, indexDs1.length])
 					       .range([0, width]);
 
+  let max1 = d3.max(indexDs1, function(d) { return d.target_pct; });
+  let max2 = indexDs2 != null ? d3.max(indexDs2, function(d) { return d.target_pct; }) : 0;
+  let max3 = indexDs3 != null ? d3.max(indexDs3, function(d) { return d.target_pct; }) : 0;
+
 	let yScale = d3.scaleLinear()
-		             .domain([0, Math.max(
-                      d3.max(indexDs1, function(d) { return d.target_pct; }),
-                      d3.max(indexDs2, function(d) { return d.target_pct; }),
-                      indexDs3 != null ? d3.max(indexDs3, function(d) { return d.target_pct; }) : 0
-                    )
-                 ])
+		             .domain([0, Math.max(max1,max2,max3)])
 		             .range([height, 0]);
 
 	/* Create SVG element */
@@ -96,7 +97,6 @@ function barMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null, numS
   /* Will set y position and color dependent on size of bar */
   function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
 
-
   function addBar(data,series,color) {
     plot.selectAll("rect."+series)
         .data(data)
@@ -107,20 +107,20 @@ function barMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null, numS
               if (series == "series1") {
                 return xScale(i);
               } else if (series == "series2") {
-                return xScale(i) + width / (indexDs1.length * numSeries) - barPadding;
+                return xScale(i) + width / (data.length * numSeries) - barPadding;
               } else if (series == "series3") {
-                return xScale(i) + width / (indexDs1.length * 1.5) - barPadding * 2;
+                return xScale(i) + width / (data.length * 1.5) - barPadding * 2;
               }
 
           })
-          .attr("width", width / (indexDs1.length * numSeries) - barPadding)
+          .attr("width", width / (data.length * numSeries) - barPadding)
           .attr("y", function(d) {
                return yScale(d.target_pct);
           })
           .attr("height", function(d) {
               return height-yScale(d.target_pct);
           })
-          .attr("fill", color)
+          .attr("fill", numSeries > 1 ? color : function(d) { return colorByIndexBar(d.index) })
         .attr("cursor", "pointer")
         .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
         .on("mouseover", mouseover)
@@ -160,8 +160,10 @@ function barMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null, numS
     //     .on("click", up);
 
     addBar(indexDs1,"series1",colorSeries1);
-    addBar(indexDs2,"series2",colorSeries2);
-    if (indexDs3 != null) {
+    if (numSeries > 1) {
+        addBar(indexDs2,"series2",colorSeries2);
+    }
+    if (numSeries > 2) {
       addBar(indexDs3,"series3",colorSeries3);
     }
 
@@ -195,10 +197,9 @@ function barMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null, numS
 
 
   function addBarText(data, series) {
-      let fontSize = "10px";
-      if (numSeries == 2 && attrName != "children") {
-          fontSize = "12px";
-      }  else if (numSeries == 3 && attrName == "children") {
+
+      let fontSize = "12px";
+      if (numSeries == 3) {
           fontSize = "9px";
       }
 
@@ -238,8 +239,10 @@ function barMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null, numS
   }
 
   addBarText(indexDs1,"series1");
-  addBarText(indexDs2,"series2");
-  if (indexDs3 != null) {
+  if (numSeries > 1) {
+      addBarText(indexDs2,"series2");
+  }
+  if (numSeries > 2) {
       addBarText(indexDs3,"series3");
   }
   /* 1st series */
@@ -331,15 +334,18 @@ function barMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null, numS
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
        DS_VIS_STORE["activeFilter"] = null;
-       drawComparisonCharts();
-       if (numSeries == 2) {
+       if (numSeries == 1) {
+          drawCharts();
+       } else if (numSeries == 2) {
           drawComparisonCharts();
        } else if (numSeries == 3) {
           drawComparisonCharts3();
        }
        showActiveFilter(DS_VIS_STORE);
      } else {
-       if (numSeries == 2) {
+       if (numSeries == 1) {
+          updateCharts(attrName, d.attrib_value);
+       } else if (numSeries == 2) {
           updateComparisonCharts(attrName, d.attrib_value, numSeries);
        } else if (numSeries == 3) {
           update3ComparisonCharts(attrName, d.attrib_value, numSeries);
@@ -1699,13 +1705,13 @@ function drawComparisonCharts() {
         setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
     });
 
-  barMultiSeriesChart("age", ageIndex1, ageIndex2);
+  drawBarChart("age", ageIndex1, ageIndex2);
   add2SeriesStat("age", ageMedianCat1, ageMedianCat2, prefix = "Median: ", suffix = " years");
-  barMultiSeriesChart("ethnicity", ethnicityIndex1, ethnicityIndex2);
-  barMultiSeriesChart("children", childrenIndex1, childrenIndex2);
+  drawBarChart("ethnicity", ethnicityIndex1, ethnicityIndex2);
+  drawBarChart("children", childrenIndex1, childrenIndex2);
   add2SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, prefix = "Child present: ", suffix = "%");
-  barMultiSeriesChart("education", educationIndex1, educationIndex2);
-  barMultiSeriesChart("income", incomeIndex1, incomeIndex2);
+  drawBarChart("education", educationIndex1, educationIndex2);
+  drawBarChart("income", incomeIndex1, incomeIndex2);
   add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "Median: ");
   hBarParallelChart("gender", audName1, genderIndex1, audName2, genderIndex2);
   hBarParallelChart("marital", audName1, maritalIndex1, audName2, maritalIndex2);
@@ -1727,10 +1733,8 @@ function drawComparisonCharts() {
 *******************************************************************************/
 
 /* updates bar charts when a value element is clicked on a chart */
-function updateComparisonCharts(attrName, attrValue, numSeries = 2) {
-    if (DS_VIS_STORE.activeView == "triple") {
-        numSeries = 3;
-    }
+function updateComparisonCharts(attrName, attrValue) {
+    let numSeries = DS_VIS_STORE.activeView;
     DS_VIS_STORE.activeFilter = [attrName, attrValue];
 
     let attrIndex = [];

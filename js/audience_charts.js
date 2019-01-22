@@ -6,7 +6,7 @@ let DS_VIS_STORE = {
     stateActive: [1,2,3],
     interestsActive: [1,2,3],
     retailActive: [1,2,3],
-    activeView: "single",
+    activeView: 1,
     scaleWeight: 1
 }
 
@@ -994,7 +994,6 @@ function addStat(attrName, stat, prefix='', suffix='') {
 *** ADD AUDIENCE LEGEND ********************************************************
 *******************************************************************************/
 function addAudienceLegend(compare=null) {
-
   if (compare === null) {
     $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorOverIndex)
     $("#dsAudienceLegend1 .ds-audience-legend-label span").text("Over-Index")
@@ -1041,11 +1040,11 @@ function showActiveFilter(store) {
 
 function removeActiveFilter(store) {
   store["activeFilter"] = null;
-  if (store["activeView"] == "single") {
+  if (store["activeView"] == 1) {
     drawCharts();
-  } else if (store["activeView"] == "double") {
+  } else if (store["activeView"] == 2) {
     drawComparisonCharts();
-  } else if (store["activeView"] == "triple") {
+  } else if (store["activeView"] == 3) {
     drawComparisonCharts3();
   }
 
@@ -1071,13 +1070,13 @@ $(".ds-audience-selection-form").change(function(){
   }
 
   if (selectedAudiences.length == 3) {
-    DS_VIS_STORE["activeView"] = "triple";
+    DS_VIS_STORE["activeView"] = 3;
     resetCompareAuds()
   } else if (selectedAudiences.length == 2) {
-    DS_VIS_STORE["activeView"] = "double";
+    DS_VIS_STORE["activeView"] = 2;
     resetCompareAuds()
   } else if (selectedAudiences.length == 1){
-    DS_VIS_STORE["activeView"] = "single";
+    DS_VIS_STORE["activeView"] = 1;
   }
 
   if (selectedAudiences.length == 0) {
@@ -1174,13 +1173,14 @@ function drawCharts() {
       setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
     });
 
-    barChart("age", ageIndex0);
+    //barChart("age", ageIndex0);
+    drawBarChart("age", ageIndex0)
     addStat("age", ageMedianCat, prefix = "Median: ", suffix = " years");
-    barChart("ethnicity", ethnicityIndex0);
-    barChart("children", childrenIndex0);
+    drawBarChart("ethnicity", ethnicityIndex0);
+    drawBarChart("children", childrenIndex0);
     addStat("children", childrenNonZeroPct, prefix = "Child present: ", suffix = "%");
-    barChart("education", educationIndex0);
-    barChart("income", incomeIndex0);
+    drawBarChart("education", educationIndex0);
+    drawBarChart("income", incomeIndex0);
     addStat("income", incomeMedianCat, prefix = "Median: ");
     pieChart("gender", genderIndex0);
     pieChart("marital", maritalIndex0);
@@ -1198,11 +1198,11 @@ function drawCharts() {
 *** RESET CHARTS ***************************************************************
 *******************************************************************************/
 function resetCharts() {
-    if (DS_VIS_STORE["activeView"] == "single") {
+    if (DS_VIS_STORE["activeView"] == 1) {
         drawCharts();
-    } else if (DS_VIS_STORE["activeView"] == "double") {
+    } else if (DS_VIS_STORE["activeView"] == 2) {
         drawComparisonCharts();
-    } else if (DS_VIS_STORE["activeView"] == "triple") {
+    } else if (DS_VIS_STORE["activeView"] == 1) {
         drawComparisonCharts3();
     }
 }
