@@ -172,7 +172,7 @@ function bar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
 
     /* Add y labels to plot */
     let fontSize = "10px";
-    if (attrName == "children") { fontSize = "8px" ;}
+    if (attrName == "children") { fontSize = "9px" ;}
     /* 1st series */
   	plot.selectAll("text.series1")
   	    .data(indexDs1)
@@ -296,30 +296,33 @@ function bar3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
     	}
 
       function mouseover(d) {
-        // Add tooltip based on position of the mouse
-        let e = window.event;
-        var x = e.clientX,
-            y = e.clientY;
+          // Add tooltip based on position of the mouse
+          let e = window.event;
+          var x = e.clientX,
+              y = e.clientY;
 
-        let tipY = (y - 40) + 'px';
-        let tipX = (x) + 'px';
+          let tipY = (y - 40) + 'px';
+          let tipX = (x) + 'px';
 
-        // Move tooltip to the left of the cursor if it gets too close to right edge
-        if  (window.innerWidth - x < 200) {
-          tipX = (x - 130) + 'px';
-        }
+          // Move tooltip to the left of the cursor if it gets too close to right edge
+          if  (window.innerWidth - x < 200) {
+            tipX = (x - 130) + 'px';
+          }
 
-        tooltip.transition()
-            .duration(200)
-        tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-            .style("opacity", .9)
-            .style('left', `${(tipX)}`)
-            .style('top', `${(tipY)}`);
+          tooltip.transition()
+              .duration(200)
+          tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+              .style("opacity", .9)
+              .style('left', `${(tipX)}`)
+              .style('top', `${(tipY)}`);
+
+          //d3.select(this).attr("stroke","#fff")
       }
 
       function mouseup(d) {
-        // Hide tooltip when the mouse leaves the element
-        tooltip.style('opacity', 0);
+          // Hide tooltip when the mouse leaves the element
+          tooltip.style('opacity', 0);
+          //d3.select(this).attr("stroke","none")
       }
 
 }
@@ -372,7 +375,7 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3) {
     let topPos = height - ((barHeight + barSpacing) * 3 + paddingBottom);
     let lineStroke = 'steelblue';
     let lineExtend = 12;
-    let lineStrokeWidth = 3;
+    let lineStrokeWidth = 8;
 
     /* Attach index data and add the chart elems */
     /* 1st series */
@@ -1111,7 +1114,7 @@ function wave3SeriesChart(ds1, ds2, ds3) {
       x: unpack(ds1[attrName], 'index'),
       y: unpack(ds1[attrName], 'target_pct'),
       base: unpack(ds1[attrName], 'target_pct').map(x => -x/2),
-      width: 3,
+      width: 2,
       type: 'bar',
       marker: {
         color: colorSeries1,
@@ -1135,7 +1138,7 @@ function wave3SeriesChart(ds1, ds2, ds3) {
       x: unpack(ds2[attrName], 'index'),
       y: unpack(ds2[attrName], 'target_pct'),
       base: unpack(ds2[attrName], 'target_pct').map(x => -x/2),
-      width: 3,
+      width: 2,
       type: 'bar',
       marker: {
         color: colorSeries2,
@@ -1159,7 +1162,7 @@ function wave3SeriesChart(ds1, ds2, ds3) {
       x: unpack(ds3[attrName], 'index'),
       y: unpack(ds3[attrName], 'target_pct'),
       base: unpack(ds3[attrName], 'target_pct').map(x => -x/2),
-      width: 3,
+      width: 2,
       type: 'bar',
       marker: {
         color: colorSeries3,
@@ -1196,15 +1199,15 @@ function wave3SeriesChart(ds1, ds2, ds3) {
       showarrow: false,
     },
     {
-      x: 500,
+      x: 300,
       y: -50,
       xref: 'x',
       yref: 'y',
-      text: '500',
+      text: '300',
       showarrow: false,
     }],
     xaxis: {
-      range: [0, 500],
+      range: [0, 300],
       showgrid: false,
       zeroline: false,
       showline: false,
@@ -1405,7 +1408,7 @@ function mikeJ3SeriesChart(attrName, indexDs1, indexDs2, indexDs3) {
   let margin = 40;
 
   // update the tile height to fit in the chart
-  $("#"+attrName+"DetailChart").parent().css("height", height + margin);
+  //$("#"+attrName+"DetailChart").parent().css("height", height + margin);
 
 
   let layout = {

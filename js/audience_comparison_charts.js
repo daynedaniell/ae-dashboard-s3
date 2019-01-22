@@ -150,7 +150,7 @@ function bar2SeriesChart(attrName, indexDs1, indexDs2) {
 
 	/* Add y labels to plot */
   let fontSize = "12px";
-  if (attrName == "children") { fontSize = "8px" ;}
+  if (attrName == "children") { fontSize = "10px" ;}
   /* 1st series */
 	plot.selectAll("text.series1")
 	    .data(indexDs1)
@@ -327,7 +327,7 @@ function hBarParallelChart(attrName, audName1, indexDs1, audName2, indexDs2) {
     let topPos = height - ((barHeight + barSpacing) * 2 + paddingBottom);
     let lineStroke = 'steelblue';
     let lineExtend = 12;
-    let lineStrokeWidth = 3;
+    let lineStrokeWidth = 8;
 
     /* Attach index data and add the chart elems */
     /* 1st series */
@@ -382,7 +382,7 @@ function hBarParallelChart(attrName, audName1, indexDs1, audName2, indexDs2) {
         .attr("text-anchor", "middle")
         /* Set x position to be inside corresponding edge of the bar */
         .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
-        .attr("y", function(d) { return topPos + 3 + (height/16)})
+        .attr("y", function(d) { return topPos + 3 + (barHeight/2)})
         .attr("class", "yAxis")
         .attr("font-family", "sans-serif")
         .attr("fill", "white")
@@ -1151,7 +1151,7 @@ function wave2SeriesChart(ds1, ds2) {
       x: unpack(ds1[attrName], 'index'),
       y: unpack(ds1[attrName], 'target_pct'),
       base: unpack(ds1[attrName], 'target_pct').map(x => -x/2),
-      width: 4,
+      width: 3,
       type: 'bar',
       marker: {
         color: colorSeries1,
@@ -1175,7 +1175,7 @@ function wave2SeriesChart(ds1, ds2) {
       x: unpack(ds2[attrName], 'index'),
       y: unpack(ds2[attrName], 'target_pct'),
       base: unpack(ds2[attrName], 'target_pct').map(x => -x/2),
-      width: 4,
+      width: 3,
       type: 'bar',
       marker: {
         color: colorSeries2,
@@ -1212,15 +1212,15 @@ function wave2SeriesChart(ds1, ds2) {
       showarrow: false,
     },
     {
-      x: 500,
+      x: 300,
       y: -50,
       xref: 'x',
       yref: 'y',
-      text: '500',
+      text: '300',
       showarrow: false,
     }],
     xaxis: {
-      range: [0, 500],
+      range: [0, 300],
       showgrid: false,
       zeroline: false,
       showline: false,
@@ -1396,7 +1396,7 @@ function mikeJ2SeriesChart(attrName, indexDs1, indexDs2) {
   let margin = 40;
 
   // update the tile height to fit in the chart
-  $("#"+attrName+"DetailChart").parent().css("height", height + margin);
+  //$("#"+attrName+"DetailChart").parent().css("height", height + margin);
 
 
   let layout = {

@@ -25,7 +25,7 @@ let colorOverIndex = '#ffb14e',
 
 /* color-by-index functions */
 function colorByIndexBar(index) {
-    if (index > 120) {
+    if (index >= 120) {
         return colorOverIndex;
     } else if (index > 80) {
         return colorNeutralIndex1;
@@ -35,7 +35,7 @@ function colorByIndexBar(index) {
     return colorUnderIndex;
 }
 function colorByIndexPie(index, indexCats, attrValue) {
-    if (index > 120) {
+    if (index >= 120) {
         return colorOverIndex;
     } else if (index > 80) {
         if (indexCats.findIndex(x => x.attrib_value == attrValue) == 0) {
@@ -93,7 +93,7 @@ function wrap(text, width, sep = " ", type = "pie") {
     });
 }
 
-
+d3.select(window).on('resize', console.log(window.innerWidth))
 /*******************************************************************************
 *** BAR CHART ******************************************************************
 *******************************************************************************/
@@ -741,7 +741,7 @@ function waveChart(ds) {
       x: unpack(ds[attrName], 'index'),
       y: unpack(ds[attrName], 'target_pct'),
       base: unpack(ds[attrName], 'target_pct').map(x => -x/2),
-      width: 6,
+      width: 5,
       type: 'bar',
       marker: {
         color: unpack(ds[attrName], 'index').map(x => colorByIndexBar(x)),
@@ -779,15 +779,15 @@ function waveChart(ds) {
       showarrow: false,
     },
     {
-      x: 500,
+      x: 300,
       y: -50,
       xref: 'x',
       yref: 'y',
-      text: '500',
+      text: '300',
       showarrow: false,
     }],
     xaxis: {
-      range: [0, 500],
+      range: [0, 300],
       showgrid: false,
       zeroline: false,
       showline: false,
@@ -934,7 +934,7 @@ function mikeJChart(attrName, indexDs) {
   let margin = 40;
 
   // update the tile height to fit in the chart
-  $("#"+attrName+"DetailChart").parent().css("height", height + margin);
+  //$("#"+attrName+"DetailChart").parent().css("height", height + margin);
 
 
   let layout = {
