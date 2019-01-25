@@ -1349,6 +1349,15 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
     return toolTipValuesArray;
   }
 
+  function getId(ds,aud){
+    idArray = ds.map(function(row) {
+      let attr = row['attrib_value']
+      return attr
+
+    });
+    return idArray;
+  }
+
   trace1 = {
     showlegend: false,
     x: unpack(indexDs1, 'index'),
@@ -1358,11 +1367,12 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
     marker: {
       size: unpack(indexDs1, 'target_pct').map(x => Math.sqrt(x)*5),
       color: numSeries == 1 ? unpack(indexDs1, 'index').map(x => colorByIndexBar(x)) : colorSeries1,
-      opacity: 0.5,
+      opacity: unpack(indexDs1, 'target_pct').map(x => 0.5),
       line: {width: 0}
     },
+    id: getId(indexDs1, 1),
     hovertext: getMikeJTooltipValues(indexDs1),
-    hoverinfo: 'text',
+    hoverinfo: 'none',
     hoverlabel: {
       bgcolor: '#fff',
       bordercolor: 'lightgrey',
@@ -1384,11 +1394,12 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
         marker: {
           size: unpack(indexDs2, 'target_pct').map(x => Math.sqrt(x)*5),
           color: colorSeries2,
-          opacity: 0.5,
+          opacity: unpack(indexDs2, 'target_pct').map(x => 0.5),
           line: {width: 0}
         },
+        id: getId(indexDs2, 2),
         hovertext: getMikeJTooltipValues(indexDs2),
-        hoverinfo: 'text',
+        hoverinfo: 'none',
         hoverlabel: {
           bgcolor: '#fff',
           bordercolor: 'lightgrey',
@@ -1411,11 +1422,12 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
         marker: {
           size: unpack(indexDs3, 'target_pct').map(x => Math.sqrt(x)*5),
           color: colorSeries3,
-          opacity: 0.5,
+          opacity: unpack(indexDs3, 'target_pct').map(x => 0.5),
           line: {width: 0}
         },
+        id: getId(indexDs3, 3),
         hovertext: getMikeJTooltipValues(indexDs3),
-        hoverinfo: 'text',
+        hoverinfo: 'none',
         hoverlabel: {
           bgcolor: '#fff',
           bordercolor: 'lightgrey',
@@ -1423,7 +1435,7 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
             family: "Open Sans",
             size: 15,
             color: '#333'
-          }
+         }
         }
       };
   }
@@ -1442,7 +1454,7 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
 
 
   let layout = {
-    hovermode:'closest',
+    hovermode: 'closest',
     // height: height,
     // width: width,
     xaxis: {
@@ -1637,6 +1649,128 @@ function drawComparisonCharts3() {
     $( ".tile" ).removeClass("selected-tile");
 
     mikeJBubbleChart('interests', interestsIndex1, interestsIndex2, interestsIndex3);
+    var myPlot2 = document.getElementById('interestsDetailChart');
+    const ttip = d3.select("#interestsDetailChart").append("div")
+        .attr("class", "ds-tooltip-bubble")
+        .style("opacity", 0);
+    // let r1 = myPlot2.data[0].marker.opacity.slice(0);
+    // let r2 = myPlot2.data[1].marker.opacity.slice(0);
+    // let r3 = myPlot2.data[2].marker.opacity.slice(0);
+    let ops1 = myPlot2.data[0].marker.opacity;
+    let ops2 = myPlot2.data[1].marker.opacity;
+    let ops3 = myPlot2.data[2].marker.opacity;
+    let r1 = ops1.slice(0);
+    let r2 = ops2.slice(0);
+    let r3 = ops3.slice(0);
+    let l1 = Array(ops1.length).fill(0)
+    let l2 = Array(ops2.length).fill(0)
+    let l3 = Array(ops3.length).fill(0)
+
+    console.log(myPlot2.data)
+    myPlot2.onmousemove = function(event) {
+      ttip.style("left", event.pageX + "px");
+      ttip.style("top", (event.pageY - 100) + "px");
+    }
+    myPlot2.on('plotly_hover', function(data){
+
+
+        pn = data.points[0].pointNumber;
+        id = data.points[0].data.id[pn];
+        let d1,d2,d3;
+        myPlot2.data[0].id.forEach((d, i) => {
+          if (d == id) {
+            d1 = i;
+          }
+        })
+        myPlot2.data[1].id.forEach((d, i) => {
+          if (d == id) {
+            d2 = i;
+          }
+        })
+
+        myPlot2.data[2].id.forEach((d, i) => {
+          if (d == id) {
+            d3 = i;
+          }
+        })
+        ops1 = Array(ops1.length).fill(0.3)
+        ops2 = Array(ops2.length).fill(0.3)
+        ops3 = Array(ops3.length).fill(0.3)
+        ops1[d1] = 1.0;
+        ops2[d2] = 1.0;
+        ops3[d3] = 1.0;
+
+
+        l1[d1] = 1;
+        l2[d2] = 1;
+        l3[d3] = 1;
+        console.log(data.points[0])
+
+        ttip.style("opacity", 0.9)
+            .html(data.points[0].hovertext);
+
+
+        // Add tooltip based on position of the mouse
+
+
+                      // let e = window.event;
+                      // var x = e.clientX,
+                      //     y = e.clientY;
+                      //
+                      // let tipY = (y - 50) + 'px';
+                      // let tipX = (x - 40) + 'px';
+                      //
+                      // // Move tooltip to the left of the cursor if it gets too close to right edge
+                      // if  (window.innerWidth - x < 200) {
+                      //   tipX = (x - 130) + 'px';
+                      // }
+                      //
+                      //
+                      //
+                      // ttip.transition()
+                      //     .duration(200)
+                      // ttip.html("test")
+                      //     .style("opacity", .9)
+                      //     .style('left', `${(tipX)}`)
+                      //     .style('top', `${(tipY)}`);
+
+
+  let update = {
+    'marker.opacity': [ops1,ops2,ops3],
+    'marker.line.width': [l1,l2,l3]
+  }
+
+  //var update = {'marker':{color: colors, size:16}};
+  Plotly.restyle('interestsDetailChart', update, [0,1,2]);
+});
+
+myPlot2.on('plotly_unhover', function(data){
+  ttip.style("opacity",0)
+  ops1 = Array(ops1.length).fill(0.5)
+  ops2 = Array(ops2.length).fill(0.5)
+  ops3 = Array(ops3.length).fill(0.5)
+  l1 = Array(ops1.length).fill(0)
+  l2 = Array(ops2.length).fill(0)
+  l3 = Array(ops3.length).fill(0)
+  let update2 = {
+    'marker.opacity': [ops1, ops2, ops3],
+    'marker.line.width': [l1,l2,l3]
+  }
+  Plotly.restyle('interestsDetailChart', update2, [0,1,2]);
+});
+myPlot2.on('plotly_click', function(data){
+  ops1 = Array(ops1.length).fill(0.5)
+  ops2 = Array(ops2.length).fill(0.5)
+  ops3 = Array(ops3.length).fill(0.5)
+  l1 = Array(ops1.length).fill(0)
+  l2 = Array(ops2.length).fill(0)
+  l3 = Array(ops3.length).fill(0)
+  let update2 = {
+    'marker.opacity': [ops1, ops2, ops3],
+    'marker.line.width': [l1,l2,l3]
+  }
+  Plotly.restyle('interestsDetailChart', update2, [0,1,2]);
+});
     mikeJBubbleChart('retail', retailIndex1, retailIndex2, retailIndex3);
 
 }
