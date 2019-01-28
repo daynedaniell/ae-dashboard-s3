@@ -1046,7 +1046,7 @@ function removeActiveFilter(store) {
   } else if (store["activeView"] == 2) {
     drawComparisonCharts();
   } else if (store["activeView"] == 3) {
-    drawComparisonCharts3();
+    drawComparisonCharts();
   }
 
 }
@@ -1204,7 +1204,7 @@ function resetCharts() {
     } else if (DS_VIS_STORE["activeView"] == 2) {
         drawComparisonCharts();
     } else if (DS_VIS_STORE["activeView"] == 1) {
-        drawComparisonCharts3();
+        drawComparisonCharts();
     }
 }
 

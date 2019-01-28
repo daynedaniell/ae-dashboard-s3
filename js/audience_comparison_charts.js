@@ -339,7 +339,7 @@ function drawBarChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
        } else if (numSeries == 2) {
           drawComparisonCharts();
        } else if (numSeries == 3) {
-          drawComparisonCharts3();
+          drawComparisonCharts();
        }
        showActiveFilter(DS_VIS_STORE);
      } else {
@@ -1603,7 +1603,7 @@ function addMultipleAudienceTitles(targetAud1, targetAud2, targetAud3 = null) {
 /*******************************************************************************
 *** DRAW ALL COMPARISON CHARTS *************************************************
 *******************************************************************************/
-function drawComparisonCharts() {
+function drawComparisonChartsOld() {
     d3.selectAll(".ds-tooltip").remove()
     // add the audience titles
     addAudienceLegend(compare=2);

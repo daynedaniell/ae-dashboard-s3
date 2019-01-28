@@ -287,7 +287,7 @@ function add3SeriesStat(attrName, stat1, stat2, stat3, prefix='', suffix='') {
 //          isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
 //          if (isSelected){
 //            DS_VIS_STORE["activeFilter"] = null;
-//            drawComparisonCharts3();
+//            drawComparisonCharts();
 //            showActiveFilter(DS_VIS_STORE);
 //          } else {
 //            update3ComparisonCharts(attrName, d.attrib_value);
@@ -629,7 +629,7 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
          if (numSeries == 2) {
             drawComparisonCharts();
          } else if (numSeries == 3) {
-            drawComparisonCharts3();
+            drawComparisonCharts();
          }
          showActiveFilter(DS_VIS_STORE);
        } else {
@@ -1495,21 +1495,20 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
 /*******************************************************************************
 *** DRAW TRIPLE COMPARISON CHARTS **********************************************
 *******************************************************************************/
-function drawComparisonCharts3() {
+function drawComparisonCharts(activeView) {
     /* Remove any active tooltips */
     d3.selectAll(".ds-tooltip").remove();
-
-    let activeView = DS_VIS_STORE.activeView;
 
     /* View setup */
     addAudienceLegend(compare=activeView);
 
-    // if (activeView == 1) {
-    //     addAudienceTitles(targetAud);
-    // } else if (activeView == 2) {
-    //
-    // }
-    addMultipleAudienceTitles(targetAud, targetAud2, targetAud3);
+    if (activeView == 1) {
+        addAudienceTitles(targetAud);
+    } else if (activeView == 2) {
+        addMultipleAudienceTitles(targetAud, targetAud2);
+    } else if (activeView == 3) {
+        addMultipleAudienceTitles(targetAud, targetAud2, targetAud3);
+    }
 
     let indexCats = makeIndexCats();
     let demogAttributesList = Object.keys(indexCats);
@@ -1534,45 +1533,89 @@ function drawComparisonCharts3() {
     let interestsIndex1 = indexInterestsRetail("interests", targetInterests, randomInterests);
     let retailIndex1 = indexInterestsRetail("retail", targetRetail, randomRetail);
 
-    let audName2 = targetAud2.name;
-    let ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
-    let ageMedianCat2 = getMedianCategory(ageIndex2);
-    let genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
-    let ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
-    let maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
-    let childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
-    let childrenNonZeroPct2 = getNonZeroPct(childrenIndex2);
-    let educationIndex2 = indexAttr("education", indexCats.education, targetDemog2, randomDemog);
-    let incomeIndex2 = indexAttr("income", indexCats.income, targetDemog2, randomDemog);
-    let incomeMedianCat2 = getMedianCategory(incomeIndex2);
-    let stateIndex2 = indexAttr("state", indexCats.state, targetDemog2, randomDemog);
-    let interestsIndex2 = indexInterestsRetail("interests", targetInterests2, randomInterests);
-    let retailIndex2 = indexInterestsRetail("retail", targetRetail2, randomRetail);
+    let audName2 = null;
+    let ageIndex2 = null;
+    let ageMedianCat2 = null;
+    let genderIndex2 = null;
+    let ethnicityIndex2 = null;
+    let maritalIndex2 = null;
+    let childrenIndex2 = null;
+    let childrenNonZeroPct2 = null;
+    let educationIndex2 = null;
+    let incomeIndex2 = null;
+    let incomeMedianCat2 = null;
+    let stateIndex2 = null;
+    let interestsIndex2 = null;
+    let retailIndex2 = null;
 
-    let audName3 = targetAud3.name;
-    let ageIndex3 = indexAttr("age", indexCats.age, targetDemog3, randomDemog);
-    let ageMedianCat3 = getMedianCategory(ageIndex3);
-    let genderIndex3 = indexAttr("gender", indexCats.gender, targetDemog3, randomDemog);
-    let ethnicityIndex3 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog3, randomDemog);
-    let maritalIndex3 = indexAttr("marital", indexCats.marital, targetDemog3, randomDemog);
-    let childrenIndex3 = indexAttr("children", indexCats.children, targetDemog3, randomDemog);
-    let childrenNonZeroPct3 = getNonZeroPct(childrenIndex3);
-    let educationIndex3 = indexAttr("education", indexCats.education, targetDemog3, randomDemog);
-    let incomeIndex3 = indexAttr("income", indexCats.income, targetDemog3, randomDemog);
-    let incomeMedianCat3 = getMedianCategory(incomeIndex3);
-    let stateIndex3 = indexAttr("state", indexCats.state, targetDemog3, randomDemog);
-    let interestsIndex3 = indexInterestsRetail("interests", targetInterests3, randomInterests);
-    let retailIndex3 = indexInterestsRetail("retail", targetRetail3, randomRetail);
+    let audName3 = null;
+    let ageIndex3 = null;
+    let ageMedianCat3 = null;
+    let genderIndex3 = null;
+    let ethnicityIndex3 = null;
+    let maritalIndex3 = null;
+    let childrenIndex3 = null;
+    let childrenNonZeroPct3 = null;
+    let educationIndex3 = null;
+    let incomeIndex3 = null;
+    let incomeMedianCat3 = null;
+    let stateIndex3 = null;
+    let interestsIndex3 = null;
+    let retailIndex3 = null;
 
+    if (activeView > 1) {
+        audName2 = targetAud2.name;
+        ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
+        ageMedianCat2 = getMedianCategory(ageIndex2);
+        genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
+        ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
+        maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
+        childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
+        childrenNonZeroPct2 = getNonZeroPct(childrenIndex2);
+        educationIndex2 = indexAttr("education", indexCats.education, targetDemog2, randomDemog);
+        incomeIndex2 = indexAttr("income", indexCats.income, targetDemog2, randomDemog);
+        incomeMedianCat2 = getMedianCategory(incomeIndex2);
+        stateIndex2 = indexAttr("state", indexCats.state, targetDemog2, randomDemog);
+        interestsIndex2 = indexInterestsRetail("interests", targetInterests2, randomInterests);
+        retailIndex2 = indexInterestsRetail("retail", targetRetail2, randomRetail);
+    }
+
+    if (activeView > 2) {
+        audName3 = targetAud3.name;
+        ageIndex3 = indexAttr("age", indexCats.age, targetDemog3, randomDemog);
+        ageMedianCat3 = getMedianCategory(ageIndex3);
+        genderIndex3 = indexAttr("gender", indexCats.gender, targetDemog3, randomDemog);
+        ethnicityIndex3 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog3, randomDemog);
+        maritalIndex3 = indexAttr("marital", indexCats.marital, targetDemog3, randomDemog);
+        childrenIndex3 = indexAttr("children", indexCats.children, targetDemog3, randomDemog);
+        childrenNonZeroPct3 = getNonZeroPct(childrenIndex3);
+        educationIndex3 = indexAttr("education", indexCats.education, targetDemog3, randomDemog);
+        incomeIndex3 = indexAttr("income", indexCats.income, targetDemog3, randomDemog);
+        incomeMedianCat3 = getMedianCategory(incomeIndex3);
+        stateIndex3 = indexAttr("state", indexCats.state, targetDemog3, randomDemog);
+        interestsIndex3 = indexInterestsRetail("interests", targetInterests3, randomInterests);
+        retailIndex3 = indexInterestsRetail("retail", targetRetail3, randomRetail);
+    }
+
+    let stateIndexTop3 = null;
+    let interestsIndexTop3 = null;
+    let retailIndexTop3 = null;
+
+    console.log(stateIndex1)
     let stateIndexTop1 = indexStatesTop5(stateIndex1, stateIndex2, stateIndex3);
     let stateIndexTop2 = indexStatesTop5(stateIndex2,stateIndex1, stateIndex3);
-    let stateIndexTop3 = indexStatesTop5(stateIndex3,stateIndex1, stateIndex2);
+    if (activeView > 2) {
+        stateIndexTop3 = indexStatesTop5(stateIndex3,stateIndex1, stateIndex2);
+        interestsIndexTop3 = indexInterestsRetailTop5(interestsIndex3,interestsIndex1,interestsIndex2);
+        retailIndexTop3 = indexInterestsRetailTop5(retailIndex3, retailIndex1, retailIndex2);
+    }
+
     let interestsIndexTop1 = indexInterestsRetailTop5(interestsIndex1,interestsIndex2,interestsIndex3);
     let interestsIndexTop2 = indexInterestsRetailTop5(interestsIndex2,interestsIndex1,interestsIndex3);
-    let interestsIndexTop3 = indexInterestsRetailTop5(interestsIndex3,interestsIndex1,interestsIndex2);
+
     let retailIndexTop1 = indexInterestsRetailTop5(retailIndex1, retailIndex2, retailIndex3);
     let retailIndexTop2 = indexInterestsRetailTop5(retailIndex2, retailIndex1, retailIndex3);
-    let retailIndexTop3 = indexInterestsRetailTop5(retailIndex3, retailIndex1, retailIndex2);
+
 
     let indexes1 = {
       age: ageIndex1,
@@ -1586,30 +1629,40 @@ function drawComparisonCharts3() {
       interests: interestsIndexTop1[0],
       retail: retailIndexTop1[0]
     };
-    let indexes2 = {
-      age: ageIndex2,
-      gender: genderIndex2,
-      ethnicity: ethnicityIndex2,
-      marital: maritalIndex2,
-      children: childrenIndex2,
-      education: educationIndex2,
-      income: incomeIndex2,
-      state: stateIndex2,
-      interests: interestsIndexTop2[0],
-      retail: retailIndexTop2[0]
-    };
-    let indexes3 = {
-      age: ageIndex3,
-      gender: genderIndex3,
-      ethnicity: ethnicityIndex3,
-      marital: maritalIndex3,
-      children: childrenIndex3,
-      education: educationIndex3,
-      income: incomeIndex3,
-      state: stateIndex3,
-      interests: interestsIndexTop3[0],
-      retail: retailIndexTop3[0]
-    };
+
+    let indexes2 = null;
+    let indexes3 = null;
+
+    if (activeView > 1) {
+        indexes2 = {
+          age: ageIndex2,
+          gender: genderIndex2,
+          ethnicity: ethnicityIndex2,
+          marital: maritalIndex2,
+          children: childrenIndex2,
+          education: educationIndex2,
+          income: incomeIndex2,
+          state: stateIndex2,
+          interests: interestsIndexTop2[0],
+          retail: retailIndexTop2[0]
+        };
+    }
+
+    if (activeView > 2) {
+        indexes3 = {
+          age: ageIndex3,
+          gender: genderIndex3,
+          ethnicity: ethnicityIndex3,
+          marital: maritalIndex3,
+          children: childrenIndex3,
+          education: educationIndex3,
+          income: incomeIndex3,
+          state: stateIndex3,
+          interests: interestsIndexTop3[0],
+          retail: retailIndexTop3[0]
+        };
+    }
+
 
     dnaChart(indexes1, indexes2, indexes3);
 
@@ -1634,17 +1687,17 @@ function drawComparisonCharts3() {
       setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
     });
 
-    drawBarChart("age", ageIndex1, ageIndex2, ageIndex3, numSeries = 3);
+    drawBarChart("age", ageIndex1, ageIndex2, ageIndex3, numSeries = activeView);
     add3SeriesStat("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
     //bar3SeriesChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3);
-    drawBarChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3, numSeries = 3);
+    drawBarChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3, numSeries = activeView);
     // bar3SeriesChart("children", childrenIndex1, childrenIndex2, childrenIndex3);
-    drawBarChart("children", childrenIndex1, childrenIndex2, childrenIndex3, numSeries = 3);
+    drawBarChart("children", childrenIndex1, childrenIndex2, childrenIndex3, numSeries = activeView);
     add3SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
     // bar3SeriesChart("education", educationIndex1, educationIndex2, educationIndex3);
-    drawBarChart("education", educationIndex1, educationIndex2, educationIndex3, numSeries = 3);
+    drawBarChart("education", educationIndex1, educationIndex2, educationIndex3, numSeries = activeView);
     // bar3SeriesChart("income", incomeIndex1, incomeIndex2, incomeIndex3);
-    drawBarChart("income", incomeIndex1, incomeIndex2, incomeIndex3, numSeries = 3);
+    drawBarChart("income", incomeIndex1, incomeIndex2, incomeIndex3, numSeries = activeView);
     add3SeriesStat("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
     hBar3ParallelChart("gender", genderIndex1, genderIndex2, genderIndex3);
     hBar3ParallelChart("marital", maritalIndex1, maritalIndex2, maritalIndex3);
@@ -1663,22 +1716,26 @@ function drawComparisonCharts3() {
 
     function addBubbleHighlighting(attrName) {
         var myPlot2 = document.getElementById(attrName+"DetailChart");
-        const ttip = d3.select(attrName+"DetailChart").append("div")
+        const ttip = d3.select("#"+attrName+"DetailChart").append("div")
             .attr("class", "ds-tooltip-bubble")
             .style("opacity", 0);
 
-        let ops1 = myPlot2.data[0].marker.opacity;
-        let ops2 = myPlot2.data[1].marker.opacity;
-        let ops3 = myPlot2.data[2].marker.opacity;
+        let ops1, ops2, ops3, l1, l2, l3;
 
-        let l1 = Array(ops1.length).fill(0)
-        let l2 = Array(ops2.length).fill(0)
-        let l3 = Array(ops3.length).fill(0)
+        ops1 = myPlot2.data[0].marker.opacity;
+        activeView > 1 ? ops2 = myPlot2.data[1].marker.opacity : null;
+        activeView > 2 ? ops3 = myPlot2.data[2].marker.opacity : null;
+
+        l1 = Array(ops1.length).fill(0)
+        activeView > 1 ? l2 = Array(ops2.length).fill(0) : null;
+        activeView > 2 ? l3 = Array(ops3.length).fill(0) : null;
 
         myPlot2.onmousemove = function(event) {
           ttip.style("left", event.pageX + "px");
           ttip.style("top", (event.pageY - 70) + "px");
         }
+
+        let traces = activeView == 2 ? [0,1] : [0,1,2];
 
         myPlot2.on('plotly_hover', function(data){
             pn = data.points[0].pointNumber;
@@ -1694,43 +1751,50 @@ function drawComparisonCharts3() {
                 d2 = i;
               }
             })
-
-            myPlot2.data[2].id.forEach((d, i) => {
-              if (d == id) {
-                d3 = i;
-              }
-            })
             ops1 = Array(ops1.length).fill(0.3)
-            ops2 = Array(ops2.length).fill(0.3)
-            ops3 = Array(ops3.length).fill(0.3)
+            ops2 = Array(ops2.length).fill(0.3);
+
             ops1[d1] = 1.0;
             ops2[d2] = 1.0;
-            ops3[d3] = 1.0;
 
             l1[d1] = 1;
             l2[d2] = 1;
-            l3[d3] = 1;
+            if (activeView > 2) {
+                myPlot2.data[2].id.forEach((d, i) => {
+                  if (d == id) {
+                    d3 = i;
+                  }
+                });
+                ops3 = Array(ops3.length).fill(0.3);
+                ops3[d3] = 1.0;
+                l3[d3] = 1;
+            }
 
             ttip.style("opacity", 0.9)
                 .html(data.points[0].hovertext);
 
             let update = {
-              'marker.opacity': [ops1,ops2,ops3],
-              'marker.line.width': [l1,l2,l3],
+              'marker.opacity': [ops1, ops2, ops3],//activeView == 2 ? [ops1,ops2] : [ops1,ops2,ops3],
+              'marker.line.width': [l1, l2, l3],//activeView == 2 ? [l1,l2] : [l1,l2,l3],
               'marker.line.color': '#ddd'
             }
 
             //var update = {'marker':{color: colors, size:16}};
-            Plotly.restyle(attrName+"DetailChart", update, [0,1,2]);
+
+            Plotly.restyle(attrName+"DetailChart", update, traces);
           });
 
         function removeHoverHighlightUpdate() {
             ops1 = Array(ops1.length).fill(0.5)
             ops2 = Array(ops2.length).fill(0.5)
-            ops3 = Array(ops3.length).fill(0.5)
+
             l1 = Array(ops1.length).fill(0)
             l2 = Array(ops2.length).fill(0)
-            l3 = Array(ops3.length).fill(0)
+            if (activeView > 2) {
+                ops3 = Array(ops3.length).fill(0.5)
+                l3 = Array(ops3.length).fill(0)
+            }
+
             let update2 = {
               'marker.opacity': [ops1, ops2, ops3],
               'marker.line.width': [l1,l2,l3]
@@ -1740,12 +1804,12 @@ function drawComparisonCharts3() {
 
         myPlot2.on('plotly_unhover', function(data){
           ttip.style("opacity",0)
-          Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), [0,1,2]);
+          Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), traces);
         });
 
         myPlot2.on('plotly_click', function(data){
           ttip.style("opacity",0)
-          Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), [0,1,2]);
+          Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), traces);
         });
     }
 
