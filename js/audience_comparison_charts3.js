@@ -1101,7 +1101,7 @@ function dnaChart(ds1, ds2, ds3) {
       // in the tooltip text string
       return "<br>    " + "    <br>    "
         + attrFullName[attrName]
-        + " = "
+        + ": "
         + row['attrib_value']
         + "    <br>    Target Pct: "
         + row['target_pct'].toString()
@@ -1338,8 +1338,7 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
       // the white spaces are needed here to create padding, b/c plotly
       // doesn't seem to have padding options, and allows only inline html tags
       // in the tooltip text string
-      return "<br>    " + "  ".repeat(toolTipBoxLength) +"    <br>    "
-        + row['attrib_value']
+      return row['attrib_value']
         + "    <br>    Target Pct: "
         + row['target_pct'].toString()
         + "%<br>    Index: "
@@ -1500,8 +1499,16 @@ function drawComparisonCharts3() {
     /* Remove any active tooltips */
     d3.selectAll(".ds-tooltip").remove();
 
+    let activeView = DS_VIS_STORE.activeView;
+
     /* View setup */
-    addAudienceLegend(compare=3);
+    addAudienceLegend(compare=activeView);
+
+    // if (activeView == 1) {
+    //     addAudienceTitles(targetAud);
+    // } else if (activeView == 2) {
+    //
+    // }
     addMultipleAudienceTitles(targetAud, targetAud2, targetAud3);
 
     let indexCats = makeIndexCats();
@@ -1649,129 +1656,99 @@ function drawComparisonCharts3() {
     $( ".tile" ).removeClass("selected-tile");
 
     mikeJBubbleChart('interests', interestsIndex1, interestsIndex2, interestsIndex3);
-    var myPlot2 = document.getElementById('interestsDetailChart');
-    const ttip = d3.select("#interestsDetailChart").append("div")
-        .attr("class", "ds-tooltip-bubble")
-        .style("opacity", 0);
-    // let r1 = myPlot2.data[0].marker.opacity.slice(0);
-    // let r2 = myPlot2.data[1].marker.opacity.slice(0);
-    // let r3 = myPlot2.data[2].marker.opacity.slice(0);
-    let ops1 = myPlot2.data[0].marker.opacity;
-    let ops2 = myPlot2.data[1].marker.opacity;
-    let ops3 = myPlot2.data[2].marker.opacity;
-    let r1 = ops1.slice(0);
-    let r2 = ops2.slice(0);
-    let r3 = ops3.slice(0);
-    let l1 = Array(ops1.length).fill(0)
-    let l2 = Array(ops2.length).fill(0)
-    let l3 = Array(ops3.length).fill(0)
-
-    console.log(myPlot2.data)
-    myPlot2.onmousemove = function(event) {
-      ttip.style("left", event.pageX + "px");
-      ttip.style("top", (event.pageY - 100) + "px");
-    }
-    myPlot2.on('plotly_hover', function(data){
-
-
-        pn = data.points[0].pointNumber;
-        id = data.points[0].data.id[pn];
-        let d1,d2,d3;
-        myPlot2.data[0].id.forEach((d, i) => {
-          if (d == id) {
-            d1 = i;
-          }
-        })
-        myPlot2.data[1].id.forEach((d, i) => {
-          if (d == id) {
-            d2 = i;
-          }
-        })
-
-        myPlot2.data[2].id.forEach((d, i) => {
-          if (d == id) {
-            d3 = i;
-          }
-        })
-        ops1 = Array(ops1.length).fill(0.3)
-        ops2 = Array(ops2.length).fill(0.3)
-        ops3 = Array(ops3.length).fill(0.3)
-        ops1[d1] = 1.0;
-        ops2[d2] = 1.0;
-        ops3[d3] = 1.0;
-
-
-        l1[d1] = 1;
-        l2[d2] = 1;
-        l3[d3] = 1;
-        console.log(data.points[0])
-
-        ttip.style("opacity", 0.9)
-            .html(data.points[0].hovertext);
-
-
-        // Add tooltip based on position of the mouse
-
-
-                      // let e = window.event;
-                      // var x = e.clientX,
-                      //     y = e.clientY;
-                      //
-                      // let tipY = (y - 50) + 'px';
-                      // let tipX = (x - 40) + 'px';
-                      //
-                      // // Move tooltip to the left of the cursor if it gets too close to right edge
-                      // if  (window.innerWidth - x < 200) {
-                      //   tipX = (x - 130) + 'px';
-                      // }
-                      //
-                      //
-                      //
-                      // ttip.transition()
-                      //     .duration(200)
-                      // ttip.html("test")
-                      //     .style("opacity", .9)
-                      //     .style('left', `${(tipX)}`)
-                      //     .style('top', `${(tipY)}`);
-
-
-  let update = {
-    'marker.opacity': [ops1,ops2,ops3],
-    'marker.line.width': [l1,l2,l3]
-  }
-
-  //var update = {'marker':{color: colors, size:16}};
-  Plotly.restyle('interestsDetailChart', update, [0,1,2]);
-});
-
-myPlot2.on('plotly_unhover', function(data){
-  ttip.style("opacity",0)
-  ops1 = Array(ops1.length).fill(0.5)
-  ops2 = Array(ops2.length).fill(0.5)
-  ops3 = Array(ops3.length).fill(0.5)
-  l1 = Array(ops1.length).fill(0)
-  l2 = Array(ops2.length).fill(0)
-  l3 = Array(ops3.length).fill(0)
-  let update2 = {
-    'marker.opacity': [ops1, ops2, ops3],
-    'marker.line.width': [l1,l2,l3]
-  }
-  Plotly.restyle('interestsDetailChart', update2, [0,1,2]);
-});
-myPlot2.on('plotly_click', function(data){
-  ops1 = Array(ops1.length).fill(0.5)
-  ops2 = Array(ops2.length).fill(0.5)
-  ops3 = Array(ops3.length).fill(0.5)
-  l1 = Array(ops1.length).fill(0)
-  l2 = Array(ops2.length).fill(0)
-  l3 = Array(ops3.length).fill(0)
-  let update2 = {
-    'marker.opacity': [ops1, ops2, ops3],
-    'marker.line.width': [l1,l2,l3]
-  }
-  Plotly.restyle('interestsDetailChart', update2, [0,1,2]);
-});
     mikeJBubbleChart('retail', retailIndex1, retailIndex2, retailIndex3);
+
+    addBubbleHighlighting('interests');
+    addBubbleHighlighting('retail');
+
+    function addBubbleHighlighting(attrName) {
+        var myPlot2 = document.getElementById(attrName+"DetailChart");
+        const ttip = d3.select(attrName+"DetailChart").append("div")
+            .attr("class", "ds-tooltip-bubble")
+            .style("opacity", 0);
+
+        let ops1 = myPlot2.data[0].marker.opacity;
+        let ops2 = myPlot2.data[1].marker.opacity;
+        let ops3 = myPlot2.data[2].marker.opacity;
+
+        let l1 = Array(ops1.length).fill(0)
+        let l2 = Array(ops2.length).fill(0)
+        let l3 = Array(ops3.length).fill(0)
+
+        myPlot2.onmousemove = function(event) {
+          ttip.style("left", event.pageX + "px");
+          ttip.style("top", (event.pageY - 70) + "px");
+        }
+
+        myPlot2.on('plotly_hover', function(data){
+            pn = data.points[0].pointNumber;
+            id = data.points[0].data.id[pn];
+            let d1,d2,d3;
+            myPlot2.data[0].id.forEach((d, i) => {
+              if (d == id) {
+                d1 = i;
+              }
+            })
+            myPlot2.data[1].id.forEach((d, i) => {
+              if (d == id) {
+                d2 = i;
+              }
+            })
+
+            myPlot2.data[2].id.forEach((d, i) => {
+              if (d == id) {
+                d3 = i;
+              }
+            })
+            ops1 = Array(ops1.length).fill(0.3)
+            ops2 = Array(ops2.length).fill(0.3)
+            ops3 = Array(ops3.length).fill(0.3)
+            ops1[d1] = 1.0;
+            ops2[d2] = 1.0;
+            ops3[d3] = 1.0;
+
+            l1[d1] = 1;
+            l2[d2] = 1;
+            l3[d3] = 1;
+
+            ttip.style("opacity", 0.9)
+                .html(data.points[0].hovertext);
+
+            let update = {
+              'marker.opacity': [ops1,ops2,ops3],
+              'marker.line.width': [l1,l2,l3],
+              'marker.line.color': '#ddd'
+            }
+
+            //var update = {'marker':{color: colors, size:16}};
+            Plotly.restyle(attrName+"DetailChart", update, [0,1,2]);
+          });
+
+        function removeHoverHighlightUpdate() {
+            ops1 = Array(ops1.length).fill(0.5)
+            ops2 = Array(ops2.length).fill(0.5)
+            ops3 = Array(ops3.length).fill(0.5)
+            l1 = Array(ops1.length).fill(0)
+            l2 = Array(ops2.length).fill(0)
+            l3 = Array(ops3.length).fill(0)
+            let update2 = {
+              'marker.opacity': [ops1, ops2, ops3],
+              'marker.line.width': [l1,l2,l3]
+            }
+            return update2
+        }
+
+        myPlot2.on('plotly_unhover', function(data){
+          ttip.style("opacity",0)
+          Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), [0,1,2]);
+        });
+
+        myPlot2.on('plotly_click', function(data){
+          ttip.style("opacity",0)
+          Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), [0,1,2]);
+        });
+    }
+
 
 }
 
