@@ -1044,9 +1044,9 @@ function removeActiveFilter(store) {
   if (store["activeView"] == 1) {
     drawCharts();
   } else if (store["activeView"] == 2) {
-    drawComparisonCharts();
+    drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
   } else if (store["activeView"] == 3) {
-    drawComparisonCharts();
+    drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
   }
 
 }
@@ -1176,13 +1176,13 @@ function drawCharts() {
 
     //barChart("age", ageIndex0);
     drawBarChart("age", ageIndex0)
-    addStat("age", ageMedianCat, prefix = "Median: ", suffix = " years");
+    addSeriesStats("age", ageMedianCat, null, null, prefix = "Median: ", suffix = " years");
     drawBarChart("ethnicity", ethnicityIndex0);
     drawBarChart("children", childrenIndex0);
-    addStat("children", childrenNonZeroPct, prefix = "Child present: ", suffix = "%");
+    addSeriesStats("children", childrenNonZeroPct, null, null, prefix = "Child present: ", suffix = "%");
     drawBarChart("education", educationIndex0);
     drawBarChart("income", incomeIndex0);
-    addStat("income", incomeMedianCat, prefix = "Median: ");
+    addSeriesStats("income", incomeMedianCat, null, null, prefix = "Median: ");
     pieChart("gender", genderIndex0);
     pieChart("marital", maritalIndex0);
     mapChart("state", stateIndex0);
@@ -1202,9 +1202,9 @@ function resetCharts() {
     if (DS_VIS_STORE["activeView"] == 1) {
         drawCharts();
     } else if (DS_VIS_STORE["activeView"] == 2) {
-        drawComparisonCharts();
+        drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
     } else if (DS_VIS_STORE["activeView"] == 1) {
-        drawComparisonCharts();
+        drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
     }
 }
 
@@ -1338,13 +1338,13 @@ function updateCharts(attrName, attrValue) {
         if (attrName != demogAttributeListName) {
           if (demogAttributeListName == "age") {
               let ageMedianCat = getMedianCategory(attrIndex);
-              addStat("age", ageMedianCat, prefix = "Median: ", suffix = " years");
+              addSeriesStats("age", ageMedianCat, null, null, prefix = "Median: ", suffix = " years");
           } else if (demogAttributeListName == "children") {
               let childrenNonZeroPct = getNonZeroPct(attrIndex);
-              addStat("children", childrenNonZeroPct, prefix = "Child present: ", suffix = "%");
+              addSeriesStats("children", childrenNonZeroPct, null, null, prefix = "Child present: ", suffix = "%");
           } else if (demogAttributeListName == "income") {
               let incomeMedianCat = getMedianCategory(attrIndex);
-              addStat("income", incomeMedianCat, prefix = "Median: ");
+              addSeriesStats("income", incomeMedianCat, null, null, prefix = "Median: ");
           }
         }
 

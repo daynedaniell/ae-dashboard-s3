@@ -337,9 +337,9 @@ function drawBarChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
        if (numSeries == 1) {
           drawCharts();
        } else if (numSeries == 2) {
-          drawComparisonCharts();
+          drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
        } else if (numSeries == 3) {
-          drawComparisonCharts();
+          drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
        }
        showActiveFilter(DS_VIS_STORE);
      } else {
@@ -348,7 +348,7 @@ function drawBarChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
        } else if (numSeries == 2) {
           updateComparisonCharts(attrName, d.attrib_value, numSeries);
        } else if (numSeries == 3) {
-          update3ComparisonCharts(attrName, d.attrib_value, numSeries);
+          updateComparisonCharts(attrName, d.attrib_value, numSeries);
        }
        showActiveFilter(DS_VIS_STORE);
      }
@@ -582,10 +582,10 @@ function hBarParallelChart(attrName, audName1, indexDs1, audName2, indexDs2) {
        isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
        if (isSelected){
          DS_VIS_STORE["activeFilter"] = null;
-         drawComparisonCharts();
+         drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
          showActiveFilter(DS_VIS_STORE);
        } else {
-         updateComparisonCharts(attrName, d.attrib_value);
+         updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
          showActiveFilter(DS_VIS_STORE);
        }
     }
@@ -788,10 +788,10 @@ function stackedBar2SeriesChart(attrName, audName1, indexDs1, audName2, indexDs2
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
        DS_VIS_STORE["activeFilter"] = null;
-       drawComparisonCharts();
+       drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
        showActiveFilter(DS_VIS_STORE);
      } else {
-       updateComparisonCharts(attrName, d.attrib_value);
+       updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
        showActiveFilter(DS_VIS_STORE);
      }
   }
@@ -1733,7 +1733,7 @@ function drawComparisonChartsOld() {
 *******************************************************************************/
 
 /* updates bar charts when a value element is clicked on a chart */
-function updateComparisonCharts(attrName, attrValue) {
+function updateComparisonChartsOld2(attrName, attrValue) {
     let numSeries = DS_VIS_STORE.activeView;
     DS_VIS_STORE.activeFilter = [attrName, attrValue];
 

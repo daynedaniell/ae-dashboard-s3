@@ -1,12 +1,21 @@
 /*******************************************************************************
 *** ADD 3-SERIES STATS *********************************************************
 *******************************************************************************/
-function add3SeriesStat(attrName, stat1, stat2, stat3, prefix='', suffix='') {
+function addSeriesStats(attrName, stat1, stat2=null, stat3=null, prefix='', suffix='') {
+  console.log("Adding series stats: " + prefix)
   // remove existing stats, if any
   $( "#" + attrName + "Chart" )
     .prev(".tile-header")
     .find(".ds-stats")
     .remove();
+
+  let twoString = DS_VIS_STORE.activeView > 1
+      ? "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-2'>" + stat2 + suffix
+      : '';
+
+  let threeString = DS_VIS_STORE.activeView > 2
+      ? "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-3'>" + stat3 + suffix
+      : '';
 
   // add in stats
   $( "#" + attrName + "Chart" )
@@ -15,10 +24,8 @@ function add3SeriesStat(attrName, stat1, stat2, stat3, prefix='', suffix='') {
             + prefix
             + "</span><span class='ds-stat-1'>"
             + stat1 + suffix
-            + "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-2'>"
-            + stat2 + suffix
-            + "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-3'>"
-            + stat3 + suffix
+            + twoString
+            + threeString
             + "</span></div>");
 
   // color code the stats
@@ -290,7 +297,7 @@ function add3SeriesStat(attrName, stat1, stat2, stat3, prefix='', suffix='') {
 //            drawComparisonCharts();
 //            showActiveFilter(DS_VIS_STORE);
 //          } else {
-//            update3ComparisonCharts(attrName, d.attrib_value);
+//            updateComparisonCharts(attrName, d.attrib_value);
 //            showActiveFilter(DS_VIS_STORE);
 //          }
 //     	}
@@ -627,16 +634,16 @@ function hBar3ParallelChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
        if (isSelected){
          DS_VIS_STORE["activeFilter"] = null;
          if (numSeries == 2) {
-            drawComparisonCharts();
+            drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
          } else if (numSeries == 3) {
-            drawComparisonCharts();
+            drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
          }
          showActiveFilter(DS_VIS_STORE);
        } else {
          if (numSeries == 2) {
-            updateComparisonCharts(attrName, d.attrib_value);
+            updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
          } else if (numSeries == 3) {
-            update3ComparisonCharts(attrName, d.attrib_value);
+            updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
          }
          showActiveFilter(DS_VIS_STORE);
        }
@@ -1688,17 +1695,17 @@ function drawComparisonCharts(activeView) {
     });
 
     drawBarChart("age", ageIndex1, ageIndex2, ageIndex3, numSeries = activeView);
-    add3SeriesStat("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
+    addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
     //bar3SeriesChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3);
     drawBarChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3, numSeries = activeView);
     // bar3SeriesChart("children", childrenIndex1, childrenIndex2, childrenIndex3);
     drawBarChart("children", childrenIndex1, childrenIndex2, childrenIndex3, numSeries = activeView);
-    add3SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
+    addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
     // bar3SeriesChart("education", educationIndex1, educationIndex2, educationIndex3);
     drawBarChart("education", educationIndex1, educationIndex2, educationIndex3, numSeries = activeView);
     // bar3SeriesChart("income", incomeIndex1, incomeIndex2, incomeIndex3);
     drawBarChart("income", incomeIndex1, incomeIndex2, incomeIndex3, numSeries = activeView);
-    add3SeriesStat("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
+    addSeriesStats("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
     hBar3ParallelChart("gender", genderIndex1, genderIndex2, genderIndex3);
     hBar3ParallelChart("marital", maritalIndex1, maritalIndex2, maritalIndex3);
 
@@ -1822,7 +1829,7 @@ function drawComparisonCharts(activeView) {
 *******************************************************************************/
 
 /* updates bar charts when a value element is clicked on a chart */
-function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
+function updateComparisonCharts(attrName, attrValue, numSeries = 3) {
     DS_VIS_STORE.activeFilter = [attrName, attrValue];
 
     let attrIndex = [];
@@ -1837,6 +1844,9 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
     let sBarChartAttributesList = ["gender", "marital"]
     let hBarChartAttributesList = ["state", "interests", "retail"]
 
+    /* Instantiate these in event of 2 series comparison */
+    let attrIndex3, attrIndexTop3, targetDemog3;
+
     demogAttributesList.forEach(function(demogAttributeListName) {
         if (attrName != demogAttributeListName) {
             /* reset opacity */
@@ -1850,7 +1860,10 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
                 let filteredIds2 = filterAttr(targetDemog2, attrName, attrValue).map(function(d) { return d.temp_id; });
 
                 let filteredData3 = [];
-                let filteredIds3 = filterAttr(targetDemog3, attrName, attrValue).map(function(d) { return d.temp_id; });
+                let filteredIds3;
+                if (numSeries > 2) {
+                    filteredIds3 = filterAttr(targetDemog3, attrName, attrValue).map(function(d) { return d.temp_id; });
+                }
 
                 if (demogAttributeListName == "interests") {
                   orderedTargetFilter(targetInterests, filteredIds1, filteredData1);
@@ -1859,8 +1872,10 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
                   orderedTargetFilter(targetInterests2, filteredIds2, filteredData2);
                   attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomInterests);
 
-                  orderedTargetFilter(targetInterests3, filteredIds3, filteredData3);
-                  attrIndex3 = indexInterestsRetail(demogAttributeListName, filteredData3, randomInterests);
+                  if (numSeries > 2) {
+                      orderedTargetFilter(targetInterests3, filteredIds3, filteredData3);
+                      attrIndex3 = indexInterestsRetail(demogAttributeListName, filteredData3, randomInterests);
+                  }
                 } else if (demogAttributeListName == "retail"){
                   orderedTargetFilter(targetRetail, filteredIds1, filteredData1);
                   attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomRetail);
@@ -1868,16 +1883,24 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
                   orderedTargetFilter(targetRetail2, filteredIds2, filteredData2);
                   attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomRetail);
 
-                  orderedTargetFilter(targetRetail3, filteredIds3, filteredData3);
-                  attrIndex3 = indexInterestsRetail(demogAttributeListName, filteredData3, randomRetail);
+                  if (numSeries > 2) {
+                      orderedTargetFilter(targetRetail3, filteredIds3, filteredData3);
+                      attrIndex3 = indexInterestsRetail(demogAttributeListName, filteredData3, randomRetail);
+                  }
                 }
                 attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2,attrIndex3);
                 attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1,attrIndex3);
-                attrIndexTop3 = indexInterestsRetailTop5(attrIndex3,attrIndex1,attrIndex2);
+                if (numSeries > 2) {
+                    attrIndexTop3 = indexInterestsRetailTop5(attrIndex3,attrIndex1,attrIndex2);
+                }
             } else {
-              let filteredData1 = filterAttr(targetDemog, attrName, attrValue);
-              let filteredData2 = filterAttr(targetDemog2, attrName, attrValue);
-              let filteredData3 = filterAttr(targetDemog3, attrName, attrValue);
+              let filteredData1, filteredData2, filteredData3;
+              filteredData1 = filterAttr(targetDemog, attrName, attrValue);
+              filteredData2 = filterAttr(targetDemog2, attrName, attrValue);
+              if (numSeries > 2) {
+                  console.log('numSeries > 2')
+                  filteredData3 = filterAttr(targetDemog3, attrName, attrValue);
+              }
 
               attrIndex1 = indexAttr(demogAttributeListName,
                                     indexCats[demogAttributeListName],
@@ -1887,14 +1910,18 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
                                     indexCats[demogAttributeListName],
                                     filteredData2,
                                     randomDemog);
-              attrIndex3 = indexAttr(demogAttributeListName,
-                                    indexCats[demogAttributeListName],
-                                    filteredData3,
-                                    randomDemog);
+              if (numSeries > 2) {
+                  attrIndex3 = indexAttr(demogAttributeListName,
+                                        indexCats[demogAttributeListName],
+                                        filteredData3,
+                                        randomDemog);
+              }
               if (demogAttributeListName == "state") {
                   attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2, attrIndex3);
                   attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1, attrIndex3);
-                  attrIndexTop3 = indexStatesTop5(attrIndex3, attrIndex1, attrIndex2);
+                  if (numSeries > 2) {
+                      attrIndexTop3 = indexStatesTop5(attrIndex3, attrIndex1, attrIndex2);
+                  }
               }
             }
         } else {
@@ -1902,15 +1929,21 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
                 if (demogAttributeListName == "interests"){
                     attrIndex1 = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
                     attrIndex2 = indexInterestsRetail(demogAttributeListName, targetInterests2, randomInterests);
-                    attrIndex3 = indexInterestsRetail(demogAttributeListName, targetInterests3, randomInterests);
+                    if (numSeries > 2) {
+                        attrIndex3 = indexInterestsRetail(demogAttributeListName, targetInterests3, randomInterests);
+                    }
                 } else if (demogAttributeListName == "retail"){
                     attrIndex1 = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
                     attrIndex2 = indexInterestsRetail(demogAttributeListName, targetRetail2, randomRetail);
-                    attrIndex3 = indexInterestsRetail(demogAttributeListName, targetRetail3, randomRetail);
+                    if (numSeries > 2) {
+                        attrIndex3 = indexInterestsRetail(demogAttributeListName, targetRetail3, randomRetail);
+                    }
                 }
                 attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2,attrIndex3);
                 attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1,attrIndex3);
-                attrIndexTop3 = indexInterestsRetailTop5(attrIndex3,attrIndex1,attrIndex2);
+                if (numSeries > 2) {
+                    attrIndexTop3 = indexInterestsRetailTop5(attrIndex3,attrIndex1,attrIndex2);
+                }
             } else {
                 attrIndex1 = indexAttr(demogAttributeListName,
                                       indexCats[demogAttributeListName],
@@ -1922,15 +1955,19 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
                                       targetDemog2,
                                       randomDemog);
 
-                attrIndex3 = indexAttr(demogAttributeListName,
-                                      indexCats[demogAttributeListName],
-                                      targetDemog3,
-                                      randomDemog);
+                if (numSeries > 2) {
+                    attrIndex3 = indexAttr(demogAttributeListName,
+                                          indexCats[demogAttributeListName],
+                                          targetDemog3,
+                                          randomDemog);
+                }
 
                 if (demogAttributeListName == "state") {
                     attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2, attrIndex3)[0];
                     attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1, attrIndex3)[0];
-                    attrIndexTop3 = indexStatesTop5(attrIndex3, attrIndex1, attrIndex2)[0];
+                    if (numSeries > 2) {
+                        attrIndexTop3 = indexStatesTop5(attrIndex3, attrIndex1, attrIndex2)[0];
+                    }
                 }
             }
         }
@@ -1939,11 +1976,15 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
         if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
           indexes1[demogAttributeListName] = attrIndexTop1[0];
           indexes2[demogAttributeListName] = attrIndexTop2[0];
-          indexes3[demogAttributeListName] = attrIndexTop3[0];
+          if (numSeries > 2) {
+              indexes3[demogAttributeListName] = attrIndexTop3[0];
+          }
         } else {
           indexes1[demogAttributeListName] = attrIndex1;
           indexes2[demogAttributeListName] = attrIndex2;
-          indexes3[demogAttributeListName] = attrIndex3;
+          if (numSeries > 2) {
+              indexes3[demogAttributeListName] = attrIndex3;
+          }
         }
 
         // update stats
@@ -1953,20 +1994,29 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
           .css("opacity", 0);
         if (attrName != demogAttributeListName) {
             if (demogAttributeListName == "age") {
-                let ageMedianCat1 = getMedianCategory(attrIndex1);
-                let ageMedianCat2 = getMedianCategory(attrIndex2);
-                let ageMedianCat3 = getMedianCategory(attrIndex3);
-                add3SeriesStat("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
+                let ageMedianCat1, ageMedianCat2, ageMedianCat3;
+                ageMedianCat1 = getMedianCategory(attrIndex1);
+                ageMedianCat2 = getMedianCategory(attrIndex2);
+                if (numSeries > 2) {
+                    ageMedianCat3 = getMedianCategory(attrIndex3);
+                }
+                addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
             } else if (demogAttributeListName == "children") {
-                let childrenNonZeroPct1 = getNonZeroPct(attrIndex1);
-                let childrenNonZeroPct2 = getNonZeroPct(attrIndex2);
-                let childrenNonZeroPct3 = getNonZeroPct(attrIndex3);
-                add3SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child present: ", suffix = "%");
+                let childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3;
+                childrenNonZeroPct1 = getNonZeroPct(attrIndex1);
+                childrenNonZeroPct2 = getNonZeroPct(attrIndex2);
+                if (numSeries > 2) {
+                    childrenNonZeroPct3 = getNonZeroPct(attrIndex3);
+                }
+                addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child present: ", suffix = "%");
             } else if (demogAttributeListName == "income") {
-                let incomeMedianCat1 = getMedianCategory(attrIndex1);
-                let incomeMedianCat2 = getMedianCategory(attrIndex2);
-                let incomeMedianCat3 = getMedianCategory(attrIndex3);
-                add3SeriesStat("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
+                let incomeMedianCat1, incomeMedianCat2, incomeMedianCat3;
+                incomeMedianCat1 = getMedianCategory(attrIndex1);
+                incomeMedianCat2 = getMedianCategory(attrIndex2);
+                if (numSeries > 2) {
+                    incomeMedianCat3 = getMedianCategory(attrIndex3);
+                }
+                addSeriesStats("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
             }
         }
 
@@ -1992,7 +2042,7 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
                              .domain([0, Math.max(
                                   d3.max(attrIndex1, function(d) { return d.target_pct; }),
                                   d3.max(attrIndex2, function(d) { return d.target_pct; }),
-                                  d3.max(attrIndex3, function(d) { return d.target_pct; })
+                                  numSeries > 2 ? d3.max(attrIndex3, function(d) { return d.target_pct; }) : 0
                                 )
                              ])
                              .range([height,0]);
@@ -2108,7 +2158,7 @@ function update3ComparisonCharts(attrName, attrValue, numSeries = 3) {
 
               updateBarText(attrIndex1, "series1");
               updateBarText(attrIndex2, "series2");
-              if (numSeries == 3) {
+              if (numSeries > 2) {
                   updateBarText(attrIndex3, "series3");
               }
         } else if ( sBarChartAttributesList.includes(demogAttributeListName) ) {
