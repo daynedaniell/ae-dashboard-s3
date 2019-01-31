@@ -7,6 +7,7 @@ let DS_VIS_STORE = {
     interestsActive: [1,2,3],
     retailActive: [1,2,3],
     activeView: 1,
+    activeTab: 'dashboard',
     scaleWeight: 1
 }
 
@@ -1205,7 +1206,12 @@ function showActiveFilter(store) {
     $(".ds-filter-tip").css("display","");
     $(".ds-current-filter-remove").css("display", "none");
   }
-  $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "Click chart item to apply filter.");
+    console.log(store.activeTab)
+    if (store.activeTab == "dashboard") {
+        $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "Click chart item to apply filter.");
+    } else {
+        $(".ds-filter-tip").css("display","none");
+    }
 }
 
 function removeActiveFilter(store) {
@@ -1239,6 +1245,14 @@ $(".ds-audience-selection-form").change(function(){
     $(".ds-active-filters").css("top", "360px")
   }
 
+  if (DS_VIS_STORE["activeFilter"] != null && DS_VIS_STORE["activeTab"] == 'dashboard') {
+    console.log('not null')
+    DS_VIS_STORE["activeFilter"] = null;
+    $(".ds-current-filter").text("Click chart item to apply filter.");
+    $(".ds-filter-tip").css("display","");
+    $(".ds-current-filter-remove").css("display", "none");
+  }
+
   if (selectedAudiences.length == 3) {
     DS_VIS_STORE["activeView"] = 3;
     resetCompareAuds()
@@ -1253,10 +1267,6 @@ $(".ds-audience-selection-form").change(function(){
     DS_VIS_STORE["activeView"] = null;
   }
 
-  DS_VIS_STORE["activeFilter"] = null;
-  $(".ds-current-filter").text("Click chart item to apply filter.");
-  $(".ds-filter-tip").css("display","");
-  $(".ds-current-filter-remove").css("display", "none");
 
 });
 
@@ -1512,9 +1522,10 @@ function resetCharts() {
 
 /* Reset dashboard charts if filter was left on when switching to bubble */
 $("#interests-tab").click(function() {
+    DS_VIS_STORE.activeTab = 'interests';
     if (DS_VIS_STORE.activeFilter != null) {
         DS_VIS_STORE.activeFilter = null;
-        showActiveFilter(DS_VIS_STORE);
+        //showActiveFilter(DS_VIS_STORE);
         resetCharts();
     }
     $(".ds-current-filter").text("");
@@ -1522,9 +1533,10 @@ $("#interests-tab").click(function() {
 });
 
 $("#retail-tab").click(function() {
+    DS_VIS_STORE.activeTab = 'retail';
     if (DS_VIS_STORE.activeFilter != null) {
         DS_VIS_STORE.activeFilter = null;
-        showActiveFilter(DS_VIS_STORE);
+        //showActiveFilter(DS_VIS_STORE);
         resetCharts();
     }
     $(".ds-current-filter").text("");
@@ -1532,7 +1544,8 @@ $("#retail-tab").click(function() {
 });
 
 $("#dashboard-tab").click(function() {
-  showActiveFilter(DS_VIS_STORE);
+    DS_VIS_STORE.activeTab = 'dashboard';
+    showActiveFilter(DS_VIS_STORE);
 });
 
 
