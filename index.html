@@ -64,7 +64,7 @@
             <!-- Active Filter -->
             </span>
 
-            <div style="font-style:italic;"><span class="ds-filter-tip"><i class="fas fa-lightbulb"></i></span><span class="ds-current-filter-remove">Active filter: <br/><i class="fas fa-times"></i></span><span class="ds-current-filter"></span></div>
+            <div style="font-style:italic;"><span class="ds-filter-tip"><i class="fas fa-lightbulb"></i></span><span class="ds-current-filter-remove">Active Filter<br/><i class="fas fa-times"></i></span><span class="ds-current-filter"></span></div>
           </div>
           <div class="aud-nav">
               <form class="ds-audience-selection-form">
@@ -218,11 +218,11 @@
 
 
           <div class="tab-pane" id="interests" role="tabpanel">
-              <div class="well tile ds-grid-full">
+              <div class="well tile ds-grid-full" style="height: 100%;">
                   <div class="tile-header">
                       <h4 class="ds-chart-title">Interests</h4>
                   </div>
-                  <div id="interestsDetailChart" class="mikej-chart" style="width:1260px;height:1334px;"></div>
+                  <div id="interestsDetailChart" class="mikej-chart" style="width:1460px;height:1334px;"></div>
               </div>
           </div>
           <div class="tab-pane" id="retail" role="tabpanel">
@@ -263,7 +263,6 @@
     <script src="js/audience_data_processing.js"></script>
     <script src="js/audience_charts.js"></script>
     <script src="js/audience_comparison_charts.js"></script>
-    <script src="js/audience_comparison_charts3.js"></script>
 
 
     <script>
@@ -296,7 +295,7 @@
                   targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
                   targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
 
-                  drawComparisonCharts();
+                  drawComparisonCharts(activeView=2);
               } else if (audIds.length == 3) {
                   targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
                   targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
@@ -308,7 +307,7 @@
                   targetInterests3 = await d3.tsv("data/target_aud_" + audIds[2] + "/interests_target.tsv");
                   targetRetail3 = await d3.tsv("data/target_aud_" + audIds[2] + "/retail_target.tsv");
 
-                  drawComparisonCharts3();
+                  drawComparisonCharts(activeView=3);
               }
 
             }

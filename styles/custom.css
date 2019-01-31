@@ -66,7 +66,11 @@ h4.ds-chart-title {
 
 }
 
-
+.ds-nav-middle nav {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
 
 .ds-nav-end {
     grid-column: 3 / -1;
@@ -74,15 +78,17 @@ h4.ds-chart-title {
 }
 
 ul.ds-nav {
-  list-style: none;
-  display: grid;
-  grid-template-columns: auto 150px 150px 150px auto;
-  margin: 0;
-
+    list-style: none;
+    display: inline;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    align-content: space-evenly;
 }
 
 .ds-nav li {
-  width: 150px;
+  float: left;
+  margin: 0 40px;
 }
 
 .ds-nav>li>a:focus, .ds-nav>li>a:hover {
@@ -240,13 +246,13 @@ ul.ds-nav {
 
 
 /* temp fixes */
-#incomeChart svg g text {
+/* #incomeChart svg g text {
     font-size: 12px;
 }
 
 #incomeChart svg g.axis text {
     font-size: 10px;
-}
+} */
 
 
 
@@ -314,6 +320,24 @@ body {
   box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
   opacity: 0;
   z-index: 1;
+}
+
+.ds-tooltip-bubble {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-width: 500px;
+  padding: 15px;
+  word-break: break-all;
+  position: fixed;
+  background-color: #fff;
+  margin-top: -20px;
+  font: 15px "MuseoSans-300", sans-serif;
+  color: #333;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1;
+  border: 1px solid #ddd;
 }
 
 
