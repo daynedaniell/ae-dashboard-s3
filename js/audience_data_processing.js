@@ -335,8 +335,6 @@ function indexInterestsRetailTop5(indexDs, indexDs2 = null, indexDs3 = null) {
 }
 
 function indexStatesTop5(indexDs1, indexDs2, indexDs3 = null) {
-  console.log('test')
-  console.log(JSON.stringify(indexDs2));
   let triple = indexDs3 != null;
   let a = [...indexDs1].filter( d => ( d["random_pct"] > 0 ) )
                       .sort(function(a,b){

@@ -340,6 +340,8 @@ body {
   border: 1px solid #ddd;
 }
 
+.hovertext { display: none }
+
 
 
 .ds-grid line {

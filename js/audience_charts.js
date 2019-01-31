@@ -695,11 +695,20 @@ function hBarChart(attrName, indexDs) {
 
 }
 
-
 /*******************************************************************************
-*** WAVE CHART *****************************************************************
+*** DNA CHART ******************************************************************
 *******************************************************************************/
-function waveChart(ds) {
+function dnaChart(ds1, ds2, ds3) {
+  let numSeries = DS_VIS_STORE.activeView;
+
+  let barWidth = 4;
+
+  if (numSeries == 2) {
+      barWidth = 3;
+  } else if (numSeries == 3) {
+      barWidth = 2;
+  }
+
 
   // tooltip values
   function makeToolTips(indexDs, attrName) {
@@ -721,7 +730,7 @@ function waveChart(ds) {
       // in the tooltip text string
       return "<br>    " + "    <br>    "
         + attrFullName[attrName]
-        + " = "
+        + ": "
         + row['attrib_value']
         + "    <br>    Target Pct: "
         + row['target_pct'].toString()
@@ -732,22 +741,24 @@ function waveChart(ds) {
     return t;
   }
 
-  let traces = [];
-  let attrNames = Object.keys(ds);
+  let traces1 = [];
+  let traces2 = [];
+  let traces3 = [];
+  let attrNames = Object.keys(ds1);
 
   attrNames.forEach(function(attrName, i){
-    traces[i] = {
+    traces1[i] = {
       name: attrName,
-      x: unpack(ds[attrName], 'index'),
-      y: unpack(ds[attrName], 'target_pct'),
-      base: unpack(ds[attrName], 'target_pct').map(x => -x/2),
-      width: 5,
+      x: unpack(ds1[attrName], 'index'),
+      y: unpack(ds1[attrName], 'target_pct'),
+      base: unpack(ds1[attrName], 'target_pct').map(x => -x/2),
+      width: barWidth,
       type: 'bar',
       marker: {
-        color: unpack(ds[attrName], 'index').map(x => colorByIndexBar(x)),
+        color: numSeries == 1 ? unpack(ds1[attrName], 'index').map(x => colorByIndexBar(x)) : colorSeries1,
         opacity: 0.5
       },
-     hovertext: makeToolTips(ds[attrName], attrName),
+     hovertext: makeToolTips(ds1[attrName], attrName),
      hoverinfo: 'text',
       hoverlabel: {
         bgcolor: '#fff',
@@ -759,17 +770,68 @@ function waveChart(ds) {
         }
       }
     };
+    if (numSeries > 1) {
+        traces2[i] = {
+          name: attrName,
+          x: unpack(ds2[attrName], 'index'),
+          y: unpack(ds2[attrName], 'target_pct'),
+          base: unpack(ds2[attrName], 'target_pct').map(x => -x/2),
+          width: barWidth,
+          type: 'bar',
+          marker: {
+            color: colorSeries2,
+            opacity: 0.5
+          },
+         hovertext: makeToolTips(ds2[attrName], attrName),
+         hoverinfo: 'text',
+          hoverlabel: {
+            bgcolor: '#fff',
+            bordercolor: 'lightgrey',
+            font: {
+              family: "Open Sans",
+              size: 15,
+              color: '#333'
+            }
+          }
+        };
+    }
+
+    if (numSeries > 2) {
+        traces3[i] = {
+          name: attrName,
+          x: unpack(ds3[attrName], 'index'),
+          y: unpack(ds3[attrName], 'target_pct'),
+          base: unpack(ds3[attrName], 'target_pct').map(x => -x/2),
+          width: barWidth,
+          type: 'bar',
+          marker: {
+            color: colorSeries3,
+            opacity: 0.5
+          },
+         hovertext: makeToolTips(ds3[attrName], attrName),
+         hoverinfo: 'text',
+          hoverlabel: {
+            bgcolor: '#fff',
+            bordercolor: 'lightgrey',
+            font: {
+              family: "Open Sans",
+              size: 15,
+              color: '#333'
+            }
+          }
+        };
+    }
+
 
   });
 
   let height = 150;
-	let width = "100%";
-  //let width = 1260;
+	let width = 1260;
 
   let layout = {
     hovermode:'closest',
     // height: height,
-    // width: "100%",
+    // width: width,
     annotations: [{
       x: 0,
       y: -50,
@@ -865,10 +927,10 @@ function waveChart(ds) {
         width: 0.75,
         dash: 'dot'
       }
-    }
-    ]
+    }]
   };
 
+  let traces = [...traces1, ...traces2, ...traces3];
   Plotly.newPlot("waveChart", traces, layout, {displayModeBar: false, responsive: true});
 
 }
@@ -876,45 +938,70 @@ function waveChart(ds) {
 
 
 /*******************************************************************************
-*** MIKEJ CHART ****************************************************************
+*** MIKEJ BUBBLE CHART *********************************************************
 *******************************************************************************/
-function mikeJChart(attrName, indexDs) {
+function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
+
+  let numSeries = DS_VIS_STORE.activeView;
+
   // sort data alphabetically by category
-  indexDs.sort((a, b) => b.category.localeCompare(a.category));
+  indexDs1.sort((a, b) => b.category.localeCompare(a.category));
+  if (numSeries > 1) {
+      indexDs2.sort((a, b) => b.category.localeCompare(a.category));
+  }
+  if (numSeries > 2) {
+      indexDs3.sort((a, b) => b.category.localeCompare(a.category));
+  }
 
-  // tooltip values
-  let toolTipValues = indexDs.map(function(row) {
-    let toolTipBoxLength = Math.max(
-      row['attrib_value'].length,
-      row['target_pct'].toString().length + 12,
-      row['index'].toString().length + 7
-    );
-    // the white spaces are needed here to create padding, b/c plotly
-    // doesn't seem to have padding options, and allows only inline html tags
-    // in the tooltip text string
-    return "<br>    " + "  ".repeat(toolTipBoxLength) +"    <br>    "
-      + row['attrib_value']
-      + "    <br>    Target Pct: "
-      + row['target_pct'].toString()
-      + "%<br>    Index: "
-      + row['index'].toString()
-      + "<br>   ";
-  });
+  let trace1 = [];
+  let trace2 = [];
+  let trace3 = [];
 
-  let trace = {
-    x: unpack(indexDs, 'index'),
-    y: unpack(indexDs, 'category'),
+  // put together tooltip values
+  function getMikeJTooltipValues(ds){
+    toolTipValuesArray = ds.map(function(row) {
+      let toolTipBoxLength = Math.max(
+        row['attrib_value'].length,
+        row['target_pct'].toString().length + 12,
+        row['index'].toString().length + 7
+      );
+      // the white spaces are needed here to create padding, b/c plotly
+      // doesn't seem to have padding options, and allows only inline html tags
+      // in the tooltip text string
+      return row['attrib_value']
+        + "    <br>    Target Pct: "
+        + row['target_pct'].toString()
+        + "%<br>    Index: "
+        + row['index'].toString()
+        + "<br>   ";
+    });
+    return toolTipValuesArray;
+  }
+
+  function getId(ds,aud){
+    idArray = ds.map(function(row) {
+      let attr = row['attrib_value']
+      return attr
+
+    });
+    return idArray;
+  }
+
+  trace1 = {
+    showlegend: false,
+    x: unpack(indexDs1, 'index'),
+    y: unpack(indexDs1, 'category'),
     mode: 'markers',
     type: 'scatter',
     marker: {
-      size: unpack(indexDs, 'target_pct').map(x => Math.sqrt(x)*5),
-      color: unpack(indexDs, 'index').map(x => colorByIndexBar(x)),
-      opacity: 0.5,
+      size: unpack(indexDs1, 'target_pct').map(x => Math.sqrt(x)*5),
+      color: numSeries == 1 ? unpack(indexDs1, 'index').map(x => colorByIndexBar(x)) : colorSeries1,
+      opacity: unpack(indexDs1, 'target_pct').map(x => 0.5),
       line: {width: 0}
     },
-    hovertext: toolTipValues,
-    custom: "test",
-    hoverinfo: 'text',
+    id: getId(indexDs1, 1),
+    hovertext: getMikeJTooltipValues(indexDs1),
+    //hoverinfo: 'none',
     hoverlabel: {
       bgcolor: '#fff',
       bordercolor: 'lightgrey',
@@ -926,9 +1013,67 @@ function mikeJChart(attrName, indexDs) {
     }
   };
 
+  if (numSeries > 1) {
+      trace2 = {
+        showlegend: false,
+        x: unpack(indexDs2, 'index'),
+        y: unpack(indexDs2, 'category'),
+        mode: 'markers',
+        type: 'scatter',
+        marker: {
+          size: unpack(indexDs2, 'target_pct').map(x => Math.sqrt(x)*5),
+          color: colorSeries2,
+          opacity: unpack(indexDs2, 'target_pct').map(x => 0.5),
+          line: {width: 0}
+        },
+        id: getId(indexDs2, 2),
+        hovertext: getMikeJTooltipValues(indexDs2),
+        hoverinfo: 'none',
+        hoverlabel: {
+          bgcolor: '#fff',
+          bordercolor: 'lightgrey',
+          font: {
+            family: "Open Sans",
+            size: 15,
+            color: '#333'
+          }
+        }
+      };
+  }
+
+  if (numSeries > 2) {
+      trace3 = {
+        showlegend: false,
+        x: unpack(indexDs3, 'index'),
+        y: unpack(indexDs3, 'category'),
+        mode: 'markers',
+        type: 'scatter',
+        marker: {
+          size: unpack(indexDs3, 'target_pct').map(x => Math.sqrt(x)*5),
+          color: colorSeries3,
+          opacity: unpack(indexDs3, 'target_pct').map(x => 0.5),
+          line: {width: 0}
+        },
+        id: getId(indexDs3, 3),
+        hovertext: getMikeJTooltipValues(indexDs3),
+        hoverinfo: 'none',
+        hoverlabel: {
+          bgcolor: '#fff',
+          bordercolor: 'lightgrey',
+          font: {
+            family: "Open Sans",
+            size: 15,
+            color: '#333'
+         }
+        }
+      };
+  }
+
+
 
   // calculate chart height based on the number of distinct categories
-  let allCats = [...new Set( unpack(indexDs, 'category') )];
+  // let allCats = [...new Set( [...unpack(indexDs1, 'category'), ...unpack(indexDs2, 'category')] )];
+  let allCats = [...new Set( [...unpack(indexDs1, 'category')] )];
   let height = allCats.length * 58;
 	let width = 1260;
   let margin = 40;
@@ -938,7 +1083,7 @@ function mikeJChart(attrName, indexDs) {
 
 
   let layout = {
-    hovermode:'closest',
+    hovermode: 'closest',
     // height: height,
     // width: width,
     xaxis: {
@@ -973,21 +1118,46 @@ function mikeJChart(attrName, indexDs) {
   };
 
   let chartName = attrName+"DetailChart";
-  Plotly.newPlot(chartName, [trace], layout, {displayModeBar: false, responsive: true});
+  Plotly.newPlot(chartName, [trace1, trace2, trace3], layout, {displayModeBar: false, responsive: true});
 }
 
+
 /*******************************************************************************
-*** ADD STATS ******************************************************************
+*** ADD SERIES STATS ***********************************************************
 *******************************************************************************/
-function addStat(attrName, stat, prefix='', suffix='') {
+function addSeriesStats(attrName, stat1, stat2=null, stat3=null, prefix='', suffix='') {
   // remove existing stats, if any
   $( "#" + attrName + "Chart" )
     .prev(".tile-header")
     .find(".ds-stats")
     .remove();
+
+  let twoString = DS_VIS_STORE.activeView > 1
+      ? "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-2'>" + stat2 + suffix
+      : '';
+
+  let threeString = DS_VIS_STORE.activeView > 2
+      ? "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-3'>" + stat3 + suffix
+      : '';
+
+  // add in stats
   $( "#" + attrName + "Chart" )
     .prev(".tile-header")
-    .append("<div class='ds-stats'>" + prefix + stat + suffix + "</div>");
+    .append("<div class='ds-stats'><span class='ds-stats-name'>"
+            + prefix
+            + "</span><span class='ds-stat-1'>"
+            + stat1 + suffix
+            + twoString
+            + threeString
+            + "</span></div>");
+
+  // color code the stats
+  $("#" + attrName + "Chart").prev(".tile-header")
+  .find(".ds-stats .ds-stat-1").css('color', colorSeries1);
+  $("#" + attrName + "Chart").prev(".tile-header")
+  .find(".ds-stats .ds-stat-2").css('color', colorSeries2);
+  $("#" + attrName + "Chart").prev(".tile-header")
+  .find(".ds-stats .ds-stat-3").css('color', colorSeries3);
 }
 
 /*******************************************************************************
@@ -1025,7 +1195,6 @@ function addAudienceLegend(compare=null) {
 *** SHOW ACTIVE FILTERS ********************************************************
 *******************************************************************************/
 function showActiveFilter(store) {
-  console.log(JSON.stringify(store))
   let cat = null;
   if (store["activeFilter"] != null) {
       cat = store["activeFilter"][0];
@@ -1155,7 +1324,7 @@ function drawCharts() {
     /* Take user to corresponding chart on bar click */
     let myPlot = document.getElementById('waveChart');
     myPlot.on('plotly_click', function(data){
-      let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+      let d = data.points[0].hovertext.split("<br>")[2].trim().split(":");
       d[0] = d[0][0].toLowerCase() + d[0].slice(1)
       let mapping = {
         "number of children": "children",
@@ -1169,6 +1338,7 @@ function drawCharts() {
         "interests": "interests",
         "retail": "retail"
       }
+      console.log(d)
       document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
       $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
       setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
@@ -1193,7 +1363,118 @@ function drawCharts() {
 
     mikeJBubbleChart('interests', interestsIndexBubble0);
     mikeJBubbleChart('retail', retailIndex0);
+
+    addBubbleHighlighting('interests');
+    addBubbleHighlighting('retail');
+
+
+
 }
+
+
+function addBubbleHighlighting(attrName) {
+    let activeView = DS_VIS_STORE.activeView;
+    var myPlot2 = document.getElementById(attrName+"DetailChart");
+    const ttip = d3.select("#"+attrName+"DetailChart").append("div")
+        .attr("class", "ds-tooltip-bubble")
+        .style("opacity", 0);
+
+    let ops1, ops2, ops3, l1, l2, l3;
+
+    ops1 = myPlot2.data[0].marker.opacity;
+    activeView > 1 ? ops2 = myPlot2.data[1].marker.opacity : null;
+    activeView > 2 ? ops3 = myPlot2.data[2].marker.opacity : null;
+
+    l1 = Array(ops1.length).fill(0)
+    activeView > 1 ? l2 = Array(ops2.length).fill(0) : null;
+    activeView > 2 ? l3 = Array(ops3.length).fill(0) : null;
+
+    myPlot2.onmousemove = function(event) {
+      ttip.style("left", event.pageX + "px");
+      ttip.style("top", (event.pageY - 70) + "px");
+    }
+
+    let traces = activeView == 2 ? [0,1] : [0,1,2];
+
+    myPlot2.on('plotly_hover', function(data){
+        pn = data.points[0].pointNumber;
+        id = data.points[0].data.id[pn];
+        let d1,d2,d3;
+        myPlot2.data[0].id.forEach((d, i) => {
+          if (d == id) {
+            d1 = i;
+          }
+        })
+        ops1 = Array(ops1.length).fill(0.3);
+        ops1[d1] = 1.0;
+        l1[d1] = 1;
+        if (activeView > 1) {
+          myPlot2.data[1].id.forEach((d, i) => {
+            if (d == id) {
+              d2 = i;
+            }
+          })
+          ops2 = Array(ops2.length).fill(0.3);
+          ops2[d2] = 1.0;
+          l2[d2] = 1;
+        }
+
+        if (activeView > 2) {
+            myPlot2.data[2].id.forEach((d, i) => {
+              if (d == id) {
+                d3 = i;
+              }
+            });
+            ops3 = Array(ops3.length).fill(0.3);
+            ops3[d3] = 1.0;
+            l3[d3] = 1;
+        }
+
+        ttip.style("opacity", 0.9)
+            .html(data.points[0].hovertext);
+
+        let update = {
+          'marker.opacity': [ops1, ops2, ops3],//activeView == 2 ? [ops1,ops2] : [ops1,ops2,ops3],
+          'marker.line.width': [l1, l2, l3],//activeView == 2 ? [l1,l2] : [l1,l2,l3],
+          'marker.line.color': '#ddd'
+        }
+
+        //var update = {'marker':{color: colors, size:16}};
+
+        Plotly.restyle(attrName+"DetailChart", update, traces);
+      });
+
+    function removeHoverHighlightUpdate() {
+        ops1 = Array(ops1.length).fill(0.5)
+        l1 = Array(ops1.length).fill(0)
+
+        if (activeView > 1) {
+            ops2 = Array(ops2.length).fill(0.5)
+            l2 = Array(ops2.length).fill(0)
+        }
+        if (activeView > 2) {
+            ops3 = Array(ops3.length).fill(0.5)
+            l3 = Array(ops3.length).fill(0)
+        }
+
+        let update2 = {
+          'marker.opacity': [ops1, ops2, ops3],
+          'marker.line.width': [l1,l2,l3]
+        }
+        return update2
+    }
+
+    myPlot2.on('plotly_unhover', function(data){
+      ttip.style("opacity",0)
+      Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), traces);
+    });
+
+    myPlot2.on('plotly_click', function(data){
+      ttip.style("opacity",0)
+      Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), traces);
+    });
+}
+
 
 /*******************************************************************************
 *** RESET CHARTS ***************************************************************
@@ -1464,7 +1745,7 @@ function updateCharts(attrName, attrValue) {
     /* Take user to corresponding chart on bar click */
     let myPlot = document.getElementById('waveChart');
     myPlot.on('plotly_click', function(data){
-      let d = data.points[0].hovertext.split("<br>")[2].trim().split(" = ");
+      let d = data.points[0].hovertext.split("<br>")[2].trim().split(":");
       d[0] = d[0][0].toLowerCase() + d[0].slice(1)
       let mapping = {
         "number of children": "children",
