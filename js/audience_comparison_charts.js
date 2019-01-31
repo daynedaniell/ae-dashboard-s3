@@ -920,47 +920,30 @@ function hBarMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
 }
 
 
-
 /*******************************************************************************
-*** ADD AUDIENCE TITLE *********************************************************
+*** DRAW COMPARISON CHARTS *****************************************************
 *******************************************************************************/
-function addMultipleAudienceTitles(targetAud1, targetAud2, targetAud3 = null) {
-    // remove existing titles, if any
-    $( ".ds-audience-title h1" ).remove();
+function drawComparisonCharts(activeView) {
+    /* Remove any active tooltips */
+    d3.selectAll(".ds-tooltip").remove();
 
-    let threeString = (targetAud3 != null) ? ("<div class= 'ds-aud-title-3'> <span style='color:#505050;'> VS </span>" + targetAud3.name + "</div>") : '';
-    // add titles
-    $( ".ds-audience-title" )
-        .append("<h1><div class= 'ds-aud-title-1'>"
-          + targetAud1.name
-          + "</div>  <div class= 'ds-aud-title-2'> <span style='color:#505050'> VS </span> "
-          + targetAud2.name + "</div>"
-          + threeString
-          + "</h1>");
+    /* View setup */
+    addAudienceLegend(compare=activeView);
 
-    // add color codes
-    $(".ds-audience-title .ds-aud-title-1").css("color", colorSeries1);
-    $(".ds-audience-title .ds-aud-title-2").css("color", colorSeries2);
-    if (targetAud3 != null) {
-        $(".ds-audience-title .ds-aud-title-3").css("color", colorSeries3);
+    if (activeView == 1) {
+        addAudienceTitles(targetAud);
+    } else if (activeView == 2) {
+        addAudienceTitle(targetAud, targetAud2);
+    } else if (activeView == 3) {
+        addAudienceTitle(targetAud, targetAud2, targetAud3);
     }
-}
-
-
-/*******************************************************************************
-*** DRAW ALL COMPARISON CHARTS *************************************************
-*******************************************************************************/
-function drawComparisonChartsOld() {
-    d3.selectAll(".ds-tooltip").remove()
-    // add the audience titles
-    addAudienceLegend(compare=2);
-    addMultipleAudienceTitles(targetAud, targetAud2);
 
     let indexCats = makeIndexCats();
     let demogAttributesList = Object.keys(indexCats);
 
+    /* Remove the current svg from each chart div */
     demogAttributesList.forEach(function(demogAttributeListName) {
-        d3.select("#"+demogAttributeListName+"Chart svg").remove();
+      d3.select("#"+demogAttributeListName+"Chart svg").remove();
     });
 
     let audName1 = targetAud.name;
@@ -978,27 +961,87 @@ function drawComparisonChartsOld() {
     let interestsIndex1 = indexInterestsRetail("interests", targetInterests, randomInterests);
     let retailIndex1 = indexInterestsRetail("retail", targetRetail, randomRetail);
 
-    let audName2 = targetAud2.name;
-    let ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
-    let ageMedianCat2 = getMedianCategory(ageIndex2);
-    let genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
-    let ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
-    let maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
-    let childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
-    let childrenNonZeroPct2 = getNonZeroPct(childrenIndex2);
-    let educationIndex2 = indexAttr("education", indexCats.education, targetDemog2, randomDemog);
-    let incomeIndex2 = indexAttr("income", indexCats.income, targetDemog2, randomDemog);
-    let incomeMedianCat2 = getMedianCategory(incomeIndex2);
-    let stateIndex2 = indexAttr("state", indexCats.state, targetDemog2, randomDemog);
+    let audName2 = null;
+    let ageIndex2 = null;
+    let ageMedianCat2 = null;
+    let genderIndex2 = null;
+    let ethnicityIndex2 = null;
+    let maritalIndex2 = null;
+    let childrenIndex2 = null;
+    let childrenNonZeroPct2 = null;
+    let educationIndex2 = null;
+    let incomeIndex2 = null;
+    let incomeMedianCat2 = null;
+    let stateIndex2 = null;
+    let interestsIndex2 = null;
+    let retailIndex2 = null;
 
-    let stateIndexTop1 = indexStatesTop5(stateIndex1, stateIndex2);
-    let stateIndexTop2 = indexStatesTop5(stateIndex2,stateIndex1);
-    let interestsIndex2 = indexInterestsRetail("interests", targetInterests2, randomInterests);
-    let interestsIndexTop1 = indexInterestsRetailTop5(interestsIndex1,interestsIndex2);
-    let interestsIndexTop2 = indexInterestsRetailTop5(interestsIndex2,interestsIndex1);
-    let retailIndex2 = indexInterestsRetail("retail", targetRetail2, randomRetail);
-    let retailIndexTop1 = indexInterestsRetailTop5(retailIndex1, retailIndex2);
-    let retailIndexTop2 = indexInterestsRetailTop5(retailIndex2, retailIndex1);
+    let audName3 = null;
+    let ageIndex3 = null;
+    let ageMedianCat3 = null;
+    let genderIndex3 = null;
+    let ethnicityIndex3 = null;
+    let maritalIndex3 = null;
+    let childrenIndex3 = null;
+    let childrenNonZeroPct3 = null;
+    let educationIndex3 = null;
+    let incomeIndex3 = null;
+    let incomeMedianCat3 = null;
+    let stateIndex3 = null;
+    let interestsIndex3 = null;
+    let retailIndex3 = null;
+
+    if (activeView > 1) {
+        audName2 = targetAud2.name;
+        ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
+        ageMedianCat2 = getMedianCategory(ageIndex2);
+        genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
+        ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
+        maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
+        childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
+        childrenNonZeroPct2 = getNonZeroPct(childrenIndex2);
+        educationIndex2 = indexAttr("education", indexCats.education, targetDemog2, randomDemog);
+        incomeIndex2 = indexAttr("income", indexCats.income, targetDemog2, randomDemog);
+        incomeMedianCat2 = getMedianCategory(incomeIndex2);
+        stateIndex2 = indexAttr("state", indexCats.state, targetDemog2, randomDemog);
+        interestsIndex2 = indexInterestsRetail("interests", targetInterests2, randomInterests);
+        retailIndex2 = indexInterestsRetail("retail", targetRetail2, randomRetail);
+    }
+
+    if (activeView > 2) {
+        audName3 = targetAud3.name;
+        ageIndex3 = indexAttr("age", indexCats.age, targetDemog3, randomDemog);
+        ageMedianCat3 = getMedianCategory(ageIndex3);
+        genderIndex3 = indexAttr("gender", indexCats.gender, targetDemog3, randomDemog);
+        ethnicityIndex3 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog3, randomDemog);
+        maritalIndex3 = indexAttr("marital", indexCats.marital, targetDemog3, randomDemog);
+        childrenIndex3 = indexAttr("children", indexCats.children, targetDemog3, randomDemog);
+        childrenNonZeroPct3 = getNonZeroPct(childrenIndex3);
+        educationIndex3 = indexAttr("education", indexCats.education, targetDemog3, randomDemog);
+        incomeIndex3 = indexAttr("income", indexCats.income, targetDemog3, randomDemog);
+        incomeMedianCat3 = getMedianCategory(incomeIndex3);
+        stateIndex3 = indexAttr("state", indexCats.state, targetDemog3, randomDemog);
+        interestsIndex3 = indexInterestsRetail("interests", targetInterests3, randomInterests);
+        retailIndex3 = indexInterestsRetail("retail", targetRetail3, randomRetail);
+    }
+
+    let stateIndexTop3 = null;
+    let interestsIndexTop3 = null;
+    let retailIndexTop3 = null;
+
+    let stateIndexTop1 = indexStatesTop5(stateIndex1, stateIndex2, stateIndex3);
+    let stateIndexTop2 = indexStatesTop5(stateIndex2,stateIndex1, stateIndex3);
+    if (activeView > 2) {
+        stateIndexTop3 = indexStatesTop5(stateIndex3,stateIndex1, stateIndex2);
+        interestsIndexTop3 = indexInterestsRetailTop5(interestsIndex3,interestsIndex1,interestsIndex2);
+        retailIndexTop3 = indexInterestsRetailTop5(retailIndex3, retailIndex1, retailIndex2);
+    }
+
+    let interestsIndexTop1 = indexInterestsRetailTop5(interestsIndex1,interestsIndex2,interestsIndex3);
+    let interestsIndexTop2 = indexInterestsRetailTop5(interestsIndex2,interestsIndex1,interestsIndex3);
+
+    let retailIndexTop1 = indexInterestsRetailTop5(retailIndex1, retailIndex2, retailIndex3);
+    let retailIndexTop2 = indexInterestsRetailTop5(retailIndex2, retailIndex1, retailIndex3);
 
 
     let indexes1 = {
@@ -1013,397 +1056,45 @@ function drawComparisonChartsOld() {
       interests: interestsIndexTop1[0],
       retail: retailIndexTop1[0]
     };
-    let indexes2 = {
-      age: ageIndex2,
-      gender: genderIndex2,
-      ethnicity: ethnicityIndex2,
-      marital: maritalIndex2,
-      children: childrenIndex2,
-      education: educationIndex2,
-      income: incomeIndex2,
-      state: stateIndex2,
-      interests: interestsIndexTop2[0],
-      retail: retailIndexTop2[0]
-    };
+
+    let indexes2 = null;
+    let indexes3 = null;
+
+    if (activeView > 1) {
+        indexes2 = {
+          age: ageIndex2,
+          gender: genderIndex2,
+          ethnicity: ethnicityIndex2,
+          marital: maritalIndex2,
+          children: childrenIndex2,
+          education: educationIndex2,
+          income: incomeIndex2,
+          state: stateIndex2,
+          interests: interestsIndexTop2[0],
+          retail: retailIndexTop2[0]
+        };
+    }
+
+    if (activeView > 2) {
+        indexes3 = {
+          age: ageIndex3,
+          gender: genderIndex3,
+          ethnicity: ethnicityIndex3,
+          marital: maritalIndex3,
+          children: childrenIndex3,
+          education: educationIndex3,
+          income: incomeIndex3,
+          state: stateIndex3,
+          interests: interestsIndexTop3[0],
+          retail: retailIndexTop3[0]
+        };
+    }
 
 
-    dnaChart(indexes1, indexes2);
+    dnaChart(indexes1, indexes2, indexes3);
 
-    /* Clicking on bar in DNA chart takes you to corresponding chart for more info */
     var myPlot = document.getElementById('waveChart');
     myPlot.on('plotly_click', function(data){
-        let d = data.points[0].hovertext.split("<br>")[2].trim().split(":");
-        d[0] = d[0][0].toLowerCase() + d[0].slice(1)
-        let mapping = {
-            "number of children": "children",
-            "age": "age",
-            "ethnicity": "ethnicity",
-            "gender": "gender",
-            "marital status": "marital",
-            "education": "education",
-            "income": "income",
-            "location": "state",
-            "interests": "interests",
-            "retail": "retail"
-        }
-        document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
-        $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
-        // Highlight the chart of interest for 3 seconds
-        setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-    });
-
-  drawBarChart("age", ageIndex1, ageIndex2);
-  add2SeriesStat("age", ageMedianCat1, ageMedianCat2, prefix = "Median: ", suffix = " years");
-  drawBarChart("ethnicity", ethnicityIndex1, ethnicityIndex2);
-  drawBarChart("children", childrenIndex1, childrenIndex2);
-  add2SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, prefix = "Child present: ", suffix = "%");
-  drawBarChart("education", educationIndex1, educationIndex2);
-  drawBarChart("income", incomeIndex1, incomeIndex2);
-  add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "Median: ");
-  hBarBalanceChart("gender", genderIndex1, genderIndex2);
-  hBarBalanceChart("marital", maritalIndex1, maritalIndex2);
-
-  (DS_VIS_STORE["stateActive"][0] === 1) ? hBarMultiSeriesChart("state", stateIndexTop1, stateIndexTop2) : hBarMultiSeriesChart("state", stateIndexTop2, stateIndexTop1);
-  (DS_VIS_STORE["interestsActive"][0] === 1) ? hBarMultiSeriesChart("interests", interestsIndexTop1, interestsIndexTop2) : hBarMultiSeriesChart("interests", interestsIndexTop2, interestsIndexTop1);
-  (DS_VIS_STORE["retailActive"][0] === 1) ? hBarMultiSeriesChart("retail", retailIndexTop1, retailIndexTop2) : hBarMultiSeriesChart("retail", retailIndexTop2, retailIndexTop1);
-
-  $( ".tile" ).removeClass("selected-tile");
-
-  mikeJBubbleChart('interests', interestsIndex1, interestsIndex2);
-  mikeJBubbleChart('retail', retailIndex1, retailIndex2);
-
-}
-
-
-/*******************************************************************************
-*** UPDATE ALL CHARTS **********************************************************
-*******************************************************************************/
-
-/* updates bar charts when a value element is clicked on a chart */
-function updateComparisonChartsOld2(attrName, attrValue) {
-    let numSeries = DS_VIS_STORE.activeView;
-    DS_VIS_STORE.activeFilter = [attrName, attrValue];
-
-    let attrIndex = [];
-    let indexCats = makeIndexCats();
-
-    let indexes1 = {};
-    let indexes2 = {};
-
-    let demogAttributesList = Object.keys(indexCats);
-    let barChartAttributesList = ["age", "ethnicity", "children", "education", "income"]
-    let sBarChartAttributesList = ["gender", "marital"]
-    let hBarChartAttributesList = ["state", "interests", "retail"]
-
-    demogAttributesList.forEach(function(demogAttributeListName) {
-      if (attrName != demogAttributeListName) {
-          /* reset opacity */
-          d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
-
-          if ( hBarChartAttributesList.includes(demogAttributeListName) & demogAttributeListName != "state") {
-            let filteredData1 = [];
-            let filteredIds1 = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
-
-            let filteredData2 = [];
-            let filteredIds2 = filterAttr(targetDemog2, attrName, attrValue).map(function(d) { return d.temp_id; });
-
-            if (demogAttributeListName == "interests"){
-              orderedTargetFilter(targetInterests, filteredIds1, filteredData1);
-              attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomInterests);
-
-              orderedTargetFilter(targetInterests2, filteredIds2, filteredData2);
-              attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomInterests);
-            } else if (demogAttributeListName == "retail"){
-              orderedTargetFilter(targetRetail, filteredIds1, filteredData1);
-              attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomRetail);
-
-              orderedTargetFilter(targetRetail2, filteredIds2, filteredData2);
-              attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomRetail);
-            }
-            attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2);
-            attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1);
-          } else {
-            let filteredData1 = filterAttr(targetDemog, attrName, attrValue);
-            let filteredData2 = filterAttr(targetDemog2, attrName, attrValue);
-            attrIndex1 = indexAttr(demogAttributeListName,
-                                  indexCats[demogAttributeListName],
-                                  filteredData1,
-                                  randomDemog);
-            attrIndex2 = indexAttr(demogAttributeListName,
-                                  indexCats[demogAttributeListName],
-                                  filteredData2,
-                                  randomDemog);
-            if (demogAttributeListName == "state") {
-                attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2);
-                attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1);
-            }
-          }
-      } else {
-          if ( hBarChartAttributesList.includes(demogAttributeListName) & demogAttributeListName != "state" ) {
-            if (demogAttributeListName == "interests"){
-              attrIndex1 = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
-              attrIndex2 = indexInterestsRetail(demogAttributeListName, targetInterests2, randomInterests);
-            } else if (demogAttributeListName == "retail"){
-              attrIndex1 = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
-              attrIndex2 = indexInterestsRetail(demogAttributeListName, targetRetail2, randomRetail);
-            }
-            attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2);
-            attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1);
-          } else {
-            attrIndex1 = indexAttr(demogAttributeListName,
-                                  indexCats[demogAttributeListName],
-                                  targetDemog,
-                                  randomDemog);
-
-            attrIndex2 = indexAttr(demogAttributeListName,
-                                  indexCats[demogAttributeListName],
-                                  targetDemog2,
-                                  randomDemog);
-            if (demogAttributeListName == "state") {
-                attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2)[0];
-                attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1)[0];
-            }
-          }
-      }
-
-
-      // update the wave chart data
-      if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
-          indexes1[demogAttributeListName] = attrIndexTop1[0];
-          indexes2[demogAttributeListName] = attrIndexTop2[0];
-      } else {
-          indexes1[demogAttributeListName] = attrIndex1;
-          indexes2[demogAttributeListName] = attrIndex2;
-      }
-
-
-      // update stats
-      $( "#" + demogAttributeListName + "Chart" )
-        .prev(".tile-header")
-        .find(".ds-stats")
-        .css("opacity", 0);
-      if (attrName != demogAttributeListName) {
-        if (demogAttributeListName == "age") {
-            let ageMedianCat1 = getMedianCategory(attrIndex1);
-            let ageMedianCat2 = getMedianCategory(attrIndex2);
-            add2SeriesStat("age", ageMedianCat1, ageMedianCat2, prefix = "Median: ", suffix = " years");
-        } else if (demogAttributeListName == "children") {
-            let childrenNonZeroPct1 = getNonZeroPct(attrIndex1);
-            let childrenNonZeroPct2 = getNonZeroPct(attrIndex2);
-            add2SeriesStat("children", childrenNonZeroPct1, childrenNonZeroPct2, prefix = "Child present: ", suffix = "%");
-        } else if (demogAttributeListName == "income") {
-            let incomeMedianCat1 = getMedianCategory(attrIndex1);
-            let incomeMedianCat2 = getMedianCategory(attrIndex2);
-            add2SeriesStat("income", incomeMedianCat1, incomeMedianCat2, prefix = "Median: ");
-        }
-      }
-
-
-      // update charts
-      if ( barChartAttributesList.includes(demogAttributeListName) ) {
-          // update bar chart
-          let innerWidth = 400;
-          if (demogAttributeListName == "income") {
-          	  innerWidth = 610;
-          }
-
-        	let basics = barChartSetup(innerWidth);
-        	let margin = basics.margin,
-              width = basics.width,
-              height = basics.height,
-          		barPadding = basics.barPadding * 2;
-
-          let xScale = d3.scaleLinear()
-                         .domain([0, attrIndex1.length])
-                         .range([0, width]);
-
-          let yScale = d3.scaleLinear()
-                         .domain([0, Math.max(
-                              d3.max(attrIndex1, function(d) { return d.target_pct; }),
-                              d3.max(attrIndex2, function(d) { return d.target_pct; }),
-                              numSeries == 3 ? d3.max(attrIndex3, function(d) { return d.target_pct; }) : 0
-                            )
-                         ])
-                         .range([height,0]);
-
-          let svg = d3.select("#"+demogAttributeListName+"Chart svg");
-
-          let plot = d3.select("#"+demogAttributeListName+"ChartPlot");
-
-           /* Transition grid lines */
-           let t = d3.transition()
-                 .duration(500)
-
-           function make_y_gridlines() {
-               return d3.axisLeft(yScale)
-                   .ticks(5)
-           }
-
-           svg.select(".ds-grid")
-               .transition(t)
-               .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
-               .call(make_y_gridlines()
-                   .tickSize(-width)
-                   .tickFormat("")
-               )
-
-           let axis = d3.axisLeft(yScale)
-               .ticks(5)
-               .tickFormat(function (d) { return d + "%" })
-               .tickSize(0);
-
-
-           svg.select(".axis")
-                 .transition(t)
-                 .call(axis)
-
-           svg.selectAll(".domain").remove()
-
-
-
-            /* Select existing bars and update them */
-            function updateBar(data,series,color) {
-              plot.selectAll("rect."+series)
-                  .data(data)
-                  .transition()
-                  .duration(750)
-                    .attr("x", function(d, i) {
-                        if (series == "series1") {
-                          return xScale(i);
-                        } else if (series == "series2") {
-                          return xScale(i) + width / (data.length * numSeries) - barPadding;
-                        } else if (series == "series3") {
-                          return xScale(i) + width / (data.length * 1.5) - barPadding * 2;
-                        }
-
-                    })
-                    .attr("width", width / (data.length * numSeries) - barPadding)
-                    .attr("y", function(d) {
-                         return yScale(d.target_pct);
-                    })
-                    .attr("height", function(d) {
-                        return height-yScale(d.target_pct);
-                    })
-                    .attr("fill", color)
-                  .attr("cursor", "pointer")
-                  .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-                  .attr("target-pct", function(d) { return d.target_pct; })
-                  .attr("index", function(d) { return d.index; });
-            }
-            updateBar(attrIndex1,"series1",colorSeries1)
-            updateBar(attrIndex2,"series2",colorSeries2)
-            if (numSeries == 3) {
-              updateBar(attrIndex3,"series3",colorSeries3)
-            }
-
-
-            /* Update the text labels on bars */
-            function textInside(d) { return (height - yScale(d.target_pct)) > 20 }; // Display text inside if bar is big enough
-
-            function updateBarText(data, series) {
-                let fontSize = "10px";
-                if (numSeries == 2 && attrName != "children") {
-                    fontSize = "12px";
-                }  else if (numSeries == 3 && attrName == "children") {
-                    fontSize = "9px";
-                }
-
-                plot.selectAll("text."+series)
-              	    .data(data)
-              	    .transition()
-                    .duration(750)
-                    .text(function(d) {
-                     return formatAsInteger(d3.format("d")(d.index));
-                    })
-              	    .attr("text-anchor", "middle")
-              	    /* Set x position to the left edge of each bar plus half the bar width */
-              	    .attr("x", function(d, i) {
-                        if (series == "series1") {
-                            return ( i * (width / data.length) )
-                              + ( (width / (data.length * numSeries) - barPadding) / 2 );
-                        } else if (series == "series2") {
-                            return ( i * (width / data.length) )
-                                     + ( (width / (data.length * numSeries) - barPadding) ) * 1.5 ;
-                        } else if (series == "series3") {
-                            return ( i * (width / data.length) )
-                                + ( (width / (data.length * 3) - barPadding) ) * 2.5 ;
-                        }
-
-              	    })
-              	    .attr("y", function(d) {
-              			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-              	    })
-              	  //  .attr("class", "yAxis")
-              	    .attr("font-family", "sans-serif")
-              	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
-            }
-
-            updateBarText(attrIndex1, "series1");
-            updateBarText(attrIndex2, "series2");
-            if (numSeries == 3) {
-                updateBarText(attrIndex3, "series3");
-            }
-            /* 1st series */
-            // plot.selectAll("text.series1")
-            //     .data(attrIndex1)
-            //     .transition()
-            //     .duration(750)
-            //     .attr("text-anchor", "middle")
-            //     .attr("x", function(d, i) {
-            //        return ( i * (width / attrIndex1.length) )
-            //          + ( (width / (attrIndex1.length * 2) - barPadding) / 2 );
-          	//     })
-            //     .attr("y", function(d) {
-            //        return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-            //     })
-            //     .text(function(d) {
-            //      return formatAsInteger(d3.format("d")(d.index));
-            //     })
-            //     .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-            //     .attr("class", "yAxis")
-            //     .attr("class", "series1")
-            //     ;
-            //
-            // plot.selectAll("text.series2")
-            //     .data(attrIndex2)
-            //     .transition()
-            //     .duration(750)
-            //     .attr("text-anchor", "middle")
-            //     .attr("x", function(d, i) {
-            //            return ( i * (width / attrIndex1.length) )
-            //              + ( (width / (attrIndex1.length * 2) - barPadding) ) * 1.5 ;
-            //     })
-            //     .attr("y", function(d) {
-            //        return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-            //     })
-            //     .text(function(d) {
-            //      return formatAsInteger(d3.format("d")(d.index));
-            //     })
-            //     .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-            //     .attr("class", "yAxis")
-            //     .attr("class", "series2");
-
-        } else if ( sBarChartAttributesList.includes(demogAttributeListName) ) {
-            d3.select("#"+demogAttributeListName+"Chart svg").remove();
-            hBarBalanceChart(demogAttributeListName,attrIndex1,attrIndex2);
-
-        } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
-            d3.select("#"+demogAttributeListName+"Chart svg").remove();
-            target = DS_VIS_STORE[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop1 : attrIndexTop2;
-            compare = DS_VIS_STORE[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop2 : attrIndexTop1;
-            hBarMultiSeriesChart(demogAttributeListName, target, compare);
-
-      }
-
-  });
-
-
-  // update the wave chart
-  dnaChart(indexes1, indexes2);
-
-  /* Clicking on bar in DNA chart takes you to corresponding chart for more info */
-  var myPlot = document.getElementById('waveChart');
-  myPlot.on('plotly_click', function(data){
       let d = data.points[0].hovertext.split("<br>")[2].trim().split(":");
       d[0] = d[0][0].toLowerCase() + d[0].slice(1)
       let mapping = {
@@ -1421,22 +1112,431 @@ function updateComparisonChartsOld2(attrName, attrValue) {
       document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
       $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
       setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-  });
+    });
 
-  /* Make the elems in selected chart opaque, except for the clicked chart elem */
-  d3.selectAll("#" + attrName + "Chart svg rect")
-    .style("opacity", 0.25)
-    .attr("selected", "no")
-    ;
-  d3.selectAll("#" + attrName + "Chart svg [attrib-value='" + attrValue + "']")
-    .style("opacity", 1)
-    .attr("selected", "yes")
-    ;
+    drawBarChart("age", ageIndex1, ageIndex2, ageIndex3, numSeries = activeView);
+    addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
+    drawBarChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3, numSeries = activeView);
+    drawBarChart("children", childrenIndex1, childrenIndex2, childrenIndex3, numSeries = activeView);
+    addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
+    drawBarChart("education", educationIndex1, educationIndex2, educationIndex3, numSeries = activeView);
+    drawBarChart("income", incomeIndex1, incomeIndex2, incomeIndex3, numSeries = activeView);
+    addSeriesStats("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
+    hBarBalanceChart("gender", genderIndex1, genderIndex2, genderIndex3);
+    hBarBalanceChart("marital", maritalIndex1, maritalIndex2, maritalIndex3);
+
+    (DS_VIS_STORE["stateActive"][0] === 1) ? hBarMultiSeriesChart("state", stateIndexTop1, stateIndexTop2, stateIndexTop3) : hBarMultiSeriesChart("state", stateIndexTop2, stateIndexTop1, stateIndexTop3);
+    (DS_VIS_STORE["interestsActive"][0] === 1) ? hBarMultiSeriesChart("interests", interestsIndexTop1, interestsIndexTop2, interestsIndexTop3) : hBarMultiSeriesChart("interests", interestsIndexTop2, interestsIndexTop1, interestsIndexTop3);
+    (DS_VIS_STORE["retailActive"][0] === 1) ? hBarMultiSeriesChart("retail", retailIndexTop1, retailIndexTop2, retailIndexTop3) : hBarMultiSeriesChart("retail", retailIndexTop2, retailIndexTop1, retailIndexTop3);
+
+    $( ".tile" ).removeClass("selected-tile");
+
+    mikeJBubbleChart('interests', interestsIndex1, interestsIndex2, interestsIndex3);
+    mikeJBubbleChart('retail', retailIndex1, retailIndex2, retailIndex3);
+
+    addBubbleHighlighting('interests');
+    addBubbleHighlighting('retail');
+
+}
 
 
-  /* Highlight the selected tile */
-  $( ".tile" ).removeClass("selected-tile");
-  $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
+/*******************************************************************************
+*** UPDATE ALL CHARTS **********************************************************
+*******************************************************************************/
+
+/* updates bar charts when a value element is clicked on a chart */
+function updateComparisonCharts(attrName, attrValue, numSeries = 3) {
+    DS_VIS_STORE.activeFilter = [attrName, attrValue];
+
+    let attrIndex = [];
+    let indexCats = makeIndexCats();
+
+    let indexes1 = {};
+    let indexes2 = {};
+    let indexes3 = {};
+
+    let demogAttributesList = Object.keys(indexCats);
+    let barChartAttributesList = ["age", "ethnicity", "children", "education", "income"]
+    let sBarChartAttributesList = ["gender", "marital"]
+    let hBarChartAttributesList = ["state", "interests", "retail"]
+
+    /* Temp fix to instantiate these in event of 2 series comparison */
+    if (numSeries < 3) {
+        attrIndex3 = null;
+        attrIndexTop3 = null;
+        targetDemog3 = null;
+    }
+
+
+    demogAttributesList.forEach(function(demogAttributeListName) {
+        if (attrName != demogAttributeListName) {
+            /* reset opacity */
+            d3.selectAll("#"+demogAttributeListName+"Chart svg rect").style("opacity", 1);
+
+            if ( hBarChartAttributesList.includes(demogAttributeListName) & demogAttributeListName != "state") {
+                let filteredData1 = [];
+                let filteredIds1 = filterAttr(targetDemog, attrName, attrValue).map(function(d) { return d.temp_id; });
+
+                let filteredData2 = [];
+                let filteredIds2 = filterAttr(targetDemog2, attrName, attrValue).map(function(d) { return d.temp_id; });
+
+                let filteredData3 = [];
+                let filteredIds3;
+                if (numSeries > 2) {
+                    filteredIds3 = filterAttr(targetDemog3, attrName, attrValue).map(function(d) { return d.temp_id; });
+                }
+
+                if (demogAttributeListName == "interests") {
+                  orderedTargetFilter(targetInterests, filteredIds1, filteredData1);
+                  attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomInterests);
+
+                  orderedTargetFilter(targetInterests2, filteredIds2, filteredData2);
+                  attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomInterests);
+
+                  if (numSeries > 2) {
+                      orderedTargetFilter(targetInterests3, filteredIds3, filteredData3);
+                      attrIndex3 = indexInterestsRetail(demogAttributeListName, filteredData3, randomInterests);
+                  }
+                } else if (demogAttributeListName == "retail"){
+                  orderedTargetFilter(targetRetail, filteredIds1, filteredData1);
+                  attrIndex1 = indexInterestsRetail(demogAttributeListName, filteredData1, randomRetail);
+
+                  orderedTargetFilter(targetRetail2, filteredIds2, filteredData2);
+                  attrIndex2 = indexInterestsRetail(demogAttributeListName, filteredData2, randomRetail);
+
+                  if (numSeries > 2) {
+                      orderedTargetFilter(targetRetail3, filteredIds3, filteredData3);
+                      attrIndex3 = indexInterestsRetail(demogAttributeListName, filteredData3, randomRetail);
+                  }
+                }
+                attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2,attrIndex3);
+                attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1,attrIndex3);
+                if (numSeries > 2) {
+                    attrIndexTop3 = indexInterestsRetailTop5(attrIndex3,attrIndex1,attrIndex2);
+                }
+            } else {
+              let filteredData1, filteredData2, filteredData3;
+              filteredData1 = filterAttr(targetDemog, attrName, attrValue);
+              filteredData2 = filterAttr(targetDemog2, attrName, attrValue);
+              if (numSeries > 2) {
+                  filteredData3 = filterAttr(targetDemog3, attrName, attrValue);
+              }
+
+              attrIndex1 = indexAttr(demogAttributeListName,
+                                    indexCats[demogAttributeListName],
+                                    filteredData1,
+                                    randomDemog);
+              attrIndex2 = indexAttr(demogAttributeListName,
+                                    indexCats[demogAttributeListName],
+                                    filteredData2,
+                                    randomDemog);
+              if (numSeries > 2) {
+                  attrIndex3 = indexAttr(demogAttributeListName,
+                                        indexCats[demogAttributeListName],
+                                        filteredData3,
+                                        randomDemog);
+              }
+              if (demogAttributeListName == "state") {
+                  attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2, attrIndex3);
+                  attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1, attrIndex3);
+                  if (numSeries > 2) {
+                      attrIndexTop3 = indexStatesTop5(attrIndex3, attrIndex1, attrIndex2);
+                  }
+              }
+            }
+        } else {
+            if ( hBarChartAttributesList.includes(demogAttributeListName) & demogAttributeListName != "state" ) {
+                if (demogAttributeListName == "interests"){
+                    attrIndex1 = indexInterestsRetail(demogAttributeListName, targetInterests, randomInterests);
+                    attrIndex2 = indexInterestsRetail(demogAttributeListName, targetInterests2, randomInterests);
+                    if (numSeries > 2) {
+                        attrIndex3 = indexInterestsRetail(demogAttributeListName, targetInterests3, randomInterests);
+                    }
+                } else if (demogAttributeListName == "retail"){
+                    attrIndex1 = indexInterestsRetail(demogAttributeListName, targetRetail, randomRetail);
+                    attrIndex2 = indexInterestsRetail(demogAttributeListName, targetRetail2, randomRetail);
+                    if (numSeries > 2) {
+                        attrIndex3 = indexInterestsRetail(demogAttributeListName, targetRetail3, randomRetail);
+                    }
+                }
+                attrIndexTop1 = indexInterestsRetailTop5(attrIndex1,attrIndex2,attrIndex3);
+                attrIndexTop2 = indexInterestsRetailTop5(attrIndex2,attrIndex1,attrIndex3);
+                if (numSeries > 2) {
+                    attrIndexTop3 = indexInterestsRetailTop5(attrIndex3,attrIndex1,attrIndex2);
+                }
+            } else {
+                attrIndex1 = indexAttr(demogAttributeListName,
+                                      indexCats[demogAttributeListName],
+                                      targetDemog,
+                                      randomDemog);
+
+                attrIndex2 = indexAttr(demogAttributeListName,
+                                      indexCats[demogAttributeListName],
+                                      targetDemog2,
+                                      randomDemog);
+
+                if (numSeries > 2) {
+                    attrIndex3 = indexAttr(demogAttributeListName,
+                                          indexCats[demogAttributeListName],
+                                          targetDemog3,
+                                          randomDemog);
+                }
+
+                if (demogAttributeListName == "state") {
+                    attrIndexTop1 = indexStatesTop5(attrIndex1, attrIndex2, attrIndex3)[0];
+                    attrIndexTop2 = indexStatesTop5(attrIndex2, attrIndex1, attrIndex3)[0];
+                    if (numSeries > 2) {
+                        attrIndexTop3 = indexStatesTop5(attrIndex3, attrIndex1, attrIndex2)[0];
+                    }
+                }
+            }
+        }
+
+        // update the wave chart data
+        if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+          indexes1[demogAttributeListName] = attrIndexTop1[0];
+          indexes2[demogAttributeListName] = attrIndexTop2[0];
+          if (numSeries > 2) {
+              indexes3[demogAttributeListName] = attrIndexTop3[0];
+          }
+        } else {
+          indexes1[demogAttributeListName] = attrIndex1;
+          indexes2[demogAttributeListName] = attrIndex2;
+          if (numSeries > 2) {
+              indexes3[demogAttributeListName] = attrIndex3;
+          }
+        }
+
+        // update stats
+        $( "#" + demogAttributeListName + "Chart" )
+          .prev(".tile-header")
+          .find(".ds-stats")
+          .css("opacity", 0);
+        if (attrName != demogAttributeListName) {
+            if (demogAttributeListName == "age") {
+                let ageMedianCat1, ageMedianCat2, ageMedianCat3;
+                ageMedianCat1 = getMedianCategory(attrIndex1);
+                ageMedianCat2 = getMedianCategory(attrIndex2);
+                if (numSeries > 2) {
+                    ageMedianCat3 = getMedianCategory(attrIndex3);
+                }
+                addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
+            } else if (demogAttributeListName == "children") {
+                let childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3;
+                childrenNonZeroPct1 = getNonZeroPct(attrIndex1);
+                childrenNonZeroPct2 = getNonZeroPct(attrIndex2);
+                if (numSeries > 2) {
+                    childrenNonZeroPct3 = getNonZeroPct(attrIndex3);
+                }
+                addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child present: ", suffix = "%");
+            } else if (demogAttributeListName == "income") {
+                let incomeMedianCat1, incomeMedianCat2, incomeMedianCat3;
+                incomeMedianCat1 = getMedianCategory(attrIndex1);
+                incomeMedianCat2 = getMedianCategory(attrIndex2);
+                if (numSeries > 2) {
+                    incomeMedianCat3 = getMedianCategory(attrIndex3);
+                }
+                addSeriesStats("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
+            }
+        }
+
+        // update charts
+        if ( barChartAttributesList.includes(demogAttributeListName) ) {
+            // update bar chart
+              let innerWidth = 400;
+              if (demogAttributeListName == "income") {
+              	  innerWidth = 610;
+              }
+
+            	let basics = barChartSetup(innerWidth);
+            	let margin = basics.margin,
+                  width = basics.width,
+                  height = basics.height,
+              		barPadding = basics.barPadding * 2;
+
+              let xScale = d3.scaleLinear()
+                             .domain([0, attrIndex1.length])
+                             .range([0, width]);
+
+              let yScale = d3.scaleLinear()
+                             .domain([0, Math.max(
+                                  d3.max(attrIndex1, function(d) { return d.target_pct; }),
+                                  d3.max(attrIndex2, function(d) { return d.target_pct; }),
+                                  numSeries > 2 ? d3.max(attrIndex3, function(d) { return d.target_pct; }) : 0
+                                )
+                             ])
+                             .range([height,0]);
+
+              let svg = d3.select("#"+demogAttributeListName+"Chart svg");
+
+              let plot = d3.select("#"+demogAttributeListName+"ChartPlot");
+
+              /* Transition grid lines */
+              let t = d3.transition()
+                   .duration(500)
+
+              function make_y_gridlines() {
+                 return d3.axisLeft(yScale)
+                     .ticks(5)
+              }
+
+              svg.select(".ds-grid")
+                 .transition(t)
+                 .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+                 .call(make_y_gridlines()
+                     .tickSize(-width)
+                     .tickFormat("")
+                 )
+
+              let axis = d3.axisLeft(yScale)
+                 .ticks(5)
+                 .tickFormat(function (d) { return d + "%" })
+                 .tickSize(0);
+
+              svg.select(".axis")
+                   .transition(t)
+                   .call(axis)
+
+              svg.selectAll(".domain").remove()
+
+              /* Select existing bars and update them */
+              function updateBar(data,series,color) {
+                plot.selectAll("rect."+series)
+                    .data(data)
+                    .transition()
+                    .duration(750)
+                      .attr("x", function(d, i) {
+                          if (series == "series1") {
+                            return xScale(i);
+                          } else if (series == "series2") {
+                            return xScale(i) + width / (data.length * numSeries) - barPadding;
+                          } else if (series == "series3") {
+                            return xScale(i) + width / (data.length * 1.5) - barPadding * 2;
+                          }
+
+                      })
+                      .attr("width", width / (data.length * numSeries) - barPadding)
+                      .attr("y", function(d) {
+                           return yScale(d.target_pct);
+                      })
+                      .attr("height", function(d) {
+                          return height-yScale(d.target_pct);
+                      })
+                      .attr("fill", color)
+                    .attr("cursor", "pointer")
+                    .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+                    .attr("target-pct", function(d) { return d.target_pct; })
+                    .attr("index", function(d) { return d.index; });
+              }
+              updateBar(attrIndex1,"series1",colorSeries1)
+              updateBar(attrIndex2,"series2",colorSeries2)
+              if (numSeries == 3) {
+                updateBar(attrIndex3,"series3",colorSeries3)
+              }
+
+              /* Update the text labels on bars */
+              function textInside(d) { return (height - yScale(d.target_pct)) > 20 }; // Display text inside if bar is big enough
+
+              function updateBarText(data, series) {
+                  let fontSize = "10px";
+                  if (numSeries == 2 && attrName != "children") {
+                      fontSize = "12px";
+                  }  else if (numSeries == 3 && attrName == "children") {
+                      fontSize = "9px";
+                  }
+
+                  plot.selectAll("text."+series)
+                	    .data(data)
+                	    .transition()
+                      .duration(750)
+                      .text(function(d) {
+                       return formatAsInteger(d3.format("d")(d.index));
+                      })
+                	    .attr("text-anchor", "middle")
+                	    /* Set x position to the left edge of each bar plus half the bar width */
+                	    .attr("x", function(d, i) {
+                          if (series == "series1") {
+                              return ( i * (width / data.length) )
+                                + ( (width / (data.length * numSeries) - barPadding) / 2 );
+                          } else if (series == "series2") {
+                              return ( i * (width / data.length) )
+                                       + ( (width / (data.length * numSeries) - barPadding) ) * 1.5 ;
+                          } else if (series == "series3") {
+                              return ( i * (width / data.length) )
+                                  + ( (width / (data.length * 3) - barPadding) ) * 2.5 ;
+                          }
+
+                	    })
+                	    .attr("y", function(d) {
+                			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
+                	    })
+                	  //  .attr("class", "yAxis")
+                	    .attr("font-family", "sans-serif")
+                	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+              }
+
+              updateBarText(attrIndex1, "series1");
+              updateBarText(attrIndex2, "series2");
+              if (numSeries > 2) {
+                  updateBarText(attrIndex3, "series3");
+              }
+        } else if ( sBarChartAttributesList.includes(demogAttributeListName) ) {
+            d3.select("#"+demogAttributeListName+"Chart svg").remove();
+
+            hBarBalanceChart(demogAttributeListName,attrIndex1,attrIndex2,attrIndex3);
+
+        } else if ( hBarChartAttributesList.includes(demogAttributeListName) ) {
+            d3.select("#"+demogAttributeListName+"Chart svg").remove();
+            target = DS_VIS_STORE[demogAttributeListName+"Active"][0] === 1 ? attrIndexTop1 :
+                DS_VIS_STORE[demogAttributeListName+"Active"][0] === 2 ? attrIndexTop2 : attrIndexTop3;
+            compare = DS_VIS_STORE[demogAttributeListName+"Active"][1] === 1 ? attrIndexTop1 :
+                DS_VIS_STORE[demogAttributeListName+"Active"][1] === 2 ? attrIndexTop2 : attrIndexTop3;
+            compare2 = DS_VIS_STORE[demogAttributeListName+"Active"][2] === 1 ? attrIndexTop1 :
+                DS_VIS_STORE[demogAttributeListName+"Active"][2] === 2 ? attrIndexTop2 : attrIndexTop3;
+
+            hBarMultiSeriesChart(demogAttributeListName,target,compare,compare2);
+
+        }
+    });
+
+    // update the wave chart
+    dnaChart(indexes1, indexes2, indexes3);
+
+    /* Make clicking on a bar take you to the corresponding chart below */
+    var myPlot = document.getElementById('waveChart');
+    myPlot.on('plotly_click', function(data){
+      let d = data.points[0].hovertext.split("<br>")[2].trim().split(":");
+      d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+      let mapping = {
+        "number of children": "children",
+        "age": "age",
+        "ethnicity": "ethnicity",
+        "gender": "gender",
+        "marital status": "marital",
+        "education": "education",
+        "income": "income",
+        "location": "state",
+        "interests": "interests",
+        "retail": "retail"
+      }
+      document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+      $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+      setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+    });
+
+    /* Make the elems in selected chart opaque, except for the clicked chart elem */
+    d3.selectAll("#" + attrName + "Chart svg rect")
+      .style("opacity", 0.25)
+      .attr("selected", "no")
+      ;
+    d3.selectAll("#" + attrName + "Chart svg [attrib-value='" + attrValue + "']")
+      .style("opacity", 1)
+      .attr("selected", "yes")
+      ;
+
+    /* Highlight the selected tile */
+    $( ".tile" ).removeClass("selected-tile");
+    $( "#" + attrName + "Chart" ).parent().addClass("selected-tile");
 }
 
 
@@ -1449,33 +1549,6 @@ $('.ds-toggle-button').on('click', function(event){
   $(this).toggleClass('active');
 });
 
-// function addCompareToggle(attrName) {
-//   $("#"+attrName+"Chart .ds-toggle-button").css("display", "inline-block");
-//   if (DS_VIS_STORE[attrName+"Active"][0] == 2) {
-//       $("#"+attrName+"Chart .ds-toggle-button").toggleClass("active",true);
-//   }
-//
-//   if ($("#"+attrName+"Chart .ds-toggle-main").length === 0) {
-//       $("#"+attrName+"Chart .ds-toggle-button").append(
-//         "<div class='ds-toggle-main'><div class='ds-toggle-after'></div></div>"
-//       );
-//   }
-//
-//   $("#"+attrName+"Chart .ds-triple-toggle").remove();
-//   $("#"+attrName+"Chart .ds-hbar-status").text(function() {
-//       let aud = DS_VIS_STORE[attrName+"Active"][0] === 1 ? targetAud.name : targetAud2.name;
-//       if (attrName === "interests") {
-//           return "Top 5 for " + aud + " (by Index)";
-//       } else if (attrName === "state") {
-//           return "Top 5 for " + aud + " (by Index)";
-//       } else {
-//           return "Top 5 for " + aud + " (by Index)";
-//       }
-//   });
-//
-//   $("#"+attrName+"Chart .ds-toggle-after").css("background-color", DS_VIS_STORE[attrName+"Colors"][0]);
-//
-// }
 
 function addCompareToggle(attrName) {
   let numSeries = DS_VIS_STORE.activeView;

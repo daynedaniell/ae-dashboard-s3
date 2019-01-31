@@ -1001,7 +1001,7 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
     },
     id: getId(indexDs1, 1),
     hovertext: getMikeJTooltipValues(indexDs1),
-    //hoverinfo: 'none',
+    hoverinfo: 'none',
     hoverlabel: {
       bgcolor: '#fff',
       bordercolor: 'lightgrey',
@@ -1263,12 +1263,33 @@ $(".ds-audience-selection-form").change(function(){
 /*******************************************************************************
 *** ADD AUDIENCE TITLE *********************************************************
 *******************************************************************************/
-function addAudienceTitle(targetAud) {
-  // remove existing title, if any
-  $( ".ds-audience-title h1" ).remove();
+// function addAudienceTitle(targetAud) {
+//   // remove existing title, if any
+//   $( ".ds-audience-title h1" ).remove();
+//
+//   // add audience title
+//   $( ".ds-audience-title" ).append("<h1>" + targetAud.name + "</h1>");
+// }
+function addAudienceTitle(targetAud1, targetAud2 = null, targetAud3 = null) {
+    // remove existing titles, if any
+    $( ".ds-audience-title h1" ).remove();
+    let twoString = (targetAud2 != null) ? ("<div class= 'ds-aud-title-2'> <span style='color:#505050;'> VS </span>" + targetAud2.name + "</div>") : '';
+    let threeString = (targetAud3 != null) ? ("<div class= 'ds-aud-title-3'> <span style='color:#505050;'> VS </span>" + targetAud3.name + "</div>") : '';
+    // add titles
+    $( ".ds-audience-title" )
+        .append("<h1><div class= 'ds-aud-title-1'>"
+          + targetAud1.name
+          + "</div>"
+          + twoString
+          + threeString
+          + "</h1>");
 
-  // add audience title
-  $( ".ds-audience-title" ).append("<h1>" + targetAud.name + "</h1>");
+    // add color codes
+    $(".ds-audience-title .ds-aud-title-1").css("color", colorSeries1);
+    $(".ds-audience-title .ds-aud-title-2").css("color", colorSeries2);
+    if (targetAud3 != null) {
+        $(".ds-audience-title .ds-aud-title-3").css("color", colorSeries3);
+    }
 }
 
 /*******************************************************************************
