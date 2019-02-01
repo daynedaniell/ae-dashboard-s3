@@ -1,15 +1,6 @@
 /*******************************************************************************
 *** COLORS AND FORMATS *********************************************************
 *******************************************************************************/
-let colorSeries1 = "#4d3c96",
-    colorSeries2 = "#0fbbc1",
-    colorSeries3 = "#ff9999",
-
-    colorAudience11 = colorSeries1,
-    colorAudience12 = colorSeries2,
-
-    colorAudience21 = colorSeries1,
-    colorAudience22 = colorSeries2;
 
 function resetCompareAuds() {
     DS_VIS_STORE.stateColors = [colorSeries1,colorSeries2,colorSeries3]; //Set colors to be indexable to active audience in toggle
@@ -871,7 +862,7 @@ function drawComparisonCharts(activeView) {
       setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
     });
 
-    drawBarChart("age", ageIndex1, ageIndex2, ageIndex3, numSeries = activeView);
+    drawBarChart2("age", [ageIndex1, ageIndex2, ageIndex3]);
     addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
     drawBarChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3, numSeries = activeView);
     drawBarChart("children", childrenIndex1, childrenIndex2, childrenIndex3, numSeries = activeView);
