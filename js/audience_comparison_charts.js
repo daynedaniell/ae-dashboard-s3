@@ -34,249 +34,6 @@ function toggleFromStore(store, key) {
 }
 
 
-/*******************************************************************************
-*** 2-SERIES BAR CHART *********************************************************
-*******************************************************************************/
-
-
-function drawBarChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
-  let numSeries = DS_VIS_STORE.activeView;
-
-  let innerWidth = 400;
-  if (attrName == "income") {
-  	  innerWidth = 610;
-  }
-
-	let basics = barChartSetup(innerWidth);
-	let margin = basics.margin,
-      width = basics.width,
-      height = basics.height,
-  		barPadding = basics.barPadding * 2;
-
-	let xScale = d3.scaleLinear()
-                 .domain([0, indexDs1.length])
-					       .range([0, width]);
-
-  let max1 = d3.max(indexDs1, function(d) { return d.target_pct; });
-  let max2 = indexDs2 != null ? d3.max(indexDs2, function(d) { return d.target_pct; }) : 0;
-  let max3 = indexDs3 != null ? d3.max(indexDs3, function(d) { return d.target_pct; }) : 0;
-
-	let yScale = d3.scaleLinear()
-		             .domain([0, Math.max(max1,max2,max3)])
-		             .range([height, 0]);
-
-	/* Create SVG element */
-  let svg = d3.select("#"+attrName+"Chart")
-              .append("svg")
-		          .attr("width", width + margin.left + margin.right)
-              .attr("height", height + margin.top + margin.bottom)
-              .attr("id", attrName+"ChartPlot")
-              .attr("class", "ds-chart-base");
-
-  const tooltip = d3.select("#"+attrName+"Chart").append("div")
-      .attr("class", "ds-tooltip")
-      .style("opacity", 0);
-
-  /* Add horizontal grid lines */
-  function make_y_gridlines() {
-      return d3.axisLeft(yScale)
-          .ticks(5)
-  }
-
-  svg.append("g")
-      .attr("class", "ds-grid")
-      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
-      .call(make_y_gridlines()
-          .tickSize(-width)
-          .tickFormat("")
-      )
-
-  let plot = svg.append("g")
-		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  /* Will set y position and color dependent on size of bar */
-  function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
-
-  function addBar(data,series,color) {
-    plot.selectAll("rect."+series)
-        .data(data)
-          .enter()
-          .append("rect")
-        .attr("class", series)
-          .attr("x", function(d, i) {
-              if (series == "series1") {
-                return xScale(i);
-              } else if (series == "series2") {
-                return xScale(i) + width / (data.length * numSeries) - barPadding;
-              } else if (series == "series3") {
-                return xScale(i) + width / (data.length * 1.5) - barPadding * 2;
-              }
-
-          })
-          .attr("width", width / (data.length * numSeries) - barPadding)
-          .attr("y", function(d) {
-               return yScale(d.target_pct);
-          })
-          .attr("height", function(d) {
-              return height-yScale(d.target_pct);
-          })
-          .attr("fill", numSeries > 1 ? color : function(d) { return colorByIndexBar(d.index) })
-        .attr("cursor", "pointer")
-        .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseup)
-        .on("mousemove", mouseover)
-        .attr("target-pct", function(d) { return d.target_pct; })
-        .attr("index", function(d) { return d.index; })
-        .on("click", up);
-  }
-
-    addBar(indexDs1,"series1",colorSeries1);
-    if (numSeries > 1) {
-        addBar(indexDs2,"series2",colorSeries2);
-    }
-    if (numSeries > 2) {
-      addBar(indexDs3,"series3",colorSeries3);
-    }
-
-  function addBarText(data, series) {
-
-      let fontSize = "12px";
-      if (numSeries == 3) {
-          fontSize = "9px";
-      }
-
-      plot.selectAll("text."+series)
-    	    .data(data)
-    	    .enter()
-    	    .append("text")
-          .attr("class", series)
-          .text(function(d) {
-           return formatAsInteger(d3.format("d")(d.index));
-          })
-    	    .attr("text-anchor", "middle")
-    	    /* Set x position to the left edge of each bar plus half the bar width */
-    	    .attr("x", function(d, i) {
-              if (series == "series1") {
-                  return ( i * (width / indexDs1.length) )
-                    + ( (width / (indexDs1.length * numSeries) - barPadding) / 2 );
-              } else if (series == "series2") {
-                  return ( i * (width / indexDs1.length) )
-                           + ( (width / (indexDs1.length * numSeries) - barPadding) ) * 1.5 ;
-              } else if (series == "series3") {
-                  return ( i * (width / indexDs1.length) )
-                      + ( (width / (indexDs1.length * 3) - barPadding) ) * 2.5 ;
-              }
-
-    	    })
-    	    .attr("y", function(d) {
-    			     return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
-    	    })
-    	  //  .attr("class", "yAxis")
-    	    .attr("font-family", "sans-serif")
-    	    .attr("font-size", fontSize)
-    	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-          .on("mouseover", mouseover)
-          .on("mouseout", mouseup)
-          .on("mousemove", mouseover);
-  }
-
-  addBarText(indexDs1,"series1");
-  if (numSeries > 1) {
-      addBarText(indexDs2,"series2");
-  }
-  if (numSeries > 2) {
-      addBarText(indexDs3,"series3");
-  }
-
-	/* Add x labels to chart */
-	let xLabels = svg.append("g")
-		               .attr("transform", "translate(" + margin.left + "," + (margin.top + height)  + ")");
-
-	xLabels.selectAll("text.xAxis")
-		     .data(indexDs1)
-		     .enter()
-		     .append("text")
-		     .text(function(d) { return d.attrib_value;})
-		     .attr("text-anchor", "middle")
-			   /* Set x position to the left edge of each bar plus half the bar width */
-				 .attr("x", function(d, i) {
-				       return (i * (width / indexDs1.length)) + ((width / indexDs1.length - barPadding) / 2);
-				 })
-		     .attr("y", 15)
-		     .attr("class", "xAxis");
-
-  /* Add a y-axis */
-  let axis = d3.axisLeft(yScale)
-      .ticks(5)
-      .tickFormat(function (d) { return d + "%" })
-      .tickSize(0);
-
-  svg.append("g")
-      .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
-      .attr("class", "axis")
-      .call(axis);
-
-  /* Remove vertical and extra horizontal gridlines */
-  svg.selectAll(".domain").remove()
-
-
-  function up(d, i) {
-	   /* update all charts when user selects a single bar in this chart */
-     /* if clicking on already selected item, then reset the charts */
-     isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
-     if (isSelected){
-       DS_VIS_STORE["activeFilter"] = null;
-       if (numSeries == 1) {
-          drawCharts();
-       } else if (numSeries == 2) {
-          drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
-       } else if (numSeries == 3) {
-          drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
-       }
-       showActiveFilter(DS_VIS_STORE);
-     } else {
-       if (numSeries == 1) {
-          updateCharts(attrName, d.attrib_value);
-       } else if (numSeries == 2) {
-          updateComparisonCharts(attrName, d.attrib_value, numSeries);
-       } else if (numSeries == 3) {
-          updateComparisonCharts(attrName, d.attrib_value, numSeries);
-       }
-       showActiveFilter(DS_VIS_STORE);
-     }
-	}
-
-
-  function mouseover(d) {
-    // Add tooltip based on position of the mouse
-    let e = window.event;
-    var x = e.clientX,
-        y = e.clientY;
-
-    let tipY = (y - 40) + 'px';
-    let tipX = (x) + 'px';
-
-    // Move tooltip to the left of the cursor if it gets too close to right edge
-    if  (window.innerWidth - x < 200) {
-      tipX = (x - 130) + 'px';
-    }
-
-    tooltip.transition()
-        .duration(200)
-    tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-        .style("opacity", .9)
-        .style('left', `${(tipX)}`)
-        .style('top', `${(tipY)}`);
-  }
-
-  function mouseup(d) {
-    // Hide tooltip when the mouse leaves the element
-    tooltip.style('opacity', 0);
-  }
-
-}
-
 
 /*******************************************************************************
 *** Multi-Series Balance CHART *************************************************
@@ -765,7 +522,7 @@ function hBarMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
     $("#"+attrName+"Chart .ds-toggle-button .ds-t1").unbind().click(function() {
           DS_VIS_STORE[attrName+"Active"] = [1,2,3]
           DS_VIS_STORE[attrName+"Colors"] = [colorSeries1, colorSeries2, colorSeries3]
-          $(this).toggleClass("active")
+          $(this).toggleClass("active",true)
           $("#"+attrName+"Chart .ds-toggle-button .ds-t2").toggleClass("active",false)
           $("#"+attrName+"Chart .ds-toggle-button .ds-t3").toggleClass("active",false)
           changeToggleText(1);
@@ -775,7 +532,7 @@ function hBarMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
     $("#"+attrName+"Chart .ds-toggle-button .ds-t2").unbind().click(function() {
           DS_VIS_STORE[attrName+"Active"] = [2,1,3]
           DS_VIS_STORE[attrName+"Colors"] = [colorSeries2, colorSeries1, colorSeries3]
-          $(this).toggleClass("active")
+          $(this).toggleClass("active",true)
           $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",false)
           $("#"+attrName+"Chart .ds-toggle-button .ds-t3").toggleClass("active",false)
           changeToggleText(2);
@@ -785,7 +542,7 @@ function hBarMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
     $("#"+attrName+"Chart .ds-toggle-button .ds-t3").unbind().click(function() {
           DS_VIS_STORE[attrName+"Active"] = [3,1,2]
           DS_VIS_STORE[attrName+"Colors"] = [colorSeries3, colorSeries1, colorSeries2]
-          $(this).toggleClass("active")
+          $(this).toggleClass("active",true)
           $("#"+attrName+"Chart .ds-toggle-button .ds-t2").toggleClass("active",false)
           $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",false)
           changeToggleText(3);
