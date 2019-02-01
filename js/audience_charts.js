@@ -222,7 +222,7 @@ function drawBarChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
           fontSize = "9px";
       }
 
-      plot.selectAll("text."+series)
+      plot.selectAll("text."+series+" yAxis")
     	    .data(data)
     	    .enter()
     	    .append("text")
