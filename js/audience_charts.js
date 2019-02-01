@@ -252,6 +252,7 @@ function drawBarChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
     	    .attr("font-family", "sans-serif")
     	    .attr("font-size", fontSize)
     	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+          .attr("class", "yAxis")
           .on("mouseover", mouseover)
           .on("mouseout", mouseup)
           .on("mousemove", mouseover);
