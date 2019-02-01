@@ -226,7 +226,7 @@ function drawBarChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
     	    .data(data)
     	    .enter()
     	    .append("text")
-          .attr("class", series)
+          .attr("class", series+" yAxis")
           .text(function(d) {
            return formatAsInteger(d3.format("d")(d.index));
           })
@@ -252,7 +252,6 @@ function drawBarChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
     	    .attr("font-family", "sans-serif")
     	    .attr("font-size", fontSize)
     	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-          .attr("class", "yAxis")
           .on("mouseover", mouseover)
           .on("mouseout", mouseup)
           .on("mousemove", mouseover);
@@ -1806,6 +1805,7 @@ function updateCharts(attrName, attrValue) {
                 })
                 .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
                 .attr("class", "yAxis");
+
         } else if ( pieChartAttributesList.includes(demogAttributeListName) ) {
             d3.select("#"+demogAttributeListName+"Chart svg").remove();
             pieChart(demogAttributeListName, attrIndex);
