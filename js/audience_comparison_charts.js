@@ -864,11 +864,11 @@ function drawComparisonCharts(activeView) {
 
     drawBarChart2("age", [ageIndex1, ageIndex2, ageIndex3]);
     addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
-    drawBarChart("ethnicity", ethnicityIndex1, ethnicityIndex2, ethnicityIndex3, numSeries = activeView);
-    drawBarChart("children", childrenIndex1, childrenIndex2, childrenIndex3, numSeries = activeView);
+    drawBarChart2("ethnicity", [ethnicityIndex1, ethnicityIndex2, ethnicityIndex3]);
+    drawBarChart2("children", [childrenIndex1, childrenIndex2, childrenIndex3]);
     addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
-    drawBarChart("education", educationIndex1, educationIndex2, educationIndex3, numSeries = activeView);
-    drawBarChart("income", incomeIndex1, incomeIndex2, incomeIndex3, numSeries = activeView);
+    drawBarChart2("education", [educationIndex1, educationIndex2, educationIndex3]);
+    drawBarChart2("income", [incomeIndex1, incomeIndex2, incomeIndex3], width=610);
     addSeriesStats("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
     hBarBalanceChart("gender", genderIndex1, genderIndex2, genderIndex3);
     hBarBalanceChart("marital", maritalIndex1, maritalIndex2, maritalIndex3);

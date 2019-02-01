@@ -202,18 +202,18 @@ function wrap(text, width, sep = " ", type = "pie") {
             fontSize = "9px";
         }
 
-        plot.selectAll("text.series"+(series+1))
+        plot.selectAll("text.series"+(series+1)+" yAxis")
       	    .data(data)
       	    .enter()
       	    .append("text")
-            .attr("class", "series"+(series+1))
+            .attr("class", "series"+(series+1)+" yAxis")
             .text(function(d) {
              return formatAsInteger(d3.format("d")(d.index));
             })
       	    .attr("text-anchor", "middle")
       	    /* Set x position to the left edge of each bar plus half the bar width */
       	    .attr("x", function(d, i) {
-                return xScale(i) + (barWidth * series - barPadding * series) + barWidth/2;
+                return xScale(i) + (barWidth * series - barPadding * series) + barWidth/2 - 1;
       	    })
       	    .attr("y", function(d) {
       			    return textInside(d) ? yScale(d.target_pct) + 14 : yScale(d.target_pct) - 7;
@@ -222,7 +222,6 @@ function wrap(text, width, sep = " ", type = "pie") {
       	    .attr("font-family", "sans-serif")
       	    .attr("font-size", fontSize)
       	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-            .attr("class", "yAxis")
             .on("mouseover", mouseover)
             .on("mouseout", mouseup)
             .on("mousemove", mouseover);
