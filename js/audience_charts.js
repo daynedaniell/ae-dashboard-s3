@@ -551,7 +551,6 @@ function mapChart(attrName, indexDs) {
 *** HORIZONTAL BAR CHART *******************************************************
 *******************************************************************************/
 function hBarChart2(attrName, innerWidth, indexArray, hasToggle=false) {
-    console.log(DS_VIS_STORE[attrName+"Colors"])
     if (DS_VIS_STORE.activeView == 1) {
         $("#"+attrName+"Chart .ds-toggle-button").css("display", "none");
         $("#"+attrName+"Chart .ds-hbar-status").text("Top 5 By Index");
@@ -1234,30 +1233,32 @@ function dnaChart(indexArray, barWidth=4) {
 
   attrNames.forEach(function(attrName, i){
     indexArray.forEach(function(aud,j) {
-        let startIdx = j > 0 ? Object.keys(indexArray[j - 1]).length * j: 0;
-        traces[i+startIdx] = {
-          name: attrName,
-          x: unpack(indexArray[j][attrName], 'index'),
-          y: unpack(indexArray[j][attrName], 'target_pct'),
-          base: unpack(indexArray[j][attrName], 'target_pct').map(x => -x/2),
-          width: barWidth,
-          type: 'bar',
-          marker: {
-            color: numSeries == 1 ? unpack(indexArray[j][attrName], 'index').map(x => colorByIndexBar(x)) : DS_VIS_STORE.seriesColors[j],
-            opacity: 0.5
-          },
-         hovertext: makeToolTips(indexArray[j][attrName], attrName),
-         hoverinfo: 'text',
-          hoverlabel: {
-            bgcolor: '#fff',
-            bordercolor: 'lightgrey',
-            font: {
-              family: "Open Sans",
-              size: 15,
-              color: '#333'
-            }
-          }
-        };
+        if (Object.keys(indexArray[j]).indexOf(attrName) > -1) {
+            let startIdx = j > 0 ? Object.keys(indexArray[j - 1]).length * j: 0;
+            traces[i+startIdx] = {
+              name: attrName,
+              x: unpack(indexArray[j][attrName], 'index'),
+              y: unpack(indexArray[j][attrName], 'target_pct'),
+              base: unpack(indexArray[j][attrName], 'target_pct').map(x => -x/2),
+              width: barWidth,
+              type: 'bar',
+              marker: {
+                color: numSeries == 1 ? unpack(indexArray[j][attrName], 'index').map(x => colorByIndexBar(x)) : DS_VIS_STORE.seriesColors[j],
+                opacity: 0.5
+              },
+             hovertext: makeToolTips(indexArray[j][attrName], attrName),
+             hoverinfo: 'text',
+              hoverlabel: {
+                bgcolor: '#fff',
+                bordercolor: 'lightgrey',
+                font: {
+                  family: "Open Sans",
+                  size: 15,
+                  color: '#333'
+                }
+              }
+            };
+        }
 
     })
 
