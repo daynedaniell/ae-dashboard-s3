@@ -13,7 +13,8 @@ let DS_VIS_STORE = {
     activeView: 1,
     activeTab: 'dashboard',
     scaleWeight: 1,
-    seriesColors: [colorSeries1,colorSeries2,colorSeries3]
+    seriesColors: [colorSeries1,colorSeries2,colorSeries3],
+    dnaBarWidths: [4,3,2]
 }
 
 function resetCompareAuds() {
@@ -1183,17 +1184,8 @@ function hBarChart(attrName, indexDs) {
 /*******************************************************************************
 *** DNA CHART ******************************************************************
 *******************************************************************************/
-function dnaChart(ds1, ds2, ds3) {
+function dnaChart(indexArray, barWidth=4) {
   let numSeries = DS_VIS_STORE.activeView;
-
-  let barWidth = 4;
-
-  if (numSeries == 2) {
-      barWidth = 3;
-  } else if (numSeries == 3) {
-      barWidth = 2;
-  }
-
 
   // tooltip values
   function makeToolTips(indexDs, attrName) {
@@ -1226,48 +1218,35 @@ function dnaChart(ds1, ds2, ds3) {
     return t;
   }
 
-  let traces1 = [];
-  let traces2 = [];
-  let traces3 = [];
-  let attrNames = Object.keys(ds1);
+  let traces = []
+  let audKeys = []
+  indexArray.forEach(function(aud) {
+    if (aud != null) {
+        audKeys.push(...Object.keys(aud))
+    }
+  })
+  let attrNames = [...new Set(audKeys)];
+
+  const index = indexArray.indexOf(null);
+  if (index > -1) {
+    indexArray.splice(index, 1);
+  }
 
   attrNames.forEach(function(attrName, i){
-    traces1[i] = {
-      name: attrName,
-      x: unpack(ds1[attrName], 'index'),
-      y: unpack(ds1[attrName], 'target_pct'),
-      base: unpack(ds1[attrName], 'target_pct').map(x => -x/2),
-      width: barWidth,
-      type: 'bar',
-      marker: {
-        color: numSeries == 1 ? unpack(ds1[attrName], 'index').map(x => colorByIndexBar(x)) : colorSeries1,
-        opacity: 0.5
-      },
-     hovertext: makeToolTips(ds1[attrName], attrName),
-     hoverinfo: 'text',
-      hoverlabel: {
-        bgcolor: '#fff',
-        bordercolor: 'lightgrey',
-        font: {
-          family: "Open Sans",
-          size: 15,
-          color: '#333'
-        }
-      }
-    };
-    if (numSeries > 1) {
-        traces2[i] = {
+    indexArray.forEach(function(aud,j) {
+        let startIdx = j > 0 ? Object.keys(indexArray[j - 1]).length * j: 0;
+        traces[i+startIdx] = {
           name: attrName,
-          x: unpack(ds2[attrName], 'index'),
-          y: unpack(ds2[attrName], 'target_pct'),
-          base: unpack(ds2[attrName], 'target_pct').map(x => -x/2),
+          x: unpack(indexArray[j][attrName], 'index'),
+          y: unpack(indexArray[j][attrName], 'target_pct'),
+          base: unpack(indexArray[j][attrName], 'target_pct').map(x => -x/2),
           width: barWidth,
           type: 'bar',
           marker: {
-            color: colorSeries2,
+            color: numSeries == 1 ? unpack(indexArray[j][attrName], 'index').map(x => colorByIndexBar(x)) : DS_VIS_STORE.seriesColors[j],
             opacity: 0.5
           },
-         hovertext: makeToolTips(ds2[attrName], attrName),
+         hovertext: makeToolTips(indexArray[j][attrName], attrName),
          hoverinfo: 'text',
           hoverlabel: {
             bgcolor: '#fff',
@@ -1279,39 +1258,13 @@ function dnaChart(ds1, ds2, ds3) {
             }
           }
         };
-    }
 
-    if (numSeries > 2) {
-        traces3[i] = {
-          name: attrName,
-          x: unpack(ds3[attrName], 'index'),
-          y: unpack(ds3[attrName], 'target_pct'),
-          base: unpack(ds3[attrName], 'target_pct').map(x => -x/2),
-          width: barWidth,
-          type: 'bar',
-          marker: {
-            color: colorSeries3,
-            opacity: 0.5
-          },
-         hovertext: makeToolTips(ds3[attrName], attrName),
-         hoverinfo: 'text',
-          hoverlabel: {
-            bgcolor: '#fff',
-            bordercolor: 'lightgrey',
-            font: {
-              family: "Open Sans",
-              size: 15,
-              color: '#333'
-            }
-          }
-        };
-    }
-
+    })
 
   });
 
-  let height = 150;
-	let width = 1260;
+  // let height = 150;
+	// let width = 1260;
 
   let layout = {
     hovermode:'closest',
@@ -1414,8 +1367,6 @@ function dnaChart(ds1, ds2, ds3) {
       }
     }]
   };
-
-  let traces = [...traces1, ...traces2, ...traces3];
   Plotly.newPlot("waveChart", traces, layout, {displayModeBar: false, responsive: true});
 
 }
@@ -1825,7 +1776,8 @@ function drawCharts() {
       retail: retailIndexTop0
     };
 
-    dnaChart(indexes);
+    //dnaChart(indexes);
+    dnaChart([indexes], barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
 
     /* Take user to corresponding chart on bar click */
     let myPlot = document.getElementById('waveChart');
@@ -2250,7 +2202,7 @@ function updateCharts(attrName, attrValue) {
     });
 
     // update the wave chart
-    dnaChart(indexes);
+    dnaChart([indexes], barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
 
     /* Take user to corresponding chart on bar click */
     let myPlot = document.getElementById('waveChart');
@@ -2486,8 +2438,7 @@ function drawComparisonCharts(activeView) {
         };
     }
 
-
-    dnaChart(indexes1, indexes2, indexes3);
+    dnaChart([indexes1, indexes2, indexes3],barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
 
     var myPlot = document.getElementById('waveChart');
     myPlot.on('plotly_click', function(data){
@@ -2914,7 +2865,7 @@ function updateComparisonCharts(attrName, attrValue, numSeries = 3) {
     });
 
     // update the wave chart
-    dnaChart(indexes1, indexes2, indexes3);
+    dnaChart([indexes1, indexes2, indexes3], barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
 
     /* Make clicking on a bar take you to the corresponding chart below */
     var myPlot = document.getElementById('waveChart');
