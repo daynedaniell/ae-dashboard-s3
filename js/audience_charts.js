@@ -229,6 +229,7 @@ function drawBarChart(attrName, indexArray, innerWidth=400) {
           fontSize = "9px";
       }
 
+
       plot.selectAll("text.series"+(series+1)+" yAxis")
           .data(data)
           .enter()
@@ -2114,6 +2115,7 @@ function updateCharts(attrName, attrValue) {
                 })
                 .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
                 .attr("class", "yAxis");
+
         } else if ( pieChartAttributesList.includes(demogAttributeListName) ) {
             d3.select("#"+demogAttributeListName+"Chart svg").remove();
             pieChart(demogAttributeListName, attrIndex);
