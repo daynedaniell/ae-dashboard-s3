@@ -1682,26 +1682,21 @@ $(".ds-audience-selection-form").change(function(){
 /*******************************************************************************
 *** ADD AUDIENCE TITLE *********************************************************
 *******************************************************************************/
-function addAudienceTitle(targetAud1, targetAud2 = null, targetAud3 = null) {
+function addAudienceTitle(targetAuds) {
     // remove existing titles, if any
     $( ".ds-audience-title h1" ).remove();
-    let twoString = (targetAud2 != null) ? ("<div class= 'ds-aud-title-2'> <span style='color:#505050;'> VS </span>" + targetAud2.name + "</div>") : '';
-    let threeString = (targetAud3 != null) ? ("<div class= 'ds-aud-title-3'> <span style='color:#505050;'> VS </span>" + targetAud3.name + "</div>") : '';
-    // add titles
-    $( ".ds-audience-title" )
-        .append("<h1><div class= 'ds-aud-title-1'>"
-          + targetAud1.name
-          + "</div>"
-          + twoString
-          + threeString
-          + "</h1>");
 
-    // add color codes
-    $(".ds-audience-title .ds-aud-title-1").css("color", colorSeries1);
-    $(".ds-audience-title .ds-aud-title-2").css("color", colorSeries2);
-    if (targetAud3 != null) {
-        $(".ds-audience-title .ds-aud-title-3").css("color", colorSeries3);
-    }
+    let titleString = "<h1>";
+
+    targetAuds.forEach(function(aud, i) {
+        let vs =  (i > 0) ? "<span style='color:#505050;'> VS </span>" : '';
+        titleString += `<div class= 'ds-aud-title-${(i+1)}' style='color:${DS_VIS_STORE.seriesColors[i]}'>` + vs + targetAuds[i].name + "</div>"
+    });
+
+    titleString += "</h1>"
+
+    $( ".ds-audience-title" )
+        .append(titleString);
 }
 
 /*******************************************************************************
@@ -1711,7 +1706,7 @@ function drawCharts() {
 
     d3.selectAll('.ds-tooltip').remove()
     // add the audience title
-    addAudienceTitle(targetAud);
+    addAudienceTitle([targetAud]);
     addAudienceLegend();
     showActiveFilter(DS_VIS_STORE);
 
@@ -2208,19 +2203,21 @@ function updateCharts(attrName, attrValue) {
 /*******************************************************************************
 *** DRAW COMPARISON CHARTS *****************************************************
 *******************************************************************************/
-function drawComparisonCharts(activeView) {
+function drawComparisonCharts(activeView, targetAuds=null) {
     /* Remove any active tooltips */
     d3.selectAll(".ds-tooltip").remove();
 
     /* View setup */
     addAudienceLegend(compare=activeView);
 
+    //addAudienceTitle([targetAud, targetAud2, targetAud3]);
+
     if (activeView == 1) {
-        addAudienceTitles(targetAud);
+        addAudienceTitles([targetAud]);
     } else if (activeView == 2) {
-        addAudienceTitle(targetAud, targetAud2);
+        addAudienceTitle([targetAud, targetAud2]);
     } else if (activeView == 3) {
-        addAudienceTitle(targetAud, targetAud2, targetAud3);
+        addAudienceTitle([targetAud, targetAud2, targetAud3]);
     }
 
     let indexCats = makeIndexCats();
@@ -2433,6 +2430,11 @@ function drawComparisonCharts(activeView) {
     addBubbleHighlighting('retail');
 
 }
+
+
+
+
+
 
 
 /*******************************************************************************
