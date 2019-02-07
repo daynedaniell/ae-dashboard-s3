@@ -1377,22 +1377,29 @@ function dnaChart(indexArray, barWidth=4) {
 /*******************************************************************************
 *** MIKEJ BUBBLE CHART *********************************************************
 *******************************************************************************/
-function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) {
+function bubbleChart(attrName, indexArray) {
+
+  const index = indexArray.indexOf(null);
+  if (index > -1) {
+    indexArray.splice(index, 1);
+  }
 
   let numSeries = DS_VIS_STORE.activeView;
 
-  // sort data alphabetically by category
-  indexDs1.sort((a, b) => b.category.localeCompare(a.category));
-  if (numSeries > 1) {
-      indexDs2.sort((a, b) => b.category.localeCompare(a.category));
-  }
-  if (numSeries > 2) {
-      indexDs3.sort((a, b) => b.category.localeCompare(a.category));
-  }
+  let audCatsAll = []
+  indexArray.forEach(function(aud) {
+    if (aud != null) {
+        audCatsAll.push(aud.category)
+        aud.sort((a, b) => b.category.localeCompare(a.category));
+    }
+  })
+  let allCats = [...new Set(audCatsAll)];
 
-  let trace1 = [];
-  let trace2 = [];
-  let trace3 = [];
+  allCats.sort();
+
+
+
+  let traces = []
 
   // put together tooltip values
   function getMikeJTooltipValues(ds){
@@ -1424,93 +1431,39 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
     return idArray;
   }
 
-  trace1 = {
-    showlegend: false,
-    x: unpack(indexDs1, 'index'),
-    y: unpack(indexDs1, 'category'),
-    mode: 'markers',
-    type: 'scatter',
-    marker: {
-      size: unpack(indexDs1, 'target_pct').map(x => Math.sqrt(x)*5),
-      color: numSeries == 1 ? unpack(indexDs1, 'index').map(x => colorByIndexBar(x)) : colorSeries1,
-      opacity: unpack(indexDs1, 'target_pct').map(x => 0.5),
-      line: {width: 0}
-    },
-    id: getId(indexDs1, 1),
-    hovertext: getMikeJTooltipValues(indexDs1),
-    hoverinfo: 'none',
-    hoverlabel: {
-      bgcolor: '#fff',
-      bordercolor: 'lightgrey',
-      font: {
-        family: "Open Sans",
-        size: 15,
-        color: '#333'
+  indexArray.forEach(function(aud,j) {
+
+    traces[j] = {
+      showlegend: false,
+      x: unpack(indexArray[j], 'index'),
+      y: unpack(indexArray[j], 'category'),
+      mode: 'markers',
+      type: 'scatter',
+      marker: {
+        size: unpack(indexArray[j], 'target_pct').map(x => Math.sqrt(x)*5),
+        color: numSeries == 1 ? unpack(indexArray[j], 'index').map(x => colorByIndexBar(x)) : DS_VIS_STORE.seriesColors[j],
+        opacity: unpack(indexArray[j], 'target_pct').map(x => 0.5),
+        line: {width: 0}
+      },
+      id: getId(indexArray[j], 1),
+      hovertext: getMikeJTooltipValues(indexArray[j]),
+      hoverinfo: 'none',
+      hoverlabel: {
+        bgcolor: '#fff',
+        bordercolor: 'lightgrey',
+        font: {
+          family: "Open Sans",
+          size: 15,
+          color: '#333'
+        }
       }
-    }
-  };
+    };
 
-  if (numSeries > 1) {
-      trace2 = {
-        showlegend: false,
-        x: unpack(indexDs2, 'index'),
-        y: unpack(indexDs2, 'category'),
-        mode: 'markers',
-        type: 'scatter',
-        marker: {
-          size: unpack(indexDs2, 'target_pct').map(x => Math.sqrt(x)*5),
-          color: colorSeries2,
-          opacity: unpack(indexDs2, 'target_pct').map(x => 0.5),
-          line: {width: 0}
-        },
-        id: getId(indexDs2, 2),
-        hovertext: getMikeJTooltipValues(indexDs2),
-        hoverinfo: 'none',
-        hoverlabel: {
-          bgcolor: '#fff',
-          bordercolor: 'lightgrey',
-          font: {
-            family: "Open Sans",
-            size: 15,
-            color: '#333'
-          }
-        }
-      };
-  }
-
-  if (numSeries > 2) {
-      trace3 = {
-        showlegend: false,
-        x: unpack(indexDs3, 'index'),
-        y: unpack(indexDs3, 'category'),
-        mode: 'markers',
-        type: 'scatter',
-        marker: {
-          size: unpack(indexDs3, 'target_pct').map(x => Math.sqrt(x)*5),
-          color: colorSeries3,
-          opacity: unpack(indexDs3, 'target_pct').map(x => 0.5),
-          line: {width: 0}
-        },
-        id: getId(indexDs3, 3),
-        hovertext: getMikeJTooltipValues(indexDs3),
-        hoverinfo: 'none',
-        hoverlabel: {
-          bgcolor: '#fff',
-          bordercolor: 'lightgrey',
-          font: {
-            family: "Open Sans",
-            size: 15,
-            color: '#333'
-         }
-        }
-      };
-  }
-
-
+  });
 
   // calculate chart height based on the number of distinct categories
   // let allCats = [...new Set( [...unpack(indexDs1, 'category'), ...unpack(indexDs2, 'category')] )];
-  let allCats = [...new Set( [...unpack(indexDs1, 'category')] )];
+  //let allCats = [...new Set( [...unpack(indexDs1, 'category')] )];
   let height = allCats.length * 58;
 	let width = 1260;
   let margin = 40;
@@ -1555,7 +1508,7 @@ function mikeJBubbleChart(attrName, indexDs1, indexDs2 = null, indexDs3 = null) 
   };
 
   let chartName = attrName+"DetailChart";
-  Plotly.newPlot(chartName, [trace1, trace2, trace3], layout, {displayModeBar: false, responsive: true});
+  Plotly.newPlot(chartName, traces, layout, {displayModeBar: false, responsive: true});
 }
 
 
@@ -1821,8 +1774,9 @@ function drawCharts() {
 
     $( ".tile" ).removeClass("selected-tile");
 
-    mikeJBubbleChart('interests', interestsIndexBubble0);
-    mikeJBubbleChart('retail', retailIndex0);
+    bubbleChart('interests', [interestsIndexBubble0]);
+    //bubbleChart('interests', interestsIndexBubble0);
+    bubbleChart('retail', [retailIndex0]);
 
     addBubbleHighlighting('interests');
     addBubbleHighlighting('retail');
@@ -1834,102 +1788,73 @@ function drawCharts() {
 
 function addBubbleHighlighting(attrName) {
     let activeView = DS_VIS_STORE.activeView;
-    var myPlot2 = document.getElementById(attrName+"DetailChart");
+    const bubblePlot = document.getElementById(attrName+"DetailChart");
     const ttip = d3.select("#"+attrName+"DetailChart").append("div")
         .attr("class", "ds-tooltip-bubble")
         .style("opacity", 0);
 
-    let ops1, ops2, ops3, l1, l2, l3;
+    let ops = [];
+    let borders = [];
+    let traces = [];
 
-    ops1 = myPlot2.data[0].marker.opacity;
-    activeView > 1 ? ops2 = myPlot2.data[1].marker.opacity : null;
-    activeView > 2 ? ops3 = myPlot2.data[2].marker.opacity : null;
+    bubblePlot.data.forEach(function(aud, i) {
+        ops.push(aud.marker.opacity);
+        borders.push(Array(aud.length).fill(0));
+        traces.push(i);
+    });
 
-    l1 = Array(ops1.length).fill(0)
-    activeView > 1 ? l2 = Array(ops2.length).fill(0) : null;
-    activeView > 2 ? l3 = Array(ops3.length).fill(0) : null;
-
-    myPlot2.onmousemove = function(event) {
+    bubblePlot.onmousemove = function(event) {
       ttip.style("left", event.pageX + "px");
       ttip.style("top", (event.pageY - 70) + "px");
     }
 
-    let traces = activeView == 2 ? [0,1] : [0,1,2];
-
-    myPlot2.on('plotly_hover', function(data){
+    bubblePlot.on('plotly_hover', function(data){
         pn = data.points[0].pointNumber;
         id = data.points[0].data.id[pn];
-        let d1,d2,d3;
-        myPlot2.data[0].id.forEach((d, i) => {
-          if (d == id) {
-            d1 = i;
-          }
-        })
-        ops1 = Array(ops1.length).fill(0.3);
-        ops1[d1] = 1.0;
-        l1[d1] = 1;
-        if (activeView > 1) {
-          myPlot2.data[1].id.forEach((d, i) => {
-            if (d == id) {
-              d2 = i;
-            }
-          })
-          ops2 = Array(ops2.length).fill(0.3);
-          ops2[d2] = 1.0;
-          l2[d2] = 1;
-        }
 
-        if (activeView > 2) {
-            myPlot2.data[2].id.forEach((d, i) => {
+        let ids = [];
+        bubblePlot.data.forEach(function(aud, i) {
+            bubblePlot.data[i].id.forEach((d, j) => {
               if (d == id) {
-                d3 = i;
+                ids[i] = j;
               }
-            });
-            ops3 = Array(ops3.length).fill(0.3);
-            ops3[d3] = 1.0;
-            l3[d3] = 1;
-        }
+            })
+            ops[i] = Array(ops[i].length).fill(0.3);
+            ops[i][ids[i]] = 1.0;
+            borders[ids[i]] = 1;
+        });
 
         ttip.style("opacity", 0.9)
             .html(data.points[0].hovertext);
 
         let update = {
-          'marker.opacity': [ops1, ops2, ops3],//activeView == 2 ? [ops1,ops2] : [ops1,ops2,ops3],
-          'marker.line.width': [l1, l2, l3],//activeView == 2 ? [l1,l2] : [l1,l2,l3],
+          'marker.opacity': ops,
+          'marker.line.width': borders,
           'marker.line.color': '#ddd'
         }
-
-        //var update = {'marker':{color: colors, size:16}};
 
         Plotly.restyle(attrName+"DetailChart", update, traces);
       });
 
     function removeHoverHighlightUpdate() {
-        ops1 = Array(ops1.length).fill(0.5)
-        l1 = Array(ops1.length).fill(0)
-
-        if (activeView > 1) {
-            ops2 = Array(ops2.length).fill(0.5)
-            l2 = Array(ops2.length).fill(0)
-        }
-        if (activeView > 2) {
-            ops3 = Array(ops3.length).fill(0.5)
-            l3 = Array(ops3.length).fill(0)
-        }
+        bubblePlot.data.forEach(function(aud, i) {
+            ops[i] = Array(ops[i].length).fill(0.5);
+            borders[i] = Array(ops[i].length).fill(0)
+        });
 
         let update2 = {
-          'marker.opacity': [ops1, ops2, ops3],
-          'marker.line.width': [l1,l2,l3]
+          'marker.opacity': ops,
+          'marker.line.width': ops
         }
         return update2
     }
 
-    myPlot2.on('plotly_unhover', function(data){
+    bubblePlot.on('plotly_unhover', function(data){
       ttip.style("opacity",0)
       Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), traces);
     });
 
-    myPlot2.on('plotly_click', function(data){
+    bubblePlot.on('plotly_click', function(data){
       ttip.style("opacity",0)
       Plotly.restyle(attrName+"DetailChart", removeHoverHighlightUpdate(), traces);
     });
@@ -2495,8 +2420,8 @@ function drawComparisonCharts(activeView) {
 
     $( ".tile" ).removeClass("selected-tile");
 
-    mikeJBubbleChart('interests', interestsIndex1, interestsIndex2, interestsIndex3);
-    mikeJBubbleChart('retail', retailIndex1, retailIndex2, retailIndex3);
+    bubbleChart('interests', [interestsIndex1, interestsIndex2, interestsIndex3]);
+    bubbleChart('retail', [retailIndex1, retailIndex2, retailIndex3]);
 
     addBubbleHighlighting('interests');
     addBubbleHighlighting('retail');
