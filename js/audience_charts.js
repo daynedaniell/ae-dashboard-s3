@@ -1537,39 +1537,23 @@ function bubbleChart(attrName, indexArray) {
 /*******************************************************************************
 *** ADD SERIES STATS ***********************************************************
 *******************************************************************************/
-function addSeriesStats(attrName, stat1, stat2=null, stat3=null, prefix='', suffix='') {
+function addSeriesStats(attrName, statsArray, prefix='', suffix='') {
   // remove existing stats, if any
   $( "#" + attrName + "Chart" )
     .prev(".tile-header")
     .find(".ds-stats")
     .remove();
 
-  let twoString = DS_VIS_STORE.activeView > 1
-      ? "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-2'>" + stat2 + suffix
-      : '';
-
-  let threeString = DS_VIS_STORE.activeView > 2
-      ? "</span><span style='float:left;margin:0 3px;'> | </span><span class='ds-stat-3'>" + stat3 + suffix
-      : '';
+  let statString = "<div class='ds-stats'><span class='ds-stats-name'>" + prefix + "</span>"
+  statsArray.forEach(function(stat, i) {
+      statString += `<span class='ds-stat-${i+1}' style='color: ${DS_VIS_STORE.seriesColors[i]}'>${stat} ${suffix}</span>`
+  });
+  statString += "</div>"
 
   // add in stats
   $( "#" + attrName + "Chart" )
     .prev(".tile-header")
-    .append("<div class='ds-stats'><span class='ds-stats-name'>"
-            + prefix
-            + "</span><span class='ds-stat-1'>"
-            + stat1 + suffix
-            + twoString
-            + threeString
-            + "</span></div>");
-
-  // color code the stats
-  $("#" + attrName + "Chart").prev(".tile-header")
-  .find(".ds-stats .ds-stat-1").css('color', colorSeries1);
-  $("#" + attrName + "Chart").prev(".tile-header")
-  .find(".ds-stats .ds-stat-2").css('color', colorSeries2);
-  $("#" + attrName + "Chart").prev(".tile-header")
-  .find(".ds-stats .ds-stat-3").css('color', colorSeries3);
+    .append(statString);
 }
 
 /*******************************************************************************
@@ -1776,13 +1760,13 @@ function drawCharts() {
     //barChart("age", ageIndex0);
     //drawBarChart("age", ageIndex0);
     drawBarChart("age", [ageIndex0]);
-    addSeriesStats("age", ageMedianCat, null, null, prefix = "Median: ", suffix = " years");
+    addSeriesStats("age", [ageMedianCat], prefix = "Median: ", suffix = " years");
     drawBarChart("ethnicity", [ethnicityIndex0]);
     drawBarChart("children", [childrenIndex0]);
-    addSeriesStats("children", childrenNonZeroPct, null, null, prefix = "Child present: ", suffix = "%");
+    addSeriesStats("children", [childrenNonZeroPct], prefix = "Child present: ", suffix = "%");
     drawBarChart("education", [educationIndex0]);
     drawBarChart("income", [incomeIndex0], width=610);
-    addSeriesStats("income", incomeMedianCat, null, null, prefix = "Median: ");
+    addSeriesStats("income", [incomeMedianCat], prefix = "Median: ");
     pieChart("gender", genderIndex0);
     pieChart("marital", maritalIndex0);
     mapChart("state", stateIndex0);
@@ -2025,13 +2009,13 @@ function updateCharts(attrName, attrValue) {
         if (attrName != demogAttributeListName) {
           if (demogAttributeListName == "age") {
               let ageMedianCat = getMedianCategory(attrIndex);
-              addSeriesStats("age", ageMedianCat, null, null, prefix = "Median: ", suffix = " years");
+              addSeriesStats("age", [ageMedianCat], prefix = "Median: ", suffix = " years");
           } else if (demogAttributeListName == "children") {
               let childrenNonZeroPct = getNonZeroPct(attrIndex);
-              addSeriesStats("children", childrenNonZeroPct, null, null, prefix = "Child present: ", suffix = "%");
+              addSeriesStats("children", [childrenNonZeroPct], prefix = "Child present: ", suffix = "%");
           } else if (demogAttributeListName == "income") {
               let incomeMedianCat = getMedianCategory(attrIndex);
-              addSeriesStats("income", incomeMedianCat, null, null, prefix = "Median: ");
+              addSeriesStats("income", [incomeMedianCat], prefix = "Median: ");
           }
         }
 
@@ -2504,7 +2488,7 @@ function drawComparisonCharts2(activeView=1) {
         return indexes
     }
     drawBarChart("age", getIndexArray("age"));
-    //addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
+    //addSeriesStats("age", [ageMedianCat1, ageMedianCat2, ageMedianCat3], prefix = "Median: ", suffix = " years");
     drawBarChart("ethnicity", getIndexArray("ethnicity"));
     drawBarChart("children", getIndexArray("children"));
     // addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
@@ -2546,7 +2530,7 @@ function drawComparisonCharts2(activeView=1) {
 
     bubbleChart('interests', getIndexArray("interests"));
     bubbleChart('retail', getIndexArray("retail"));
-    
+
     addBubbleHighlighting('interests');
     addBubbleHighlighting('retail');
 
@@ -2747,13 +2731,13 @@ function drawComparisonCharts(activeView, targetAuds=null) {
     });
 
     drawBarChart("age", [ageIndex1, ageIndex2, ageIndex3]);
-    addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
+    addSeriesStats("age", [ageMedianCat1, ageMedianCat2, ageMedianCat3], prefix = "Median: ", suffix = " years");
     drawBarChart("ethnicity", [ethnicityIndex1, ethnicityIndex2, ethnicityIndex3]);
     drawBarChart("children", [childrenIndex1, childrenIndex2, childrenIndex3]);
-    addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
+    addSeriesStats("children", [childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3], prefix = "Child Present: ", suffix = "%");
     drawBarChart("education", [educationIndex1, educationIndex2, educationIndex3]);
     drawBarChart("income", [incomeIndex1, incomeIndex2, incomeIndex3], width=610);
-    addSeriesStats("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
+    addSeriesStats("income", [incomeMedianCat1, incomeMedianCat2, incomeMedianCat3], prefix = "Median: ");
     hBarBalanceChart("gender", [genderIndex1, genderIndex2, genderIndex3]);
     hBarBalanceChart("marital", [maritalIndex1, maritalIndex2, maritalIndex3]);
 
@@ -2965,7 +2949,7 @@ function updateComparisonCharts(attrName, attrValue, numSeries = 3) {
                 if (numSeries > 2) {
                     ageMedianCat3 = getMedianCategory(attrIndex3);
                 }
-                addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
+                addSeriesStats("age", [ageMedianCat1, ageMedianCat2, ageMedianCat3], prefix = "Median: ", suffix = " years");
             } else if (demogAttributeListName == "children") {
                 let childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3;
                 childrenNonZeroPct1 = getNonZeroPct(attrIndex1);
@@ -2973,7 +2957,7 @@ function updateComparisonCharts(attrName, attrValue, numSeries = 3) {
                 if (numSeries > 2) {
                     childrenNonZeroPct3 = getNonZeroPct(attrIndex3);
                 }
-                addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child present: ", suffix = "%");
+                addSeriesStats("children", [childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3], prefix = "Child present: ", suffix = "%");
             } else if (demogAttributeListName == "income") {
                 let incomeMedianCat1, incomeMedianCat2, incomeMedianCat3;
                 incomeMedianCat1 = getMedianCategory(attrIndex1);
@@ -2981,7 +2965,7 @@ function updateComparisonCharts(attrName, attrValue, numSeries = 3) {
                 if (numSeries > 2) {
                     incomeMedianCat3 = getMedianCategory(attrIndex3);
                 }
-                addSeriesStats("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
+                addSeriesStats("income", [incomeMedianCat1, incomeMedianCat2, incomeMedianCat3], prefix = "Median: ");
             }
         }
 
