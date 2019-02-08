@@ -1563,8 +1563,8 @@ function addSeriesStats(attrName, statsArray, prefix='', suffix='') {
 /*******************************************************************************
 *** ADD AUDIENCE LEGEND ********************************************************
 *******************************************************************************/
-function addAudienceLegend(compare=null) {
-  if (compare === null) {
+function addAudienceLegend(targetAuds) {
+  if (DS_VIS_STORE.activeView == 1) {
     $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorOverIndex)
     $("#dsAudienceLegend1 .ds-audience-legend-label span").text("Over-Index")
     $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorUnderIndex)
@@ -1572,21 +1572,21 @@ function addAudienceLegend(compare=null) {
     $("#dsAudienceLegend3 .ds-audience-legend-color").css({"background-color": colorZeroIndex, "display": "block"})
     $("#dsAudienceLegend3 .ds-audience-legend-label span").text("No Data")
     $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "block")
-  } else if (compare === 2) {
-    $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorSeries1)
-    $("#dsAudienceLegend1 .ds-audience-legend-label span").text(targetAud.name)
-    $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorSeries2)
-    $("#dsAudienceLegend2 .ds-audience-legend-label span").text(targetAud2.name)
-    $("#dsAudienceLegend3 .ds-audience-legend-color").css("display", "none")
-    $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "none")
-  } else if (compare === 3) {
-    $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", colorSeries1)
-    $("#dsAudienceLegend1 .ds-audience-legend-label span").text(targetAud.name)
-    $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", colorSeries2)
-    $("#dsAudienceLegend2 .ds-audience-legend-label span").text(targetAud2.name)
-    $("#dsAudienceLegend3 .ds-audience-legend-color").css({"background-color": colorSeries3, "display": "block"})
-    $("#dsAudienceLegend3 .ds-audience-legend-label span").text(targetAud3.name)
-    $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "block")
+  } else {
+    targetAuds.forEach(function(aud, i) {
+        $(`#dsAudienceLegend${i+1} .ds-audience-legend-color`).css("background-color", DS_VIS_STORE.seriesColors[i])
+        $(`#dsAudienceLegend${i+1} .ds-audience-legend-label span`).text(aud.name)
+        $(`#dsAudienceLegend${i+1} .ds-audience-legend-color`).css("display", "block")
+        $(`#dsAudienceLegend${i+1} .ds-audience-legend-label span`).css("display", "block")
+    });
+    if (targetAuds.length < DS_VIS_STORE.seriesColors.length) {
+        let i = targetAuds.length;
+        while (i <= targetAuds.length) {
+            $(`#dsAudienceLegend${i+1} .ds-audience-legend-color`).css("display", "none")
+            $(`#dsAudienceLegend${i+1} .ds-audience-legend-label span`).css("display", "none")
+            i += 1;
+        }
+    }
   }
 
 }
@@ -2197,9 +2197,6 @@ function drawComparisonCharts2() {
     /* Remove any active tooltips */
     d3.selectAll(".ds-tooltip").remove();
 
-    /* View setup */
-    addAudienceLegend(compare=activeView);
-
     let targetAuds;
     if (activeView == 1) {
         targetAuds = [{
@@ -2243,6 +2240,9 @@ function drawComparisonCharts2() {
         },
       ]
     }
+
+    /* View setup */
+    addAudienceLegend(targetAuds);
 
     addAudienceTitle(targetAuds)
 
@@ -2428,7 +2428,7 @@ function drawComparisonCharts(activeView, targetAuds=null) {
     d3.selectAll(".ds-tooltip").remove();
 
     /* View setup */
-    addAudienceLegend(compare=activeView);
+    addAudienceLegend();
 
     //addAudienceTitle([targetAud, targetAud2, targetAud3]);
 
