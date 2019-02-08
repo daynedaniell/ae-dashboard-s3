@@ -292,13 +292,15 @@
 
               if (audIds.length == 1){
                 drawCharts();
+                //drawComparisonCharts2(activeView=1);
               } else if (audIds.length == 2) {
                   targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
                   targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
                   targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
                   targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
 
-                  drawComparisonCharts(activeView=2);
+                  //drawComparisonCharts(activeView=2);
+                  drawComparisonCharts2(activeView=2);
               } else if (audIds.length == 3) {
                   targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
                   targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
@@ -310,7 +312,8 @@
                   targetInterests3 = await d3.tsv("data/target_aud_" + audIds[2] + "/interests_target.tsv");
                   targetRetail3 = await d3.tsv("data/target_aud_" + audIds[2] + "/retail_target.tsv");
 
-                  drawComparisonCharts(activeView=3);
+                  //drawComparisonCharts(activeView=3);
+                  drawComparisonCharts2(activeView=3);
               }
 
             }

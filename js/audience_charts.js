@@ -1734,6 +1734,7 @@ function drawCharts() {
     let retailIndex0 = indexInterestsRetail("retail", targetRetail, randomRetail);
     let retailIndexTop0 = indexInterestsRetailTop5(retailIndex0);
 
+    // console.log(interestsIndex0)
     let indexes = {
       age: ageIndex0,
       gender: genderIndex0,
@@ -2203,6 +2204,356 @@ function updateCharts(attrName, attrValue) {
 /*******************************************************************************
 *** DRAW COMPARISON CHARTS *****************************************************
 *******************************************************************************/
+function drawComparisonCharts2(activeView=1) {
+    /* Remove any active tooltips */
+    d3.selectAll(".ds-tooltip").remove();
+
+    /* View setup */
+    addAudienceLegend(compare=activeView);
+
+    //addAudienceTitle([targetAud, targetAud2, targetAud3]);
+    let targetAuds;
+    if (activeView == 1) {
+        targetAuds = [{
+            name: targetAud.name,
+            demog: targetDemog,
+            interests: targetInterests,
+            retail: targetRetail
+        }]
+
+    } else if (activeView == 2) {
+        targetAuds = [{
+            name: targetAud.name,
+            demog: targetDemog,
+            interests: targetInterests,
+            retail: targetRetail
+        },
+        {
+            name: targetAud2.name,
+            demog: targetDemog2,
+            interests: targetInterests2,
+            retail: targetRetail2
+        }]
+    } else if (activeView == 3) {
+        targetAuds = [{
+            name: targetAud.name,
+            demog: targetDemog,
+            interests: targetInterests,
+            retail: targetRetail
+        },
+        {
+            name: targetAud2.name,
+            demog: targetDemog2,
+            interests: targetInterests2,
+            retail: targetRetail2
+        },
+        {
+            name: targetAud3.name,
+            demog: targetDemog3,
+            interests: targetInterests3,
+            retail: targetRetail3
+        },
+      ]
+    }
+
+    addAudienceTitle(targetAuds)
+
+    let indexCats = makeIndexCats();
+    let demogAttributesList = Object.keys(indexCats);
+
+    let audData = [];
+
+    /* Remove the current svg from each chart div */
+    demogAttributesList.forEach(function(demogAttributeListName) {
+      d3.select("#"+demogAttributeListName+"Chart svg").remove();
+    });
+    targetAuds.forEach(function(aud, i) {
+        let targetData = {
+            name: aud.name
+        }
+        demogAttributesList.forEach(function(demogAttributeListName) {
+            let index;
+            if (demogAttributeListName == "interests") {
+                index = indexInterestsRetail(demogAttributeListName, aud.interests, randomInterests);
+            } else if (demogAttributeListName == "retail") {
+                index = indexInterestsRetail(demogAttributeListName, aud.retail, randomRetail);
+            } else {
+                index = indexAttr(demogAttributeListName, indexCats[demogAttributeListName], aud.demog, randomDemog);
+            }
+
+            targetData[demogAttributeListName] = index;
+
+
+        });
+        targetData["ageMedianStat"] = getMedianCategory(targetData.age);
+        targetData["childrenPctStat"] = getNonZeroPct(targetData.children);
+        targetData["incomeMedianStat"] = getMedianCategory(targetData.income);
+
+        audData.push(targetData)
+    });
+
+    function getCompIndexes(attrName, targetNum) {
+
+        let indexes = [audData[targetNum][attrName]]
+        audData.forEach(function(aud, i) {
+            if (i != targetNum) {
+              indexes.push(aud[attrName])
+            }
+        })
+        console.log(indexes)
+        return indexes
+    };
+
+
+    audData.forEach(function(aud, i) {
+        if (audData.length > 1) {
+            aud["topStates"] = indexStatesTop5(...getCompIndexes("state", i));
+        }
+        aud["topInterests"] = indexInterestsRetailTop5(...getCompIndexes("interests", i));
+        aud["topRetail"] = indexInterestsRetailTop5(...getCompIndexes("retail", i));
+    });
+
+    console.log(audData);
+
+
+    // let audName1 = targetAud.name;
+    // let ageIndex1 = indexAttr("age", indexCats.age, targetDemog[i], randomDemog);
+    // let ageMedianCat1 = getMedianCategory(ageIndex1);
+    // let genderIndex1 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
+    // let ethnicityIndex1 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
+    // let maritalIndex1 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
+    // let childrenIndex1 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
+    // let childrenNonZeroPct1 = getNonZeroPct(childrenIndex1);
+    // let educationIndex1 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
+    // let incomeIndex1 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
+    // let incomeMedianCat1 = getMedianCategory(incomeIndex1);
+    // let stateIndex1 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
+    // let interestsIndex1 = indexInterestsRetail("interests", targetInterests, randomInterests);
+    // let retailIndex1 = indexInterestsRetail("retail", targetRetail, randomRetail);
+    //
+    // let audName2 = null;
+    // let ageIndex2 = null;
+    // let ageMedianCat2 = null;
+    // let genderIndex2 = null;
+    // let ethnicityIndex2 = null;
+    // let maritalIndex2 = null;
+    // let childrenIndex2 = null;
+    // let childrenNonZeroPct2 = null;
+    // let educationIndex2 = null;
+    // let incomeIndex2 = null;
+    // let incomeMedianCat2 = null;
+    // let stateIndex2 = null;
+    // let interestsIndex2 = null;
+    // let retailIndex2 = null;
+    //
+    // let audName3 = null;
+    // let ageIndex3 = null;
+    // let ageMedianCat3 = null;
+    // let genderIndex3 = null;
+    // let ethnicityIndex3 = null;
+    // let maritalIndex3 = null;
+    // let childrenIndex3 = null;
+    // let childrenNonZeroPct3 = null;
+    // let educationIndex3 = null;
+    // let incomeIndex3 = null;
+    // let incomeMedianCat3 = null;
+    // let stateIndex3 = null;
+    // let interestsIndex3 = null;
+    // let retailIndex3 = null;
+    //
+    // if (activeView > 1) {
+    //     audName2 = targetAud2.name;
+    //     ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
+    //     ageMedianCat2 = getMedianCategory(ageIndex2);
+    //     genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
+    //     ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
+    //     maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
+    //     childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
+    //     childrenNonZeroPct2 = getNonZeroPct(childrenIndex2);
+    //     educationIndex2 = indexAttr("education", indexCats.education, targetDemog2, randomDemog);
+    //     incomeIndex2 = indexAttr("income", indexCats.income, targetDemog2, randomDemog);
+    //     incomeMedianCat2 = getMedianCategory(incomeIndex2);
+    //     stateIndex2 = indexAttr("state", indexCats.state, targetDemog2, randomDemog);
+    //     interestsIndex2 = indexInterestsRetail("interests", targetInterests2, randomInterests);
+    //     retailIndex2 = indexInterestsRetail("retail", targetRetail2, randomRetail);
+    // }
+    //
+    // if (activeView > 2) {
+    //     audName3 = targetAud3.name;
+    //     ageIndex3 = indexAttr("age", indexCats.age, targetDemog3, randomDemog);
+    //     ageMedianCat3 = getMedianCategory(ageIndex3);
+    //     genderIndex3 = indexAttr("gender", indexCats.gender, targetDemog3, randomDemog);
+    //     ethnicityIndex3 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog3, randomDemog);
+    //     maritalIndex3 = indexAttr("marital", indexCats.marital, targetDemog3, randomDemog);
+    //     childrenIndex3 = indexAttr("children", indexCats.children, targetDemog3, randomDemog);
+    //     childrenNonZeroPct3 = getNonZeroPct(childrenIndex3);
+    //     educationIndex3 = indexAttr("education", indexCats.education, targetDemog3, randomDemog);
+    //     incomeIndex3 = indexAttr("income", indexCats.income, targetDemog3, randomDemog);
+    //     incomeMedianCat3 = getMedianCategory(incomeIndex3);
+    //     stateIndex3 = indexAttr("state", indexCats.state, targetDemog3, randomDemog);
+    //     interestsIndex3 = indexInterestsRetail("interests", targetInterests3, randomInterests);
+    //     retailIndex3 = indexInterestsRetail("retail", targetRetail3, randomRetail);
+    // }
+
+    // let stateIndexTop3 = [null,null];
+    // let interestsIndexTop3 = [null,null];
+    // let retailIndexTop3 = [null,null];
+    //
+    // let stateIndexTop1 = indexStatesTop5(stateIndex1, stateIndex2, stateIndex3);
+    // let stateIndexTop2 = indexStatesTop5(stateIndex2,stateIndex1, stateIndex3);
+    // if (activeView > 2) {
+    //     stateIndexTop3 = indexStatesTop5(stateIndex3,stateIndex1, stateIndex2);
+    //     interestsIndexTop3 = indexInterestsRetailTop5(interestsIndex3,interestsIndex1,interestsIndex2);
+    //     retailIndexTop3 = indexInterestsRetailTop5(retailIndex3, retailIndex1, retailIndex2);
+    // }
+    //
+    // let interestsIndexTop1 = indexInterestsRetailTop5(interestsIndex1,interestsIndex2,interestsIndex3);
+    // let interestsIndexTop2 = indexInterestsRetailTop5(interestsIndex2,interestsIndex1,interestsIndex3);
+    //
+    // let retailIndexTop1 = indexInterestsRetailTop5(retailIndex1, retailIndex2, retailIndex3);
+    // let retailIndexTop2 = indexInterestsRetailTop5(retailIndex2, retailIndex1, retailIndex3);
+
+    //
+    // let indexes1 = {
+    //   age: ageIndex1,
+    //   gender: genderIndex1,
+    //   ethnicity: ethnicityIndex1,
+    //   marital: maritalIndex1,
+    //   children: childrenIndex1,
+    //   education: educationIndex1,
+    //   income: incomeIndex1,
+    //   state: stateIndex1,
+    //   interests: interestsIndexTop1[0],
+    //   retail: retailIndexTop1[0]
+    // };
+    //
+    // let indexes2 = null;
+    // let indexes3 = null;
+    //
+    // if (activeView > 1) {
+    //     indexes2 = {
+    //       age: ageIndex2,
+    //       gender: genderIndex2,
+    //       ethnicity: ethnicityIndex2,
+    //       marital: maritalIndex2,
+    //       children: childrenIndex2,
+    //       education: educationIndex2,
+    //       income: incomeIndex2,
+    //       state: stateIndex2,
+    //       interests: interestsIndexTop2[0],
+    //       retail: retailIndexTop2[0]
+    //     };
+    // }
+    //
+    // if (activeView > 2) {
+    //     indexes3 = {
+    //       age: ageIndex3,
+    //       gender: genderIndex3,
+    //       ethnicity: ethnicityIndex3,
+    //       marital: maritalIndex3,
+    //       children: childrenIndex3,
+    //       education: educationIndex3,
+    //       income: incomeIndex3,
+    //       state: stateIndex3,
+    //       interests: interestsIndexTop3[0],
+    //       retail: retailIndexTop3[0]
+    //     };
+    // }
+    let indexes = []
+    audData.forEach(function(aud) {
+      indexes.push({
+        age: aud.age,
+        gender: aud.gender,
+        ethnicity: aud.ethnicity,
+        children: aud.children,
+        education: aud.education,
+        income: aud.income,
+        state: aud.state,
+        interests: aud.topInterests[0],
+        retail: aud.topRetail[0]
+      });
+    });
+    console.log(indexes)
+    dnaChart(indexes,barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
+    //
+    // var myPlot = document.getElementById('waveChart');
+    // myPlot.on('plotly_click', function(data){
+    //   let d = data.points[0].hovertext.split("<br>")[2].trim().split(":");
+    //   d[0] = d[0][0].toLowerCase() + d[0].slice(1)
+    //   let mapping = {
+    //     "number of children": "children",
+    //     "age": "age",
+    //     "ethnicity": "ethnicity",
+    //     "gender": "gender",
+    //     "marital status": "marital",
+    //     "education": "education",
+    //     "income": "income",
+    //     "location": "state",
+    //     "interests": "interests",
+    //     "retail": "retail"
+    //   }
+    //   document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
+    //   $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+    //   setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
+    // });
+    function getIndexArray(attrName) {
+        let indexes = [];
+        audData.forEach(function(aud) {
+          indexes.push(aud[attrName])
+        });
+        return indexes
+    }
+    drawBarChart("age", getIndexArray("age"));
+    //addSeriesStats("age", ageMedianCat1, ageMedianCat2, ageMedianCat3, prefix = "Median: ", suffix = " years");
+    drawBarChart("ethnicity", getIndexArray("ethnicity"));
+    drawBarChart("children", getIndexArray("children"));
+    // addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
+    drawBarChart("education", getIndexArray("education"));
+    drawBarChart("income", getIndexArray("income"), width=610);
+    // addSeriesStats("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
+    hBarBalanceChart("gender", getIndexArray("gender"));
+    hBarBalanceChart("marital", getIndexArray("marital"));
+
+    function getTopIndexArray(attrName, audNum) {
+        let indexes = [audData[audNum][attrName]];
+
+        audData.forEach(function(aud, i) {
+          console.log(aud)
+          if (audNum != i) {
+              indexes.push(aud[attrName])
+          }
+        });
+        console.log(indexes)
+        return indexes
+    }
+
+    (DS_VIS_STORE["stateActive"][0] === 1)
+      ? hBarChart("state", 630, getTopIndexArray("topStates", 0),hasToggle=true) : (DS_VIS_STORE["stateActive"][0] === 2)
+      ? hBarChart("state", 630,getTopIndexArray("topStates", 1),hasToggle=true) :
+      hBarChart("state", 630,getTopIndexArray("topStates", 2),hasToggle=true);
+
+    (DS_VIS_STORE["interestsActive"][0] === 1)
+      ? hBarChart("interests", 630, getTopIndexArray("topInterests", 0),hasToggle=true) : (DS_VIS_STORE["interestsActive"][0] === 2)
+      ? hBarChart("interests", 630,getTopIndexArray("topInterests", 1),hasToggle=true) :
+      hBarChart("interests", 630,getTopIndexArray("topInterests", 2),hasToggle=true);
+
+    (DS_VIS_STORE["retailActive"][0] === 1)
+      ? hBarChart("retail", 630, getTopIndexArray("topRetail", 0),hasToggle=true) : (DS_VIS_STORE["retailActive"][0] === 2)
+      ? hBarChart("retail", 630, getTopIndexArray("topRetail", 1),hasToggle=true) :
+      hBarChart("retail", 630,getTopIndexArray("topRetail", 2),hasToggle=true);
+
+    $( ".tile" ).removeClass("selected-tile");
+
+    bubbleChart('interests', getIndexArray("interests"));
+    bubbleChart('retail', getIndexArray("retail"));
+    
+    addBubbleHighlighting('interests');
+    addBubbleHighlighting('retail');
+
+}
+
+
+
 function drawComparisonCharts(activeView, targetAuds=null) {
     /* Remove any active tooltips */
     d3.selectAll(".ds-tooltip").remove();
@@ -2430,9 +2781,6 @@ function drawComparisonCharts(activeView, targetAuds=null) {
     addBubbleHighlighting('retail');
 
 }
-
-
-
 
 
 
