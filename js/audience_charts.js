@@ -1547,6 +1547,9 @@ function addSeriesStats(attrName, statsArray, prefix='', suffix='') {
   let statString = "<div class='ds-stats'><span class='ds-stats-name'>" + prefix + "</span>"
   statsArray.forEach(function(stat, i) {
       statString += `<span class='ds-stat-${i+1}' style='color: ${DS_VIS_STORE.seriesColors[i]}'>${stat} ${suffix}</span>`
+      if (i != statsArray.length - 1) {
+          statString += "<span style='float:left;margin:0 3px;'> | </span>"
+      }
   });
   statString += "</div>"
 
@@ -2269,9 +2272,9 @@ function drawComparisonCharts2(activeView=1) {
 
 
         });
-        targetData["ageMedianStat"] = getMedianCategory(targetData.age);
-        targetData["childrenPctStat"] = getNonZeroPct(targetData.children);
-        targetData["incomeMedianStat"] = getMedianCategory(targetData.income);
+        targetData["ageStat"] = getMedianCategory(targetData.age);
+        targetData["childrenStat"] = getNonZeroPct(targetData.children);
+        targetData["incomeStat"] = getMedianCategory(targetData.income);
 
         audData.push(targetData)
     });
@@ -2483,18 +2486,25 @@ function drawComparisonCharts2(activeView=1) {
     function getIndexArray(attrName) {
         let indexes = [];
         audData.forEach(function(aud) {
-          indexes.push(aud[attrName])
+            indexes.push(aud[attrName])
         });
         return indexes
     }
+    function getStatArray(attrName) {
+        let stats = [];
+        audData.forEach(function(aud) {
+            stats.push(aud[attrName+"Stat"])
+        })
+        return stats
+    }
     drawBarChart("age", getIndexArray("age"));
-    //addSeriesStats("age", [ageMedianCat1, ageMedianCat2, ageMedianCat3], prefix = "Median: ", suffix = " years");
+    addSeriesStats("age", getStatArray("age"), prefix = "Median: ", suffix = " years");
     drawBarChart("ethnicity", getIndexArray("ethnicity"));
     drawBarChart("children", getIndexArray("children"));
-    // addSeriesStats("children", childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3, prefix = "Child Present: ", suffix = "%");
+    addSeriesStats("children", getStatArray("children"), prefix = "Child Present: ", suffix = "%");
     drawBarChart("education", getIndexArray("education"));
     drawBarChart("income", getIndexArray("income"), width=610);
-    // addSeriesStats("income", incomeMedianCat1, incomeMedianCat2, incomeMedianCat3, prefix = "Median: ");
+    addSeriesStats("income", getStatArray("income"), prefix = "Median: ");
     hBarBalanceChart("gender", getIndexArray("gender"));
     hBarBalanceChart("marital", getIndexArray("marital"));
 
