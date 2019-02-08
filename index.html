@@ -291,7 +291,8 @@
               targetRetail = await d3.tsv("data/target_aud_" + audIds[0] + "/retail_target.tsv");
 
               if (audIds.length == 1){
-                drawCharts();
+                //drawCharts();
+                drawComparisonCharts2();
                 //drawComparisonCharts2(activeView=1);
               } else if (audIds.length == 2) {
                   targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
