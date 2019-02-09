@@ -307,12 +307,8 @@ function drawBarChart(attrName, indexArray, innerWidth=400) {
      isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
      if (isSelected){
        DS_VIS_STORE["activeFilter"] = null;
-       if (numSeries == 1) {
-          //drawCharts();
-          drawComparisonCharts2();
-       } else {
-          drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
-       }
+       drawCharts(targetAuds);
+
        showActiveFilter(DS_VIS_STORE);
      } else {
        if (numSeries == 1) {
@@ -447,8 +443,7 @@ function pieChart(attrName, indexDs){
                      ._groups[0][0];
       if (isSelected){
         DS_VIS_STORE["activeFilter"] = null;
-        // drawCharts();
-        drawComparisonCharts2();
+        drawCharts(targetAuds);
         showActiveFilter(DS_VIS_STORE);
       } else {
         updateCharts(attrName, d.data.attrib_value);
@@ -1165,7 +1160,7 @@ function hBarBalanceChart(attrName, indexArray, innerWidth=400) {
        isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
        if (isSelected){
          DS_VIS_STORE["activeFilter"] = null;
-         drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
+         drawCharts(targetAuds);
          showActiveFilter(DS_VIS_STORE);
        } else {
          updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
@@ -1588,7 +1583,6 @@ function addAudienceLegend(targetAuds) {
         }
     }
   }
-
 }
 
 /*******************************************************************************
@@ -1614,15 +1608,7 @@ function showActiveFilter(store) {
 
 function removeActiveFilter(store) {
   store["activeFilter"] = null;
-  if (store["activeView"] == 1) {
-    // drawCharts();
-    drawComparisonCharts2();
-  } else if (store["activeView"] == 2) {
-    drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
-  } else if (store["activeView"] == 3) {
-    drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
-  }
-
+  drawCharts(targetAuds);
 }
 
 /* Remove filter by clicking remove icon in sidebar */
@@ -1686,109 +1672,6 @@ function addAudienceTitle(targetAuds) {
 
     $( ".ds-audience-title" )
         .append(titleString);
-}
-
-/*******************************************************************************
-*** DRAW ALL CHARTS ************************************************************
-*******************************************************************************/
-function drawCharts() {
-
-    d3.selectAll('.ds-tooltip').remove()
-    // add the audience title
-    addAudienceTitle([targetAud]);
-    addAudienceLegend();
-    showActiveFilter(DS_VIS_STORE);
-
-    let indexCats = makeIndexCats();
-    let demogAttributesList = Object.keys(indexCats);
-
-    demogAttributesList.forEach(function(demogAttributeListName) {
-      d3.select("#"+demogAttributeListName+"Chart svg").remove();
-    });
-
-    let ageIndex0 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
-    let ageMedianCat = getMedianCategory(ageIndex0);
-    let genderIndex0 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
-    let ethnicityIndex0 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
-    let maritalIndex0 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
-    let childrenIndex0 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
-    let childrenNonZeroPct = getNonZeroPct(childrenIndex0);
-    let educationIndex0 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
-    let incomeIndex0 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
-    let incomeMedianCat = getMedianCategory(incomeIndex0);
-    let stateIndex0 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
-    let interestsIndex0 = indexInterestsRetail("interests", targetInterests, randomInterests);
-    let interestsIndexBubble0 = indexInterestsRetail("interests", targetInterests, randomInterests, bubble=true);
-    let interestsIndexTop0 = indexInterestsRetailTop5(interestsIndex0);
-    let retailIndex0 = indexInterestsRetail("retail", targetRetail, randomRetail);
-    let retailIndexTop0 = indexInterestsRetailTop5(retailIndex0);
-
-    let indexes = {
-      age: ageIndex0,
-      gender: genderIndex0,
-      ethnicity: ethnicityIndex0,
-      marital: maritalIndex0,
-      children: childrenIndex0,
-      education: educationIndex0,
-      income: incomeIndex0,
-      state: stateIndex0,
-      interests: interestsIndexTop0,
-      retail: retailIndexTop0
-    };
-
-    //dnaChart(indexes);
-    dnaChart([indexes], barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
-
-    /* Take user to corresponding chart on bar click */
-    let myPlot = document.getElementById('waveChart');
-    myPlot.on('plotly_click', function(data){
-      let d = data.points[0].hovertext.split("<br>")[2].trim().split(":");
-      d[0] = d[0][0].toLowerCase() + d[0].slice(1)
-      let mapping = {
-        "number of children": "children",
-        "age": "age",
-        "ethnicity": "ethnicity",
-        "gender": "gender",
-        "marital status": "marital",
-        "education": "education",
-        "income": "income",
-        "location": "state",
-        "interests": "interests",
-        "retail": "retail"
-      }
-      document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
-      $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
-      setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-    });
-
-    //barChart("age", ageIndex0);
-    //drawBarChart("age", ageIndex0);
-    drawBarChart("age", [ageIndex0]);
-    addSeriesStats("age", [ageMedianCat], prefix = "Median: ", suffix = " years");
-    drawBarChart("ethnicity", [ethnicityIndex0]);
-    drawBarChart("children", [childrenIndex0]);
-    addSeriesStats("children", [childrenNonZeroPct], prefix = "Child present: ", suffix = "%");
-    drawBarChart("education", [educationIndex0]);
-    drawBarChart("income", [incomeIndex0], width=610);
-    addSeriesStats("income", [incomeMedianCat], prefix = "Median: ");
-    pieChart("gender", genderIndex0);
-    pieChart("marital", maritalIndex0);
-    mapChart("state", stateIndex0);
-    hBarChart("interests", 630, [interestsIndexTop0]);
-    //hBarChart("interests", interestsIndexTop0);
-    hBarChart("retail", 630, [retailIndexTop0]);
-
-    $( ".tile" ).removeClass("selected-tile");
-
-    bubbleChart('interests', [interestsIndexBubble0]);
-    //bubbleChart('interests', interestsIndexBubble0);
-    bubbleChart('retail', [retailIndex0]);
-
-    addBubbleHighlighting('interests');
-    addBubbleHighlighting('retail');
-
-
-
 }
 
 
@@ -1871,13 +1754,7 @@ function addBubbleHighlighting(attrName) {
 *** RESET CHARTS ***************************************************************
 *******************************************************************************/
 function resetCharts() {
-    if (DS_VIS_STORE["activeView"] == 1) {
-        drawCharts();
-    } else if (DS_VIS_STORE["activeView"] == 2) {
-        drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
-    } else if (DS_VIS_STORE["activeView"] == 1) {
-        drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
-    }
+    drawCharts(targetAuds);
 }
 
 /* Reset dashboard charts if filter was left on when switching to bubble */
@@ -2190,56 +2067,13 @@ function updateCharts(attrName, attrValue) {
 
 
 /*******************************************************************************
-*** DRAW COMPARISON CHARTS *****************************************************
+*** DRAW ALL CHARTS ************************************************************
 *******************************************************************************/
-function drawComparisonCharts2() {
+function drawCharts(targetAuds) {
     let activeView = DS_VIS_STORE.activeView;
+    showActiveFilter(DS_VIS_STORE);
     /* Remove any active tooltips */
     d3.selectAll(".ds-tooltip").remove();
-
-    let targetAuds;
-    if (activeView == 1) {
-        targetAuds = [{
-            name: targetAud.name,
-            demog: targetDemog,
-            interests: targetInterests,
-            retail: targetRetail
-        }]
-
-    } else if (activeView == 2) {
-        targetAuds = [{
-            name: targetAud.name,
-            demog: targetDemog,
-            interests: targetInterests,
-            retail: targetRetail
-        },
-        {
-            name: targetAud2.name,
-            demog: targetDemog2,
-            interests: targetInterests2,
-            retail: targetRetail2
-        }]
-    } else if (activeView == 3) {
-        targetAuds = [{
-            name: targetAud.name,
-            demog: targetDemog,
-            interests: targetInterests,
-            retail: targetRetail
-        },
-        {
-            name: targetAud2.name,
-            demog: targetDemog2,
-            interests: targetInterests2,
-            retail: targetRetail2
-        },
-        {
-            name: targetAud3.name,
-            demog: targetDemog3,
-            interests: targetInterests3,
-            retail: targetRetail3
-        },
-      ]
-    }
 
     /* View setup */
     addAudienceLegend(targetAuds);
@@ -2420,237 +2254,6 @@ function drawComparisonCharts2() {
     addBubbleHighlighting('retail');
 
 }
-
-
-
-function drawComparisonCharts(activeView, targetAuds=null) {
-    /* Remove any active tooltips */
-    d3.selectAll(".ds-tooltip").remove();
-
-    /* View setup */
-    addAudienceLegend();
-
-    //addAudienceTitle([targetAud, targetAud2, targetAud3]);
-
-    if (activeView == 1) {
-        addAudienceTitles([targetAud]);
-    } else if (activeView == 2) {
-        addAudienceTitle([targetAud, targetAud2]);
-    } else if (activeView == 3) {
-        addAudienceTitle([targetAud, targetAud2, targetAud3]);
-    }
-
-    let indexCats = makeIndexCats();
-    let demogAttributesList = Object.keys(indexCats);
-
-    /* Remove the current svg from each chart div */
-    demogAttributesList.forEach(function(demogAttributeListName) {
-      d3.select("#"+demogAttributeListName+"Chart svg").remove();
-    });
-
-    let audName1 = targetAud.name;
-    let ageIndex1 = indexAttr("age", indexCats.age, targetDemog, randomDemog);
-    let ageMedianCat1 = getMedianCategory(ageIndex1);
-    let genderIndex1 = indexAttr("gender", indexCats.gender, targetDemog, randomDemog);
-    let ethnicityIndex1 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog, randomDemog);
-    let maritalIndex1 = indexAttr("marital", indexCats.marital, targetDemog, randomDemog);
-    let childrenIndex1 = indexAttr("children", indexCats.children, targetDemog, randomDemog);
-    let childrenNonZeroPct1 = getNonZeroPct(childrenIndex1);
-    let educationIndex1 = indexAttr("education", indexCats.education, targetDemog, randomDemog);
-    let incomeIndex1 = indexAttr("income", indexCats.income, targetDemog, randomDemog);
-    let incomeMedianCat1 = getMedianCategory(incomeIndex1);
-    let stateIndex1 = indexAttr("state", indexCats.state, targetDemog, randomDemog);
-    let interestsIndex1 = indexInterestsRetail("interests", targetInterests, randomInterests);
-    let retailIndex1 = indexInterestsRetail("retail", targetRetail, randomRetail);
-
-    let audName2 = null;
-    let ageIndex2 = null;
-    let ageMedianCat2 = null;
-    let genderIndex2 = null;
-    let ethnicityIndex2 = null;
-    let maritalIndex2 = null;
-    let childrenIndex2 = null;
-    let childrenNonZeroPct2 = null;
-    let educationIndex2 = null;
-    let incomeIndex2 = null;
-    let incomeMedianCat2 = null;
-    let stateIndex2 = null;
-    let interestsIndex2 = null;
-    let retailIndex2 = null;
-
-    let audName3 = null;
-    let ageIndex3 = null;
-    let ageMedianCat3 = null;
-    let genderIndex3 = null;
-    let ethnicityIndex3 = null;
-    let maritalIndex3 = null;
-    let childrenIndex3 = null;
-    let childrenNonZeroPct3 = null;
-    let educationIndex3 = null;
-    let incomeIndex3 = null;
-    let incomeMedianCat3 = null;
-    let stateIndex3 = null;
-    let interestsIndex3 = null;
-    let retailIndex3 = null;
-
-    if (activeView > 1) {
-        audName2 = targetAud2.name;
-        ageIndex2 = indexAttr("age", indexCats.age, targetDemog2, randomDemog);
-        ageMedianCat2 = getMedianCategory(ageIndex2);
-        genderIndex2 = indexAttr("gender", indexCats.gender, targetDemog2, randomDemog);
-        ethnicityIndex2 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog2, randomDemog);
-        maritalIndex2 = indexAttr("marital", indexCats.marital, targetDemog2, randomDemog);
-        childrenIndex2 = indexAttr("children", indexCats.children, targetDemog2, randomDemog);
-        childrenNonZeroPct2 = getNonZeroPct(childrenIndex2);
-        educationIndex2 = indexAttr("education", indexCats.education, targetDemog2, randomDemog);
-        incomeIndex2 = indexAttr("income", indexCats.income, targetDemog2, randomDemog);
-        incomeMedianCat2 = getMedianCategory(incomeIndex2);
-        stateIndex2 = indexAttr("state", indexCats.state, targetDemog2, randomDemog);
-        interestsIndex2 = indexInterestsRetail("interests", targetInterests2, randomInterests);
-        retailIndex2 = indexInterestsRetail("retail", targetRetail2, randomRetail);
-    }
-
-    if (activeView > 2) {
-        audName3 = targetAud3.name;
-        ageIndex3 = indexAttr("age", indexCats.age, targetDemog3, randomDemog);
-        ageMedianCat3 = getMedianCategory(ageIndex3);
-        genderIndex3 = indexAttr("gender", indexCats.gender, targetDemog3, randomDemog);
-        ethnicityIndex3 = indexAttr("ethnicity", indexCats.ethnicity, targetDemog3, randomDemog);
-        maritalIndex3 = indexAttr("marital", indexCats.marital, targetDemog3, randomDemog);
-        childrenIndex3 = indexAttr("children", indexCats.children, targetDemog3, randomDemog);
-        childrenNonZeroPct3 = getNonZeroPct(childrenIndex3);
-        educationIndex3 = indexAttr("education", indexCats.education, targetDemog3, randomDemog);
-        incomeIndex3 = indexAttr("income", indexCats.income, targetDemog3, randomDemog);
-        incomeMedianCat3 = getMedianCategory(incomeIndex3);
-        stateIndex3 = indexAttr("state", indexCats.state, targetDemog3, randomDemog);
-        interestsIndex3 = indexInterestsRetail("interests", targetInterests3, randomInterests);
-        retailIndex3 = indexInterestsRetail("retail", targetRetail3, randomRetail);
-    }
-
-    let stateIndexTop3 = [null,null];
-    let interestsIndexTop3 = [null,null];
-    let retailIndexTop3 = [null,null];
-
-    let stateIndexTop1 = indexStatesTop5(stateIndex1, stateIndex2, stateIndex3);
-    let stateIndexTop2 = indexStatesTop5(stateIndex2,stateIndex1, stateIndex3);
-    if (activeView > 2) {
-        stateIndexTop3 = indexStatesTop5(stateIndex3,stateIndex1, stateIndex2);
-        interestsIndexTop3 = indexInterestsRetailTop5(interestsIndex3,interestsIndex1,interestsIndex2);
-        retailIndexTop3 = indexInterestsRetailTop5(retailIndex3, retailIndex1, retailIndex2);
-    }
-
-    let interestsIndexTop1 = indexInterestsRetailTop5(interestsIndex1,interestsIndex2,interestsIndex3);
-    let interestsIndexTop2 = indexInterestsRetailTop5(interestsIndex2,interestsIndex1,interestsIndex3);
-
-    let retailIndexTop1 = indexInterestsRetailTop5(retailIndex1, retailIndex2, retailIndex3);
-    let retailIndexTop2 = indexInterestsRetailTop5(retailIndex2, retailIndex1, retailIndex3);
-
-
-    let indexes1 = {
-      age: ageIndex1,
-      gender: genderIndex1,
-      ethnicity: ethnicityIndex1,
-      marital: maritalIndex1,
-      children: childrenIndex1,
-      education: educationIndex1,
-      income: incomeIndex1,
-      state: stateIndex1,
-      interests: interestsIndexTop1[0],
-      retail: retailIndexTop1[0]
-    };
-
-    let indexes2 = null;
-    let indexes3 = null;
-
-    if (activeView > 1) {
-        indexes2 = {
-          age: ageIndex2,
-          gender: genderIndex2,
-          ethnicity: ethnicityIndex2,
-          marital: maritalIndex2,
-          children: childrenIndex2,
-          education: educationIndex2,
-          income: incomeIndex2,
-          state: stateIndex2,
-          interests: interestsIndexTop2[0],
-          retail: retailIndexTop2[0]
-        };
-    }
-
-    if (activeView > 2) {
-        indexes3 = {
-          age: ageIndex3,
-          gender: genderIndex3,
-          ethnicity: ethnicityIndex3,
-          marital: maritalIndex3,
-          children: childrenIndex3,
-          education: educationIndex3,
-          income: incomeIndex3,
-          state: stateIndex3,
-          interests: interestsIndexTop3[0],
-          retail: retailIndexTop3[0]
-        };
-    }
-
-    dnaChart([indexes1, indexes2, indexes3],barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
-
-    var myPlot = document.getElementById('waveChart');
-    myPlot.on('plotly_click', function(data){
-      let d = data.points[0].hovertext.split("<br>")[2].trim().split(":");
-      d[0] = d[0][0].toLowerCase() + d[0].slice(1)
-      let mapping = {
-        "number of children": "children",
-        "age": "age",
-        "ethnicity": "ethnicity",
-        "gender": "gender",
-        "marital status": "marital",
-        "education": "education",
-        "income": "income",
-        "location": "state",
-        "interests": "interests",
-        "retail": "retail"
-      }
-      document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
-      $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
-      setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
-    });
-
-    drawBarChart("age", [ageIndex1, ageIndex2, ageIndex3]);
-    addSeriesStats("age", [ageMedianCat1, ageMedianCat2, ageMedianCat3], prefix = "Median: ", suffix = " years");
-    drawBarChart("ethnicity", [ethnicityIndex1, ethnicityIndex2, ethnicityIndex3]);
-    drawBarChart("children", [childrenIndex1, childrenIndex2, childrenIndex3]);
-    addSeriesStats("children", [childrenNonZeroPct1, childrenNonZeroPct2, childrenNonZeroPct3], prefix = "Child Present: ", suffix = "%");
-    drawBarChart("education", [educationIndex1, educationIndex2, educationIndex3]);
-    drawBarChart("income", [incomeIndex1, incomeIndex2, incomeIndex3], width=610);
-    addSeriesStats("income", [incomeMedianCat1, incomeMedianCat2, incomeMedianCat3], prefix = "Median: ");
-    hBarBalanceChart("gender", [genderIndex1, genderIndex2, genderIndex3]);
-    hBarBalanceChart("marital", [maritalIndex1, maritalIndex2, maritalIndex3]);
-
-    (DS_VIS_STORE["stateActive"][0] === 1)
-      ? hBarChart("state", 630, [stateIndexTop1, stateIndexTop2, stateIndexTop3],hasToggle=true) : (DS_VIS_STORE["stateActive"][0] === 2)
-      ? hBarChart("state", 630,[stateIndexTop2, stateIndexTop1, stateIndexTop3],hasToggle=true) :
-      hBarChart("state", 630,[stateIndexTop3, stateIndexTop1, stateIndexTop2],hasToggle=true);
-
-    (DS_VIS_STORE["interestsActive"][0] === 1)
-      ? hBarChart("interests", 630, [interestsIndexTop1, interestsIndexTop2, interestsIndexTop3],hasToggle=true) : (DS_VIS_STORE["interestsActive"][0] === 2)
-      ? hBarChart("interests", 630,[interestsIndexTop2, interestsIndexTop1, interestsIndexTop3],hasToggle=true) :
-      hBarChart("interests", 630,[interestsIndexTop3, interestsIndexTop1, interestsIndexTop2],hasToggle=true);
-
-    (DS_VIS_STORE["retailActive"][0] === 1)
-      ? hBarChart("retail", 630, [retailIndexTop1, retailIndexTop2, retailIndexTop3],hasToggle=true) : (DS_VIS_STORE["retailActive"][0] === 2)
-      ? hBarChart("retail", 630,[retailIndexTop2, retailIndexTop1, retailIndexTop3],hasToggle=true) :
-      hBarChart("retail", 630,[retailIndexTop3, retailIndexTop1, retailIndexTop2],hasToggle=true);
-
-    $( ".tile" ).removeClass("selected-tile");
-
-    bubbleChart('interests', [interestsIndex1, interestsIndex2, interestsIndex3]);
-    bubbleChart('retail', [retailIndex1, retailIndex2, retailIndex3]);
-
-    addBubbleHighlighting('interests');
-    addBubbleHighlighting('retail');
-
-}
-
 
 
 
