@@ -131,6 +131,24 @@ function addTooltip(tooltipNode, htmlString, xOffset, yOffset) {
 }
 
 
+function applyFilter(attrName, attrValue, shapeString, targetAuds) {
+    /* update all charts when user selects a single bar in this chart */
+    /* if clicking on already selected item, then reset the charts */
+    isSelected = d3.select(".selected-tile #"+attrName+"Chart " + shapeString + "[attrib-value='"+attrValue+"'][selected='yes']")._groups[0][0];
+    //isSelected = d3.select(".selected-tile #"+attrName+"Chart path[attrib-value="+d.data.attrib_value+"][selected='yes']")
+    //                ._groups[0][0];
+    if (isSelected){
+        DS_VIS_STORE["activeFilter"] = null;
+        drawCharts(targetAuds);
+
+        showActiveFilter(DS_VIS_STORE);
+    } else {
+        updateCharts(attrName, attrValue, targetAuds);
+        showActiveFilter(DS_VIS_STORE);
+    }
+}
+
+
 //d3.select(window).on('resize', console.log(window.innerWidth))
 
 /*******************************************************************************
@@ -325,18 +343,7 @@ function drawBarChart(attrName, indexArray, innerWidth=400) {
 
 
   function up(d, i) {
-     /* update all charts when user selects a single bar in this chart */
-     /* if clicking on already selected item, then reset the charts */
-     isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
-     if (isSelected){
-       DS_VIS_STORE["activeFilter"] = null;
-       drawCharts(targetAuds);
-
-       showActiveFilter(DS_VIS_STORE);
-     } else {
-       updateCharts(attrName, d.attrib_value, targetAuds);
-       showActiveFilter(DS_VIS_STORE);
-     }
+      applyFilter(attrName, d.attrib_value, "rect", targetAuds);
   }
 
 
@@ -437,18 +444,8 @@ function pieChart(attrName, indexDs){
       .call(wrap, 1, "|", type = 'pie');
 
 
-  function up(d, i) {
-      /* update all charts when user selects piece of the pie chart */
-      /* if clicking on already selected item, then reset the charts */
-      isSelected = d3.select(".selected-tile #"+attrName+"Chart path[attrib-value="+d.data.attrib_value+"][selected='yes']")
-                     ._groups[0][0];
-      if (isSelected){
-        DS_VIS_STORE["activeFilter"] = null;
-        drawCharts(targetAuds);
-        showActiveFilter(DS_VIS_STORE);
-      } else {
-        updateCharts(attrName, d.data.attrib_value, targetAuds);
-      }
+  function up(d) {
+      applyFilter(attrName, d.data.attrib_value, "path", targetAuds);
   }
 }
 
@@ -1063,21 +1060,8 @@ function hBarBalanceChart(attrName, indexArray, innerWidth=400) {
     svg.selectAll(".domain").remove();
 
 
-    function up(d, i) {
-
-       tooltip.style('opacity', 0);
-
-       /* update all charts when user selects a single bar in this chart */
-       /* if clicking on already selected item, then reset the charts */
-       isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
-       if (isSelected){
-         DS_VIS_STORE["activeFilter"] = null;
-         drawCharts(targetAuds);
-         showActiveFilter(DS_VIS_STORE);
-       } else {
-         updateCharts(attrName, d.attrib_value, targetAuds);
-         showActiveFilter(DS_VIS_STORE);
-       }
+    function up(d) {
+       applyFilter(attrName, d.attrib_value, "rect", targetAuds);
     }
 
     function mouseover(d) {
