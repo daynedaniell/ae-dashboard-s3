@@ -108,6 +108,29 @@ function wrap(text, width, sep = " ", type = "pie") {
     });
 }
 
+/*******************************************************************************
+*** Tooltips *******************************************************************
+*******************************************************************************/
+function addTooltip(tooltipNode, htmlString, xOffset, yOffset) {
+    let e = window.event;
+    var x = e.clientX,
+        y = e.clientY;
+
+    let tipY = (y + yOffset) + 'px';
+    let tipX = (x + xOffset) + 'px';
+
+    // Move tooltip to the left of the cursor if it gets too close to right edge
+    if  (window.innerWidth - x < 200) {
+      tipX = (x - 130) + 'px';
+    }
+
+    tooltipNode.html(htmlString)
+        .style("opacity", .9)
+        .style('left', `${(tipX)}`)
+        .style('top', `${(tipY)}`);
+}
+
+
 //d3.select(window).on('resize', console.log(window.innerWidth))
 
 /*******************************************************************************
@@ -318,32 +341,14 @@ function drawBarChart(attrName, indexArray, innerWidth=400) {
 
 
   function mouseover(d) {
-    // Add tooltip based on position of the mouse
-    let e = window.event;
-    var x = e.clientX,
-        y = e.clientY;
-
-    let tipY = (y - 40) + 'px';
-    let tipX = (x) + 'px';
-
-    // Move tooltip to the left of the cursor if it gets too close to right edge
-    if  (window.innerWidth - x < 200) {
-      tipX = (x - 130) + 'px';
-    }
-
-    tooltip.transition()
-        .duration(200)
-    tooltip.html("Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-        .style("opacity", .9)
-        .style('left', `${(tipX)}`)
-        .style('top', `${(tipY)}`);
+    let htmlString = "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index
+    addTooltip(tooltip, htmlString, 0, -40);
   }
 
   function mouseup(d) {
     // Hide tooltip when the mouse leaves the element
     tooltip.style('opacity', 0);
   }
-
 
 }
 
@@ -523,22 +528,8 @@ function mapChart(attrName, indexDs) {
 
 
   function mouseover(d) {
-      // Add tooltip based on position of the mouse
-      let e = window.event;
-      var x = e.clientX,
-          y = e.clientY;
-      let tipY = (y - 60) + 'px';
-      let tipX = (x) + 'px';
-
-      // Move tooltip to the left of the cursor if it gets too close to right edge
-      if  (window.innerWidth - x < 200) {
-        tipX = (x - 130) + 'px';
-      }
-
-      tooltip.html(d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index)
-          .style("opacity", .9)
-          .style('left', `${(tipX)}`)
-          .style('top', `${(tipY)}`);
+      let htmlString = d.properties.name + "<br/>" + "Target Pct: " + d.properties.target_pct + "%<br/>"  + "Index: " + d.properties.index
+      addTooltip(tooltip, htmlString, 0, -60);
   }
 
   function mouseout() {
@@ -898,23 +889,8 @@ function hBarChart(attrName, innerWidth, indexArray, hasToggle=false) {
 
 
   function mouseover(d) {
-      // Add tooltip based on position of the mouse
-      let e = window.event;
-      var x = e.clientX,
-          y = e.clientY;
-
-      let tipY = (y - 80) + 'px';
-      let tipX = (x) + 'px';
-
-      // Move tooltip to the left of the cursor if it gets too close to right edge
-      if  (window.innerWidth - x < 200) {
-        tipX = (x - 130) + 'px';
-      }
-
-      tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-          .style("opacity", .9)
-          .style('left', `${(tipX)}`)
-          .style('top', `${(tipY)}`);
+      let htmlString = d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index
+      addTooltip(tooltip, htmlString, 0, -90);
   }
 
   function mouseout() {
@@ -1105,25 +1081,8 @@ function hBarBalanceChart(attrName, indexArray, innerWidth=400) {
     }
 
     function mouseover(d) {
-      // Add tooltip based on position of the mouse
-      let e = window.event;
-      let x = e.clientX,
-          y = e.clientY;
-
-      let tipY = (y - 60) + 'px';
-      let tipX = (x) + 'px';
-
-      // Move tooltip to the left of the cursor if it gets too close to right edge
-      if  (window.innerWidth - x < 200) {
-        tipX = (x - 130) + 'px';
-      }
-
-      tooltip.transition()
-          .duration(200)
-      tooltip.html(d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-          .style("opacity", .9)
-          .style('left', `${(tipX)}`)
-          .style('top', `${(tipY)}`);
+      let htmlString = d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index
+      addTooltip(tooltip, htmlString, 0, -60);
     }
 
     function mouseup(d) {
@@ -1720,8 +1679,6 @@ $("#dashboard-tab").click(function() {
     DS_VIS_STORE.activeTab = 'dashboard';
     showActiveFilter(DS_VIS_STORE);
 });
-
-
 
 
 
