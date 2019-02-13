@@ -359,6 +359,7 @@ function indexStatesTop5(indexDs1, indexDs2, indexDs3 = null) {
                           compare2_index: triple ? comp2[0].index : null
                        }
                      });
+
   let c = a.map(function(d) {
       return {
         attrib_value: d.attrib_value,
