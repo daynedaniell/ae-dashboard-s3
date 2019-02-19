@@ -265,8 +265,6 @@
     <!-- Data science viz functions -->
     <script src="js/audience_data_processing.js"></script>
     <script src="js/audience_charts.js"></script>
-    <script src="js/audience_comparison_charts.js"></script>
-
 
     <script>
     /*
@@ -285,33 +283,47 @@
 
               statesPaths = await d3.json("js/us-states.json");
 
+              targetAuds = [];
               targetAud = await d3.json("data/target_aud_" + audIds[0] + "/audience.json");
               targetDemog = await d3.tsv("data/target_aud_" + audIds[0] + "/demographics_target.tsv");
               targetInterests = await d3.tsv("data/target_aud_" + audIds[0] + "/interests_target.tsv");
               targetRetail = await d3.tsv("data/target_aud_" + audIds[0] + "/retail_target.tsv");
+              targetAuds.push({
+                  name: targetAud.name,
+                  demog: targetDemog,
+                  interests: targetInterests,
+                  retail: targetRetail
+              });
 
-              if (audIds.length == 1){
-                drawCharts();
-              } else if (audIds.length == 2) {
+              if (audIds.length > 1) {
                   targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
                   targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
                   targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
                   targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
 
-                  drawComparisonCharts(activeView=2);
-              } else if (audIds.length == 3) {
-                  targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
-                  targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
-                  targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
-                  targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
+                  targetAuds.push({
+                      name: targetAud2.name,
+                      demog: targetDemog2,
+                      interests: targetInterests2,
+                      retail: targetRetail2
+                  });
+              }
 
+              if (audIds.length > 2) {
                   targetAud3 = await d3.json("data/target_aud_" + audIds[2] + "/audience.json");
                   targetDemog3 = await d3.tsv("data/target_aud_" + audIds[2] + "/demographics_target.tsv");
                   targetInterests3 = await d3.tsv("data/target_aud_" + audIds[2] + "/interests_target.tsv");
                   targetRetail3 = await d3.tsv("data/target_aud_" + audIds[2] + "/retail_target.tsv");
 
-                  drawComparisonCharts(activeView=3);
+                  targetAuds.push({
+                      name: targetAud3.name,
+                      demog: targetDemog3,
+                      interests: targetInterests3,
+                      retail: targetRetail3
+                  });
+
               }
+              drawCharts(targetAuds);
 
             }
         }

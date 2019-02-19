@@ -16,656 +16,902 @@
 /*******************************************************************************
 *** Main Toggle Function *******************************************************
 *******************************************************************************/
-function toggleFromStore(store, key) {
-    /* Takes in the store and a key and switches position of elements in an array */
-    tmp1 = store[key][0]
-    tmp2 = store[key][1]
-    store[key][0] = tmp2
-    store[key][1] = tmp1
-}
+// function toggleFromStore(store, key) {
+//     /* Takes in the store and a key and switches position of elements in an array */
+//     tmp1 = store[key][0]
+//     tmp2 = store[key][1]
+//     store[key][0] = tmp2
+//     store[key][1] = tmp1
+// }
 
 
 
 /*******************************************************************************
 *** Multi-Series Balance CHART *************************************************
 *******************************************************************************/
-function hBarBalanceChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
-    let numSeries = DS_VIS_STORE.activeView;
+// function hBarBalanceChart2(attrName, indexArray, innerWidth=400) {
+//     let numSeries = DS_VIS_STORE.activeView;
+//
+//     let basics = barChartSetup(innerWidth);
+//     let margin = basics.margin,
+//         width = basics.width,
+//         height = basics.height,
+//         barPadding = basics.barPadding * 100;
+//
+//     margin.left = 20;
+//     margin.right = 20;
+//
+//     let xScale = d3.scaleLinear()
+//                     .domain([0, 100])
+//                     .range([0, width]);
+//
+//     let yScale = d3.scaleLinear()
+//                     .domain([0, 2])
+//                     .range([0, height/3]);
+//
+//     let svg = d3.select("#"+attrName+"Chart")
+//                 .append("svg")
+//                 .attr("width", width + margin.left + margin.right)
+//                 .attr("height", height + margin.top + margin.bottom)
+//                 .attr("id", attrName+"ChartPlot")
+//                 .attr("class", "ds-chart-base");
+//
+//     const tooltip = d3.select("#"+attrName+"Chart").append("div")
+//         .attr("class", "ds-tooltip")
+//         .style("opacity", 0);
+//
+//     svg.append("g")
+//         .attr("class", "ds-grid")
+//         .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+//
+//     let plot = svg.append("g")
+//                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+//
+//     /* Temporary pseudo-hardcoded barHeight */
+//     let barHeight = 120 / numSeries + ((numSeries - 2) * 10);
+//     let paddingBottom = 120 / numSeries + ((numSeries - 2) * 30);
+//     let barSpacing = 40;
+//     let topPos = height - ((barHeight + barSpacing) * numSeries + paddingBottom);
+//     let lineStroke = 'steelblue';
+//     let lineExtend = 12;
+//     let lineStrokeWidth = 8;
+//
+//     /* Attach index data and add the chart elems */
+//     function addPBar(data, series, color) {
+//         plot.selectAll("rect.series" + (series+1))
+//             .data(data)
+//             .enter()
+//             .append("rect")
+//             .attr("class", "series"+(series+1))
+//             .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
+//             .attr("width", function(d) { return xScale(d.target_pct)})
+//             .attr("y", function() {
+//                 // if (series == "series1") {
+//                     return topPos + barSpacing * i + barHeight * i
+//                 // } else if (series == "series2") {
+//                 //     return topPos + barSpacing + barHeight
+//                 // } else if (series == "series3") {
+//                 //     return topPos + barSpacing * 2 + barHeight*2
+//                 // }
+//             })
+//             .attr("height", function(d) { return barHeight ; })
+//             .attr("fill", color)
+//             .attr("cursor", "pointer")
+//             .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+//             .on("mouseover", mouseover)
+//             .on("mouseout", mouseup)
+//             .on("mousemove", mouseover)
+//             .attr("target-pct", function(d) { return d.target_pct; })
+//             .attr("index", function(d) { return d.index; })
+//             .on("click", up);
+//     }
+//     indexArray.forEach(function(aud, i) {
+//       addPBar(aud, i, DS_VIS_STORE.colorSeries[i])
+//     })
+//     // addPBar(indexDs1, "series1", colorSeries1)
+//     // addPBar(indexDs2, "series2", colorSeries2)
+//     // if (numSeries > 2) {
+//     //   addPBar(indexDs3, "series3", colorSeries3)
+//     // }
+//
+//     function addPbarText(data, series) {
+//         plot.selectAll("text."+series)
+//             .data(data)
+//             .enter()
+//             .append("text")
+//             .attr("class", series)
+//             .text(function(d) {
+//                  return formatAsInteger(d3.format("d")(d.index));
+//             })
+//             .attr("text-anchor", "middle")
+//             /* Set x position to be inside corresponding edge of the bar */
+//             .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
+//             .attr("y", function() {
+//                 if (series == "series1") {
+//                   return topPos + 3 + (barHeight/2)
+//                 } else if (series == "series2") {
+//                   return topPos + barSpacing + 3 + barHeight + (barHeight/2)
+//                 } else if (series == "series3") {
+//                   return topPos + barSpacing * 2 + 3 + barHeight*2 + (barHeight/2)
+//                 }
+//             })
+//             .attr("class", "yAxis")
+//             .attr("font-family", "sans-serif")
+//             .attr("fill", "white")
+//             .on("mouseover", mouseover)
+//             .on("mouseout", mouseup)
+//             .on("mousemove", mouseover);
+//     }
+//
+//     addPbarText(indexDs1, "series1");
+//     addPbarText(indexDs2, "series2");
+//     if (numSeries > 2) {
+//         addPbarText(indexDs3, "series3");
+//     }
+//
+//     plot.selectAll("text.labels")
+//         .data(indexDs1)
+//         .enter()
+//         .append("text")
+//         .attr("class", "ds-binary-label")
+//         .text(function(d) {
+//              return d.attrib_value;
+//         })
+//         .attr("text-anchor", function(d, i) { return i ? "end" : "start";})
+//         .attr("x",  function(d, i) { return i ? xScale(100 ) : 0})
+//         .attr("y", function(d) { return topPos - 30})
+//         .attr("class", "yAxis")
+//         .attr("font-family", "sans-serif")
+//         .attr("font-size", "20px")
+//         .attr("fill", "#505050")
+//         .on("mouseover", mouseover)
+//         .on("mouseout", mouseup)
+//         .on("mousemove", mouseover);
+//
+//
+//     /* Draw in the indicator line marking the appropriate position on the bars */
+//
+//     var lineData1 = [{"x": xScale(indexDs1[0].target_pct), "y": topPos - lineExtend},
+//                     {"x": xScale(indexDs1[0].target_pct), "y": topPos + barHeight + lineExtend}]
+//
+//     var line1 = d3.line()
+//                  .x(function(d) {return d.x})
+//                  .y(function(d) {return d.y});
+//
+//     var path1 = plot.append('path').attr('d', line1(lineData1)).attr("stroke", lineStroke)
+//         .attr("stroke-width", lineStrokeWidth)
+//         .attr("fill", "none");
+//
+//     var lineData2 = [{"x": xScale(indexDs2[0].target_pct), "y": topPos + barSpacing + barHeight - lineExtend},
+//                     {"x": xScale(indexDs2[0].target_pct), "y": topPos + barSpacing + barHeight + barHeight + lineExtend}]
+//
+//     var line2 = d3.line()
+//                  .x(function(d) {return d.x})
+//                  .y(function(d) {return d.y});
+//
+//     var path2 = plot.append('path').attr('d', line2(lineData2)).attr("stroke", lineStroke)
+//         .attr("stroke-width", lineStrokeWidth)
+//         .attr("fill", "none");
+//
+//     if (numSeries > 2) {
+//         var lineData3 = [{"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 - lineExtend},
+//                         {"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 + barHeight + lineExtend}]
+//
+//         var line3 = d3.line()
+//                      .x(function(d) {return d.x})
+//                      .y(function(d) {return d.y});
+//
+//         var path3 = plot.append('path').attr('d', line3(lineData3)).attr("stroke", lineStroke)
+//             .attr("stroke-width", lineStrokeWidth)
+//             .attr("fill", "none");
+//     }
+//
+//     /* Add x-axis */
+//     let xAxis = d3.axisBottom(xScale)
+//         .tickSize(0)
+//         .tickValues(d3.range(0, 101, 25))
+//         .tickFormat(function (d) { return d + "%" });
+//
+//     let xAxisElement = svg.append("g")
+//         .attr("class", "xAxis")
+//         .attr("transform", "translate(" + (margin.left) + "," + (margin.top + height - 1) + ")")
+//         .call(xAxis);
+//
+//     /* Remove the axis line */
+//     svg.selectAll(".domain").remove();
+//
+//
+//     function up(d, i) {
+//
+//        tooltip.style('opacity', 0);
+//
+//        /* update all charts when user selects a single bar in this chart */
+//        /* if clicking on already selected item, then reset the charts */
+//        isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
+//        if (isSelected){
+//          DS_VIS_STORE["activeFilter"] = null;
+//          if (numSeries == 2) {
+//             drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
+//          } else if (numSeries == 3) {
+//             drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
+//          }
+//          showActiveFilter(DS_VIS_STORE);
+//        } else {
+//          if (numSeries == 2) {
+//             updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
+//          } else if (numSeries == 3) {
+//             updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
+//          }
+//          showActiveFilter(DS_VIS_STORE);
+//        }
+//     }
+//
+//     function mouseover(d) {
+//       // Add tooltip based on position of the mouse
+//       let e = window.event;
+//       let x = e.clientX,
+//           y = e.clientY;
+//
+//       let tipY = (y - 60) + 'px';
+//       let tipX = (x) + 'px';
+//
+//       // Move tooltip to the left of the cursor if it gets too close to right edge
+//       if  (window.innerWidth - x < 200) {
+//         tipX = (x - 130) + 'px';
+//       }
+//
+//       tooltip.transition()
+//           .duration(200)
+//       tooltip.html(d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+//           .style("opacity", .9)
+//           .style('left', `${(tipX)}`)
+//           .style('top', `${(tipY)}`);
+//     }
+//
+//     function mouseup(d) {
+//       // Hide tooltip when the mouse leaves the element
+//       tooltip.style('opacity', 0);
+//     }
+//
+// }
 
-    let innerWidth = 400;
-
-    let basics = barChartSetup(innerWidth);
-    let margin = basics.margin,
-        width = basics.width,
-        height = basics.height,
-        barPadding = basics.barPadding * 100;
-
-    margin.left = 20;
-    margin.right = 20;
-
-    let xScale = d3.scaleLinear()
-                    .domain([0, 100])
-                    .range([0, width]);
-
-    let yScale = d3.scaleLinear()
-                    .domain([0, 2])
-                    .range([0, height/3]);
-
-    let svg = d3.select("#"+attrName+"Chart")
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .attr("id", attrName+"ChartPlot")
-                .attr("class", "ds-chart-base");
-
-    const tooltip = d3.select("#"+attrName+"Chart").append("div")
-        .attr("class", "ds-tooltip")
-        .style("opacity", 0);
-
-    svg.append("g")
-        .attr("class", "ds-grid")
-        .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
-
-    let plot = svg.append("g")
-                  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    let barHeight = numSeries == 3 ? 50 : 60;
-    let paddingBottom = numSeries == 3 ? 30 : 60;
-    let barSpacing = 40;
-    let topPos = height - ((barHeight + barSpacing) * numSeries + paddingBottom);
-    let lineStroke = 'steelblue';
-    let lineExtend = 12;
-    let lineStrokeWidth = 8;
-
-    /* Attach index data and add the chart elems */
-    function addPBar(data, series, color) {
-        plot.selectAll("rect." + series)
-            .data(data)
-            .enter()
-            .append("rect")
-            .attr("class", series)
-            .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
-            .attr("width", function(d) { return xScale(d.target_pct)})
-            .attr("y", function() {
-                if (series == "series1") {
-                    return topPos
-                } else if (series == "series2") {
-                    return topPos + barSpacing + barHeight
-                } else if (series == "series3") {
-                    return topPos + barSpacing * 2 + barHeight*2
-                }
-            })
-            .attr("height", function(d) { return barHeight ; })
-            .attr("fill", color)
-            .attr("cursor", "pointer")
-            .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-            .on("mouseover", mouseover)
-            .on("mouseout", mouseup)
-            .on("mousemove", mouseover)
-            .attr("target-pct", function(d) { return d.target_pct; })
-            .attr("index", function(d) { return d.index; })
-            .on("click", up);
-    }
-    addPBar(indexDs1, "series1", colorSeries1)
-    addPBar(indexDs2, "series2", colorSeries2)
-    if (numSeries > 2) {
-      addPBar(indexDs3, "series3", colorSeries3)
-    }
-
-    function addPbarText(data, series) {
-        plot.selectAll("text."+series)
-            .data(data)
-            .enter()
-            .append("text")
-            .attr("class", series)
-            .text(function(d) {
-                 return formatAsInteger(d3.format("d")(d.index));
-            })
-            .attr("text-anchor", "middle")
-            /* Set x position to be inside corresponding edge of the bar */
-            .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
-            .attr("y", function() {
-                if (series == "series1") {
-                  return topPos + 3 + (barHeight/2)
-                } else if (series == "series2") {
-                  return topPos + barSpacing + 3 + barHeight + (barHeight/2)
-                } else if (series == "series3") {
-                  return topPos + barSpacing * 2 + 3 + barHeight*2 + (barHeight/2)
-                }
-            })
-            .attr("class", "yAxis")
-            .attr("font-family", "sans-serif")
-            .attr("fill", "white")
-            .on("mouseover", mouseover)
-            .on("mouseout", mouseup)
-            .on("mousemove", mouseover);
-    }
-
-    addPbarText(indexDs1, "series1");
-    addPbarText(indexDs2, "series2");
-    if (numSeries > 2) {
-        addPbarText(indexDs3, "series3");
-    }
-
-    plot.selectAll("text.labels")
-        .data(indexDs1)
-        .enter()
-        .append("text")
-        .attr("class", "ds-binary-label")
-        .text(function(d) {
-             return d.attrib_value;
-        })
-        .attr("text-anchor", function(d, i) { return i ? "end" : "start";})
-        .attr("x",  function(d, i) { return i ? xScale(100 ) : 0})
-        .attr("y", function(d) { return topPos - 30})
-        .attr("class", "yAxis")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "20px")
-        .attr("fill", "#505050")
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseup)
-        .on("mousemove", mouseover);
-
-
-    /* Draw in the indicator line marking the appropriate position on the bars */
-
-    var lineData1 = [{"x": xScale(indexDs1[0].target_pct), "y": topPos - lineExtend},
-                    {"x": xScale(indexDs1[0].target_pct), "y": topPos + barHeight + lineExtend}]
-
-    var line1 = d3.line()
-                 .x(function(d) {return d.x})
-                 .y(function(d) {return d.y});
-
-    var path1 = plot.append('path').attr('d', line1(lineData1)).attr("stroke", lineStroke)
-        .attr("stroke-width", lineStrokeWidth)
-        .attr("fill", "none");
-
-    var lineData2 = [{"x": xScale(indexDs2[0].target_pct), "y": topPos + barSpacing + barHeight - lineExtend},
-                    {"x": xScale(indexDs2[0].target_pct), "y": topPos + barSpacing + barHeight + barHeight + lineExtend}]
-
-    var line2 = d3.line()
-                 .x(function(d) {return d.x})
-                 .y(function(d) {return d.y});
-
-    var path2 = plot.append('path').attr('d', line2(lineData2)).attr("stroke", lineStroke)
-        .attr("stroke-width", lineStrokeWidth)
-        .attr("fill", "none");
-
-    if (numSeries > 2) {
-        var lineData3 = [{"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 - lineExtend},
-                        {"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 + barHeight + lineExtend}]
-
-        var line3 = d3.line()
-                     .x(function(d) {return d.x})
-                     .y(function(d) {return d.y});
-
-        var path3 = plot.append('path').attr('d', line3(lineData3)).attr("stroke", lineStroke)
-            .attr("stroke-width", lineStrokeWidth)
-            .attr("fill", "none");
-    }
-
-    /* Add x-axis */
-    let xAxis = d3.axisBottom(xScale)
-        .tickSize(0)
-        .tickValues(d3.range(0, 101, 25))
-        .tickFormat(function (d) { return d + "%" });
-
-    let xAxisElement = svg.append("g")
-        .attr("class", "xAxis")
-        .attr("transform", "translate(" + (margin.left) + "," + (margin.top + height - 1) + ")")
-        .call(xAxis);
-
-    /* Remove the axis line */
-    svg.selectAll(".domain").remove();
-
-
-    function up(d, i) {
-
-       tooltip.style('opacity', 0);
-
-       /* update all charts when user selects a single bar in this chart */
-       /* if clicking on already selected item, then reset the charts */
-       isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
-       if (isSelected){
-         DS_VIS_STORE["activeFilter"] = null;
-         if (numSeries == 2) {
-            drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
-         } else if (numSeries == 3) {
-            drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
-         }
-         showActiveFilter(DS_VIS_STORE);
-       } else {
-         if (numSeries == 2) {
-            updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
-         } else if (numSeries == 3) {
-            updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
-         }
-         showActiveFilter(DS_VIS_STORE);
-       }
-    }
-
-    function mouseover(d) {
-      // Add tooltip based on position of the mouse
-      let e = window.event;
-      let x = e.clientX,
-          y = e.clientY;
-
-      let tipY = (y - 60) + 'px';
-      let tipX = (x) + 'px';
-
-      // Move tooltip to the left of the cursor if it gets too close to right edge
-      if  (window.innerWidth - x < 200) {
-        tipX = (x - 130) + 'px';
-      }
-
-      tooltip.transition()
-          .duration(200)
-      tooltip.html(d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-          .style("opacity", .9)
-          .style('left', `${(tipX)}`)
-          .style('top', `${(tipY)}`);
-    }
-
-    function mouseup(d) {
-      // Hide tooltip when the mouse leaves the element
-      tooltip.style('opacity', 0);
-    }
-
-}
+// function hBarBalanceChartOld(attrName, indexDs1, indexDs2, indexDs3 = null) {
+//     let numSeries = DS_VIS_STORE.activeView;
+//
+//     let innerWidth = 400;
+//
+//     let basics = barChartSetup(innerWidth);
+//     let margin = basics.margin,
+//         width = basics.width,
+//         height = basics.height,
+//         barPadding = basics.barPadding * 100;
+//
+//     margin.left = 20;
+//     margin.right = 20;
+//
+//     let xScale = d3.scaleLinear()
+//                     .domain([0, 100])
+//                     .range([0, width]);
+//
+//     let yScale = d3.scaleLinear()
+//                     .domain([0, 2])
+//                     .range([0, height/3]);
+//
+//     let svg = d3.select("#"+attrName+"Chart")
+//                 .append("svg")
+//                 .attr("width", width + margin.left + margin.right)
+//                 .attr("height", height + margin.top + margin.bottom)
+//                 .attr("id", attrName+"ChartPlot")
+//                 .attr("class", "ds-chart-base");
+//
+//     const tooltip = d3.select("#"+attrName+"Chart").append("div")
+//         .attr("class", "ds-tooltip")
+//         .style("opacity", 0);
+//
+//     svg.append("g")
+//         .attr("class", "ds-grid")
+//         .attr("transform", "translate(" + (margin.left - 1) + "," + (margin.top - 1) + ")")
+//
+//     let plot = svg.append("g")
+//                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+//
+//     let barHeight = numSeries == 3 ? 50 : 60;
+//     let paddingBottom = numSeries == 3 ? 30 : 60;
+//     let barSpacing = 40;
+//     let topPos = height - ((barHeight + barSpacing) * numSeries + paddingBottom);
+//     let lineStroke = 'steelblue';
+//     let lineExtend = 12;
+//     let lineStrokeWidth = 8;
+//
+//     /* Attach index data and add the chart elems */
+//     function addPBar(data, series, color) {
+//         plot.selectAll("rect." + series)
+//             .data(data)
+//             .enter()
+//             .append("rect")
+//             .attr("class", series)
+//             .attr("x", function(d, i) { return i ? xScale(100 - d.target_pct) : 0})
+//             .attr("width", function(d) { return xScale(d.target_pct)})
+//             .attr("y", function() {
+//                 if (series == "series1") {
+//                     return topPos
+//                 } else if (series == "series2") {
+//                     return topPos + barSpacing + barHeight
+//                 } else if (series == "series3") {
+//                     return topPos + barSpacing * 2 + barHeight*2
+//                 }
+//             })
+//             .attr("height", function(d) { return barHeight ; })
+//             .attr("fill", color)
+//             .attr("cursor", "pointer")
+//             .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+//             .on("mouseover", mouseover)
+//             .on("mouseout", mouseup)
+//             .on("mousemove", mouseover)
+//             .attr("target-pct", function(d) { return d.target_pct; })
+//             .attr("index", function(d) { return d.index; })
+//             .on("click", up);
+//     }
+//     addPBar(indexDs1, "series1", colorSeries1)
+//     addPBar(indexDs2, "series2", colorSeries2)
+//     if (numSeries > 2) {
+//       addPBar(indexDs3, "series3", colorSeries3)
+//     }
+//
+//     function addPbarText(data, series) {
+//         plot.selectAll("text."+series)
+//             .data(data)
+//             .enter()
+//             .append("text")
+//             .attr("class", series)
+//             .text(function(d) {
+//                  return formatAsInteger(d3.format("d")(d.index));
+//             })
+//             .attr("text-anchor", "middle")
+//             /* Set x position to be inside corresponding edge of the bar */
+//             .attr("x",  function(d, i) { return i ? xScale(100 ) - 20 : 14})
+//             .attr("y", function() {
+//                 if (series == "series1") {
+//                   return topPos + 3 + (barHeight/2)
+//                 } else if (series == "series2") {
+//                   return topPos + barSpacing + 3 + barHeight + (barHeight/2)
+//                 } else if (series == "series3") {
+//                   return topPos + barSpacing * 2 + 3 + barHeight*2 + (barHeight/2)
+//                 }
+//             })
+//             .attr("class", "yAxis")
+//             .attr("font-family", "sans-serif")
+//             .attr("fill", "white")
+//             .on("mouseover", mouseover)
+//             .on("mouseout", mouseup)
+//             .on("mousemove", mouseover);
+//     }
+//
+//     addPbarText(indexDs1, "series1");
+//     addPbarText(indexDs2, "series2");
+//     if (numSeries > 2) {
+//         addPbarText(indexDs3, "series3");
+//     }
+//
+//     plot.selectAll("text.labels")
+//         .data(indexDs1)
+//         .enter()
+//         .append("text")
+//         .attr("class", "ds-binary-label")
+//         .text(function(d) {
+//              return d.attrib_value;
+//         })
+//         .attr("text-anchor", function(d, i) { return i ? "end" : "start";})
+//         .attr("x",  function(d, i) { return i ? xScale(100 ) : 0})
+//         .attr("y", function(d) { return topPos - 30})
+//         .attr("class", "yAxis")
+//         .attr("font-family", "sans-serif")
+//         .attr("font-size", "20px")
+//         .attr("fill", "#505050")
+//         .on("mouseover", mouseover)
+//         .on("mouseout", mouseup)
+//         .on("mousemove", mouseover);
+//
+//
+//     /* Draw in the indicator line marking the appropriate position on the bars */
+//
+//     var lineData1 = [{"x": xScale(indexDs1[0].target_pct), "y": topPos - lineExtend},
+//                     {"x": xScale(indexDs1[0].target_pct), "y": topPos + barHeight + lineExtend}]
+//
+//     var line1 = d3.line()
+//                  .x(function(d) {return d.x})
+//                  .y(function(d) {return d.y});
+//
+//     var path1 = plot.append('path').attr('d', line1(lineData1)).attr("stroke", lineStroke)
+//         .attr("stroke-width", lineStrokeWidth)
+//         .attr("fill", "none");
+//
+//     var lineData2 = [{"x": xScale(indexDs2[0].target_pct), "y": topPos + barSpacing + barHeight - lineExtend},
+//                     {"x": xScale(indexDs2[0].target_pct), "y": topPos + barSpacing + barHeight + barHeight + lineExtend}]
+//
+//     var line2 = d3.line()
+//                  .x(function(d) {return d.x})
+//                  .y(function(d) {return d.y});
+//
+//     var path2 = plot.append('path').attr('d', line2(lineData2)).attr("stroke", lineStroke)
+//         .attr("stroke-width", lineStrokeWidth)
+//         .attr("fill", "none");
+//
+//     if (numSeries > 2) {
+//         var lineData3 = [{"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 - lineExtend},
+//                         {"x": xScale(indexDs3[0].target_pct), "y": topPos + barSpacing*2 + barHeight*2 + barHeight + lineExtend}]
+//
+//         var line3 = d3.line()
+//                      .x(function(d) {return d.x})
+//                      .y(function(d) {return d.y});
+//
+//         var path3 = plot.append('path').attr('d', line3(lineData3)).attr("stroke", lineStroke)
+//             .attr("stroke-width", lineStrokeWidth)
+//             .attr("fill", "none");
+//     }
+//
+//     /* Add x-axis */
+//     let xAxis = d3.axisBottom(xScale)
+//         .tickSize(0)
+//         .tickValues(d3.range(0, 101, 25))
+//         .tickFormat(function (d) { return d + "%" });
+//
+//     let xAxisElement = svg.append("g")
+//         .attr("class", "xAxis")
+//         .attr("transform", "translate(" + (margin.left) + "," + (margin.top + height - 1) + ")")
+//         .call(xAxis);
+//
+//     /* Remove the axis line */
+//     svg.selectAll(".domain").remove();
+//
+//
+//     function up(d, i) {
+//
+//        tooltip.style('opacity', 0);
+//
+//        /* update all charts when user selects a single bar in this chart */
+//        /* if clicking on already selected item, then reset the charts */
+//        isSelected = d3.select(".selected-tile #"+attrName+"Chart rect[attrib-value='"+d.attrib_value+"'][selected='yes']")._groups[0][0];
+//        if (isSelected){
+//          DS_VIS_STORE["activeFilter"] = null;
+//          if (numSeries == 2) {
+//             drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
+//          } else if (numSeries == 3) {
+//             drawComparisonCharts(activeView=DS_VIS_STORE.activeView);
+//          }
+//          showActiveFilter(DS_VIS_STORE);
+//        } else {
+//          if (numSeries == 2) {
+//             updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
+//          } else if (numSeries == 3) {
+//             updateComparisonCharts(attrName, d.attrib_value, numSeries=DS_VIS_STORE.activeView);
+//          }
+//          showActiveFilter(DS_VIS_STORE);
+//        }
+//     }
+//
+//     function mouseover(d) {
+//       // Add tooltip based on position of the mouse
+//       let e = window.event;
+//       let x = e.clientX,
+//           y = e.clientY;
+//
+//       let tipY = (y - 60) + 'px';
+//       let tipX = (x) + 'px';
+//
+//       // Move tooltip to the left of the cursor if it gets too close to right edge
+//       if  (window.innerWidth - x < 200) {
+//         tipX = (x - 130) + 'px';
+//       }
+//
+//       tooltip.transition()
+//           .duration(200)
+//       tooltip.html(d.attrib_value + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+//           .style("opacity", .9)
+//           .style('left', `${(tipX)}`)
+//           .style('top', `${(tipY)}`);
+//     }
+//
+//     function mouseup(d) {
+//       // Hide tooltip when the mouse leaves the element
+//       tooltip.style('opacity', 0);
+//     }
+//
+// }
 
 
 /*******************************************************************************
 *** Multi-SERIES HORIZONTAL BAR CHART ******************************************
 *******************************************************************************/
-function hBarMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
-    let numSeries = DS_VIS_STORE.activeView;
-
-    index1 = indexDs1[0];
-    index2 = indexDs1[1];
-    index3 = indexDs1[2];
-
-    let localColor1 = DS_VIS_STORE[attrName+"Colors"][0],
-        localColor2 = DS_VIS_STORE[attrName+"Colors"][1],
-        localColor3 = DS_VIS_STORE[attrName+"Colors"][2];
-
-    let innerWidth = 700;
-
-    let basics = barChartSetup(innerWidth);
-    let margin = basics.margin,
-      width = basics.width,
-      height = basics.height,
-    		barPadding = basics.barPadding * 2;
-
-      margin.left = 0;
-
-    let maxAttrLength = width / 2.25;
-
-  	let yScale = d3.scaleLinear()
-                   .domain([0, index1.length])
-  					       .range([0, height]);
-
-    let xScale = d3.scaleLinear()
-  		             .domain([0, 100])
-  		             .range([0, width - maxAttrLength]);
-
-    /* Create SVG element */
-    let svg = d3.select("#"+attrName+"Chart")
-                .append("svg")
-  		          .attr("width", width + margin.left + margin.right + 15) // Adjusted to fit axis
-                .attr("height", height + margin.top + margin.bottom)
-                .attr("id", attrName+"ChartPlot")
-                .attr("class", "ds-chart-base");
-
-    const tooltip = d3.select("#"+attrName+"Chart")
-        .append("div")
-        .attr("class", "ds-tooltip")
-        .style("opacity", 0);
-
-    /* Add horizontal grid lines */
-    function make_x_gridlines() {
-        return d3.axisBottom(xScale)
-            .ticks(5)
-    }
-
-    svg.append("g")
-        .attr("class", "ds-grid")
-        .attr("transform", "translate(" + (margin.left + maxAttrLength - 1) + "," + (margin.top + height - 1) + ")")
-        .call(make_x_gridlines()
-            .tickSize(-height)
-            .tickFormat("")
-        )
-
-
-    let plot = svg.append("g")
-  		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                  .attr("id", "#"+attrName+"Plot");
-
-    let barHeight = height / ( index1.length * numSeries ) - barPadding;
-
-    /* Attach index data and add the chart elems */
-    /* 1st series */
-    function drawHbar(data, series, color) {
-        plot.selectAll("rect."+series)
-            .data(data)
-      		  .enter()
-      		  .append("rect")
-            .attr("class", series)
-      			.attr("x", function(d) {
-                 return maxAttrLength;
-      			})
-      		  .attr("height", barHeight)
-      			.attr("y", function(d, i) {
-                if (series == "series1") {
-                    return yScale(i);
-                } else if (series == "series2") {
-                    return yScale(i) + barHeight;
-                } else if (series == "series3") {
-                    return yScale(i) + barHeight*2;
-                }
-      			})
-      			.attr("width", function(d) {
-      			    return xScale(d.target_pct);
-      			})
-      			.attr("fill", function(d) {
-                return color;
-            })
-            .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-            .on("mouseover", mouseover)
-            .on("mouseout", mouseout)
-            .on("mousemove", mouseover)
-            .attr("attrib-category", function(d) { return d.category; })
-            .attr("target-pct", function(d) { return d.target_pct; })
-            .attr("index", function(d) { return d.index; })
-            ;
-    }
-
-    drawHbar(index1, "series1", localColor1);
-    if (numSeries > 1) {
-        drawHbar(index2, "series2", localColor2);
-    }
-    if (numSeries > 2) {
-        drawHbar(index3, "series3", localColor3);
-    }
-
-    /* Set x position and color dependent on size of bar */
-    function textInside(d) { return xScale(d.target_pct) > 30};
-
-    /* Add y labels to plot */
-    function addHbarText(data, series) {
-        plot.selectAll("text."+series)
-      	    .data(data)
-      	    .enter()
-      	    .append("text")
-            .attr("class", series)
-      	    .text(function(d) {
-      			     return formatAsInteger(d3.format("d")(d.index));
-      	    })
-      	    .attr("text-anchor", "middle")
-      	    /* Set y position to the top edge of each bar plus half the bar width */
-      	    .attr("y", function(d, i) {
-                if (series == "series1") {
-                    return (i * numSeries * (barHeight + barPadding) + barHeight / 2 + barPadding * 2);
-                } else if (series == "series2") {
-                    return (i * numSeries * (barHeight + barPadding) + barHeight * 1.5 + barPadding * 2);
-                } else if (series == "series3") {
-                    return (i * numSeries * (barHeight + barPadding) + barHeight + barHeight * 1.5 + barPadding * 2);
-                }
-
-      	    })
-      	    .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
-      	    .attr("font-family", "sans-serif")
-      	    .attr("font-size", "11px")
-      	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
-            .on("mouseover", mouseover)
-            .on("mouseout", mouseout)
-            .on("mousemove", mouseover);
-    }
-
-    addHbarText(index1, "series1");
-    if (numSeries > 1) {
-      addHbarText(index2, "series2");
-    }
-    if (numSeries > 2) {
-      addHbarText(index3, "series3")
-    }
-
-    /* Add y labels to chart */
-  	let yLabels = svg.append("g")
-  		               .attr("transform", "translate(" + margin.left + "," + (margin.top)  + ")");
-
-    /* Series 1 */
-  	yLabels.selectAll("text.yAxis.series1")
-  		     .data(index1)
-  		     .enter()
-  		     .append("text")
-           .attr("class", "series1")
-  		     .text(function(d) {
-             let yLabel = d.attrib_value;
-             if (d.attrib_value.length > 26) {
-               yLabel = yLabel.slice(0, 26) + "...";
-             }
-             return yLabel;
-           })
-           .attr("fill", function(d) {
-               return localColor1;
-           })
-  		     .attr("text-anchor", "start")
-           .attr("y", function(d, i) {
-                return (i * numSeries * (barHeight + barPadding) + barHeight * numSeries/2 + barPadding * 2);
-           })
-  		     .attr("x", 66)
-  		     .attr("class", "yAxis");
-
-    /* Add ranking y labels to chart */
-  	yLabels.selectAll("text.ranking")
-  		     .data([ 1, 2, 3, 4, 5])
-  		     .enter()
-  		     .append("text")
-           .attr("class", "ranking")
-  		     .text(function(d) {
-             return "#" + d;
-           })
-           .attr("fill", "#81838c")
-     	     .attr("font-size", "36px")
-  		     .attr("text-anchor", "start")
-  			   /* Set y position to the top edge of each bar plus half the bar width */
-  				 .attr("y", function(d, i) {
-  				       return (i * numSeries * (barHeight + barPadding) + barHeight * numSeries/2 + barPadding + 10);
-  				 })
-  		     .attr("x", 0)
-  		     .attr("class", "yAxis");
-
-
-    /* Add x-axis */
-    let xAxis = d3.axisBottom(xScale)
-        .tickSize(0)
-        .ticks(5)
-        .tickFormat(function (d) { return d + "%" });
-
-    let xAxisElement = svg.append("g")
-        .attr("class", "xAxis")
-        .attr("transform", "translate(" + (margin.left - 1 + maxAttrLength) + "," + (margin.top + height - 1) + ")")
-        .call(xAxis);
-
-    /* Remove vertical and extra horizontal gridlines */
-    svg.selectAll(".domain").remove();
-
-    /* Add the toggle button */
-    addCompareToggle(attrName);
-
-    function changeToggleText(audNumber) {
-        // Change the toggle text to represent the selected audience
-        $("#"+attrName+"Chart .ds-hbar-status").text(function() {
-            let aud = (audNumber === 1) ? targetAud.name : audNumber === 2 ? targetAud2.name : targetAud3.name;
-            return "Top 5 for " + aud + " (by Index)";
-
-        });
-    }
-
-    /* Organize the data based on the current selected audience */
-    let inp = [indexDs1,indexDs2,indexDs3]
-    let idx1 = DS_VIS_STORE[attrName+"Active"].indexOf(1)
-    let idx2 = DS_VIS_STORE[attrName+"Active"].indexOf(2)
-    let idx3 = DS_VIS_STORE[attrName+"Active"].indexOf(3)
-    let trans = [inp[idx1],inp[idx2],inp[idx3]]
-
-    /* Toggle Comparison Charts on click */
-    $("#"+attrName+"Chart .ds-toggle-button .ds-t1").unbind().click(function() {
-          DS_VIS_STORE[attrName+"Active"] = [1,2,3]
-          DS_VIS_STORE[attrName+"Colors"] = [colorSeries1, colorSeries2, colorSeries3]
-          $(this).toggleClass("active",true)
-          $("#"+attrName+"Chart .ds-toggle-button .ds-t2").toggleClass("active",false)
-          $("#"+attrName+"Chart .ds-toggle-button .ds-t3").toggleClass("active",false)
-          changeToggleText(1);
-          toggleComparisonCharts(attrName, [trans[0],trans[1],trans[2]]);
-      });
-
-    $("#"+attrName+"Chart .ds-toggle-button .ds-t2").unbind().click(function() {
-          DS_VIS_STORE[attrName+"Active"] = [2,1,3]
-          DS_VIS_STORE[attrName+"Colors"] = [colorSeries2, colorSeries1, colorSeries3]
-          $(this).toggleClass("active",true)
-          $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",false)
-          $("#"+attrName+"Chart .ds-toggle-button .ds-t3").toggleClass("active",false)
-          changeToggleText(2);
-          toggleComparisonCharts(attrName, [trans[1],trans[0],trans[2]]);
-      });
-
-    $("#"+attrName+"Chart .ds-toggle-button .ds-t3").unbind().click(function() {
-          DS_VIS_STORE[attrName+"Active"] = [3,1,2]
-          DS_VIS_STORE[attrName+"Colors"] = [colorSeries3, colorSeries1, colorSeries2]
-          $(this).toggleClass("active",true)
-          $("#"+attrName+"Chart .ds-toggle-button .ds-t2").toggleClass("active",false)
-          $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",false)
-          changeToggleText(3);
-          toggleComparisonCharts(attrName, [trans[2],trans[0],trans[1]]);
-      });
-
-    function toggleComparisonCharts(attrName, out) {
-        /*
-          The toggle is currently set to transition to the newly selected audience.
-          If we don't want this, we can just redraw using the below for an instant transition.
-            d3.select("#"+attrName+"Chart svg").remove();
-            $("#"+attrName+"Chart .ds-toggle-button .ds-triple-toggle").remove();
-            hBarMultiSeriesChart(attrName,out[0],out[1],out[2]);
-        */
-
-        plot = d3.select("#"+attrName+"Chart");
-
-        /* Draw in the required bars and text with the functions below */
-        addCompHbar(plot, "series1", out[0][0], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][0]);
-        addCompHbar(plot, "series2", out[0][1], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][1]);
-        if (numSeries > 2) {
-            addCompHbar(plot, "series3", out[0][2], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][2]);
-        }
-        addCompHbarText(plot, "series1", out[0][0], barHeight, barPadding, maxAttrLength);
-        addCompHbarText(plot, "series2", out[0][1], barHeight, barPadding, maxAttrLength);
-        if (numSeries > 2) {
-            addCompHbarText(plot, "series3", out[0][2], barHeight, barPadding, maxAttrLength);
-        }
-
-        function addCompHbar(plot, series, aud, maxAttrLength, barHeight, xScale, yScale, color) {
-          plot.selectAll("rect."+series)
-              .data(aud)
-              .transition()
-              .duration(600)
-              .attr("class", series)
-              .attr("x", function(d) {
-                   return maxAttrLength;
-              })
-              .attr("height", barHeight)
-              .attr("y", function(d, i) {
-                   return (series == "series1") ? yScale(i) : (series == "series2") ? yScale(i) + barHeight : yScale(i) + barHeight*2;
-              })
-              .attr("width", function(d) {
-                  return xScale(d.target_pct);
-              })
-              .attr("fill", function(d) {
-                  return color;
-              })
-              .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
-              .attr("attrib-category", function(d) { return d.category; })
-              .attr("target-pct", function(d) { return d.target_pct; })
-              .attr("index", function(d) { return d.index; })
-              ;
-
-        }
-
-        function addCompHbarText(plot, series, aud, barHeight, barPadding, maxAttrLength) {
-          plot.selectAll("text."+series)
-              .data(aud)
-              .transition()
-              .duration(600)
-              .text(function(d) {
-                   return formatAsInteger(d3.format("d")(d.index));
-              })
-              .attr("class", series)
-              .attr("text-anchor", "middle")
-              /* Set y position to the top edge of each bar plus half the bar width */
-              .attr("y", function(d, i) {
-                  if (series == "series1") {
-                    return (i * numSeries * (barHeight + barPadding) + barHeight / 2 + barPadding * 2);
-                  } else if (series == "series2") {
-                    return (i * numSeries * (barHeight + barPadding) + barHeight * 1.5 + barPadding * 2);
-                  } else if (series == "series3") {
-                    return (i * numSeries * (barHeight + barPadding) + barHeight + barHeight * 1.5 + barPadding * 2);
-                  }
-
-              })
-              .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
-              .attr("font-family", "sans-serif")
-              .attr("font-size", "11px")
-              .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
-        }
-
-        plot.selectAll("text.yAxis")
-               .data(out[0][0])
-               .transition()
-               .duration(600)
-               .attr("class", "series1 yAxis")
-               .text(function(d) {
-                 let yLabel = d.attrib_value;
-                 if (d.attrib_value.length > 26) {
-                   yLabel = yLabel.slice(0, 26) + "...";
-                 }
-                 return yLabel;
-               })
-               .attr("fill", function(d) {
-                   return DS_VIS_STORE[attrName+"Colors"][0];
-               })
-               .attr("text-anchor", "start")
-               /* Set y position to the top edge of each bar plus half the bar width */
-               .attr("y", function(d, i) {
-                   return (i * numSeries * (barHeight + barPadding) + barHeight * numSeries/2 + barPadding * 2);
-               })
-               .attr("x", 66);
-    }
-
-    function mouseover(d) {
-        // Add tooltip based on position of the mouse
-        let e = window.event;
-        var x = e.clientX,
-            y = e.clientY;
-
-        let tipY = (y - 80) + 'px';
-        let tipX = (x) + 'px';
-
-        // Move tooltip to the left of the cursor if it gets too close to right edge
-        if  (window.innerWidth - x < 200) {
-          tipX = (x - 130) + 'px';
-        }
-
-        tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
-            .style("opacity", .9)
-            .style('left', `${(tipX)}`)
-            .style('top', `${(tipY)}`);
-    }
-
-    function mouseout() {
-        // Hide tooltip when the mouse leaves the element
-        tooltip.style('opacity', 0);
-    }
-
-}
+// function hBarMultiSeriesChart(attrName, indexDs1, indexDs2, indexDs3 = null) {
+//     let numSeries = DS_VIS_STORE.activeView;
+//
+//     index1 = indexDs1[0];
+//     index2 = indexDs1[1];
+//     index3 = indexDs1[2];
+//
+//     let localColor1 = DS_VIS_STORE[attrName+"Colors"][0],
+//         localColor2 = DS_VIS_STORE[attrName+"Colors"][1],
+//         localColor3 = DS_VIS_STORE[attrName+"Colors"][2];
+//
+//     let innerWidth = 700;
+//
+//     let basics = barChartSetup(innerWidth);
+//     let margin = basics.margin,
+//       width = basics.width,
+//       height = basics.height,
+//     		barPadding = basics.barPadding * 2;
+//
+//       margin.left = 0;
+//
+//     let maxAttrLength = width / 2.25;
+//
+//   	let yScale = d3.scaleLinear()
+//                    .domain([0, index1.length])
+//   					       .range([0, height]);
+//
+//     let xScale = d3.scaleLinear()
+//   		             .domain([0, 100])
+//   		             .range([0, width - maxAttrLength]);
+//
+//     /* Create SVG element */
+//     let svg = d3.select("#"+attrName+"Chart")
+//                 .append("svg")
+//   		          .attr("width", width + margin.left + margin.right + 15) // Adjusted to fit axis
+//                 .attr("height", height + margin.top + margin.bottom)
+//                 .attr("id", attrName+"ChartPlot")
+//                 .attr("class", "ds-chart-base");
+//
+//     const tooltip = d3.select("#"+attrName+"Chart")
+//         .append("div")
+//         .attr("class", "ds-tooltip")
+//         .style("opacity", 0);
+//
+//     /* Add horizontal grid lines */
+//     function make_x_gridlines() {
+//         return d3.axisBottom(xScale)
+//             .ticks(5)
+//     }
+//
+//     svg.append("g")
+//         .attr("class", "ds-grid")
+//         .attr("transform", "translate(" + (margin.left + maxAttrLength - 1) + "," + (margin.top + height - 1) + ")")
+//         .call(make_x_gridlines()
+//             .tickSize(-height)
+//             .tickFormat("")
+//         )
+//
+//
+//     let plot = svg.append("g")
+//   		            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+//                   .attr("id", "#"+attrName+"Plot");
+//
+//     let barHeight = height / ( index1.length * numSeries ) - barPadding;
+//
+//     /* Attach index data and add the chart elems */
+//     /* 1st series */
+//     function drawHbar(data, series, color) {
+//         plot.selectAll("rect."+series)
+//             .data(data)
+//       		  .enter()
+//       		  .append("rect")
+//             .attr("class", series)
+//       			.attr("x", function(d) {
+//                  return maxAttrLength;
+//       			})
+//       		  .attr("height", barHeight)
+//       			.attr("y", function(d, i) {
+//                 if (series == "series1") {
+//                     return yScale(i);
+//                 } else if (series == "series2") {
+//                     return yScale(i) + barHeight;
+//                 } else if (series == "series3") {
+//                     return yScale(i) + barHeight*2;
+//                 }
+//       			})
+//       			.attr("width", function(d) {
+//       			    return xScale(d.target_pct);
+//       			})
+//       			.attr("fill", function(d) {
+//                 return color;
+//             })
+//             .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+//             .on("mouseover", mouseover)
+//             .on("mouseout", mouseout)
+//             .on("mousemove", mouseover)
+//             .attr("attrib-category", function(d) { return d.category; })
+//             .attr("target-pct", function(d) { return d.target_pct; })
+//             .attr("index", function(d) { return d.index; })
+//             ;
+//     }
+//
+//     drawHbar(index1, "series1", localColor1);
+//     if (numSeries > 1) {
+//         drawHbar(index2, "series2", localColor2);
+//     }
+//     if (numSeries > 2) {
+//         drawHbar(index3, "series3", localColor3);
+//     }
+//
+//     /* Set x position and color dependent on size of bar */
+//     function textInside(d) { return xScale(d.target_pct) > 30};
+//
+//     /* Add y labels to plot */
+//     function addHbarText(data, series) {
+//         plot.selectAll("text."+series)
+//       	    .data(data)
+//       	    .enter()
+//       	    .append("text")
+//             .attr("class", series)
+//       	    .text(function(d) {
+//       			     return formatAsInteger(d3.format("d")(d.index));
+//       	    })
+//       	    .attr("text-anchor", "middle")
+//       	    /* Set y position to the top edge of each bar plus half the bar width */
+//       	    .attr("y", function(d, i) {
+//                 if (series == "series1") {
+//                     return (i * numSeries * (barHeight + barPadding) + barHeight / 2 + barPadding * 2);
+//                 } else if (series == "series2") {
+//                     return (i * numSeries * (barHeight + barPadding) + barHeight * 1.5 + barPadding * 2);
+//                 } else if (series == "series3") {
+//                     return (i * numSeries * (barHeight + barPadding) + barHeight + barHeight * 1.5 + barPadding * 2);
+//                 }
+//
+//       	    })
+//       	    .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
+//       	    .attr("font-family", "sans-serif")
+//       	    .attr("font-size", "11px")
+//       	    .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" })
+//             .on("mouseover", mouseover)
+//             .on("mouseout", mouseout)
+//             .on("mousemove", mouseover);
+//     }
+//
+//     addHbarText(index1, "series1");
+//     if (numSeries > 1) {
+//       addHbarText(index2, "series2");
+//     }
+//     if (numSeries > 2) {
+//       addHbarText(index3, "series3")
+//     }
+//
+//     /* Add y labels to chart */
+//   	let yLabels = svg.append("g")
+//   		               .attr("transform", "translate(" + margin.left + "," + (margin.top)  + ")");
+//
+//     /* Series 1 */
+//   	yLabels.selectAll("text.yAxis.series1")
+//   		     .data(index1)
+//   		     .enter()
+//   		     .append("text")
+//            .attr("class", "series1")
+//   		     .text(function(d) {
+//              let yLabel = d.attrib_value;
+//              if (d.attrib_value.length > 26) {
+//                yLabel = yLabel.slice(0, 26) + "...";
+//              }
+//              return yLabel;
+//            })
+//            .attr("fill", function(d) {
+//                return localColor1;
+//            })
+//   		     .attr("text-anchor", "start")
+//            .attr("y", function(d, i) {
+//                 return (i * numSeries * (barHeight + barPadding) + barHeight * numSeries/2 + barPadding * 2);
+//            })
+//   		     .attr("x", 66)
+//   		     .attr("class", "yAxis");
+//
+//     /* Add ranking y labels to chart */
+//   	yLabels.selectAll("text.ranking")
+//   		     .data([ 1, 2, 3, 4, 5])
+//   		     .enter()
+//   		     .append("text")
+//            .attr("class", "ranking")
+//   		     .text(function(d) {
+//              return "#" + d;
+//            })
+//            .attr("fill", "#81838c")
+//      	     .attr("font-size", "36px")
+//   		     .attr("text-anchor", "start")
+//   			   /* Set y position to the top edge of each bar plus half the bar width */
+//   				 .attr("y", function(d, i) {
+//   				       return (i * numSeries * (barHeight + barPadding) + barHeight * numSeries/2 + barPadding + 10);
+//   				 })
+//   		     .attr("x", 0)
+//   		     .attr("class", "yAxis");
+//
+//
+//     /* Add x-axis */
+//     let xAxis = d3.axisBottom(xScale)
+//         .tickSize(0)
+//         .ticks(5)
+//         .tickFormat(function (d) { return d + "%" });
+//
+//     let xAxisElement = svg.append("g")
+//         .attr("class", "xAxis")
+//         .attr("transform", "translate(" + (margin.left - 1 + maxAttrLength) + "," + (margin.top + height - 1) + ")")
+//         .call(xAxis);
+//
+//     /* Remove vertical and extra horizontal gridlines */
+//     svg.selectAll(".domain").remove();
+//
+//     /* Add the toggle button */
+//     addCompareToggle(attrName);
+//
+//     function changeToggleText(audNumber) {
+//         // Change the toggle text to represent the selected audience
+//         $("#"+attrName+"Chart .ds-hbar-status").text(function() {
+//             let aud = (audNumber === 1) ? targetAud.name : audNumber === 2 ? targetAud2.name : targetAud3.name;
+//             return "Top 5 for " + aud + " (by Index)";
+//
+//         });
+//     }
+//
+//     /* Organize the data based on the current selected audience */
+//     let inp = [indexDs1,indexDs2,indexDs3]
+//     let idx1 = DS_VIS_STORE[attrName+"Active"].indexOf(1)
+//     let idx2 = DS_VIS_STORE[attrName+"Active"].indexOf(2)
+//     let idx3 = DS_VIS_STORE[attrName+"Active"].indexOf(3)
+//     let trans = [inp[idx1],inp[idx2],inp[idx3]]
+//
+//     /* Toggle Comparison Charts on click */
+//     $("#"+attrName+"Chart .ds-toggle-button .ds-t1").unbind().click(function() {
+//           DS_VIS_STORE[attrName+"Active"] = [1,2,3]
+//           DS_VIS_STORE[attrName+"Colors"] = [colorSeries1, colorSeries2, colorSeries3]
+//           $(this).toggleClass("active",true)
+//           $("#"+attrName+"Chart .ds-toggle-button .ds-t2").toggleClass("active",false)
+//           $("#"+attrName+"Chart .ds-toggle-button .ds-t3").toggleClass("active",false)
+//           changeToggleText(1);
+//           toggleComparisonCharts(attrName, [trans[0],trans[1],trans[2]]);
+//       });
+//
+//     $("#"+attrName+"Chart .ds-toggle-button .ds-t2").unbind().click(function() {
+//           DS_VIS_STORE[attrName+"Active"] = [2,1,3]
+//           DS_VIS_STORE[attrName+"Colors"] = [colorSeries2, colorSeries1, colorSeries3]
+//           $(this).toggleClass("active",true)
+//           $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",false)
+//           $("#"+attrName+"Chart .ds-toggle-button .ds-t3").toggleClass("active",false)
+//           changeToggleText(2);
+//           toggleComparisonCharts(attrName, [trans[1],trans[0],trans[2]]);
+//       });
+//
+//     $("#"+attrName+"Chart .ds-toggle-button .ds-t3").unbind().click(function() {
+//           DS_VIS_STORE[attrName+"Active"] = [3,1,2]
+//           DS_VIS_STORE[attrName+"Colors"] = [colorSeries3, colorSeries1, colorSeries2]
+//           $(this).toggleClass("active",true)
+//           $("#"+attrName+"Chart .ds-toggle-button .ds-t2").toggleClass("active",false)
+//           $("#"+attrName+"Chart .ds-toggle-button .ds-t1").toggleClass("active",false)
+//           changeToggleText(3);
+//           toggleComparisonCharts(attrName, [trans[2],trans[0],trans[1]]);
+//       });
+//
+//     function toggleComparisonCharts(attrName, out) {
+//         /*
+//           The toggle is currently set to transition to the newly selected audience.
+//           If we don't want this, we can just redraw using the below for an instant transition.
+//             d3.select("#"+attrName+"Chart svg").remove();
+//             $("#"+attrName+"Chart .ds-toggle-button .ds-triple-toggle").remove();
+//             hBarMultiSeriesChart(attrName,out[0],out[1],out[2]);
+//         */
+//
+//         plot = d3.select("#"+attrName+"Chart");
+//
+//         /* Draw in the required bars and text with the functions below */
+//         addCompHbar(plot, "series1", out[0][0], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][0]);
+//         addCompHbar(plot, "series2", out[0][1], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][1]);
+//         if (numSeries > 2) {
+//             addCompHbar(plot, "series3", out[0][2], maxAttrLength, barHeight, xScale, yScale, DS_VIS_STORE[attrName+"Colors"][2]);
+//         }
+//         addCompHbarText(plot, "series1", out[0][0], barHeight, barPadding, maxAttrLength);
+//         addCompHbarText(plot, "series2", out[0][1], barHeight, barPadding, maxAttrLength);
+//         if (numSeries > 2) {
+//             addCompHbarText(plot, "series3", out[0][2], barHeight, barPadding, maxAttrLength);
+//         }
+//
+//         function addCompHbar(plot, series, aud, maxAttrLength, barHeight, xScale, yScale, color) {
+//           plot.selectAll("rect."+series)
+//               .data(aud)
+//               .transition()
+//               .duration(600)
+//               .attr("class", series)
+//               .attr("x", function(d) {
+//                    return maxAttrLength;
+//               })
+//               .attr("height", barHeight)
+//               .attr("y", function(d, i) {
+//                    return (series == "series1") ? yScale(i) : (series == "series2") ? yScale(i) + barHeight : yScale(i) + barHeight*2;
+//               })
+//               .attr("width", function(d) {
+//                   return xScale(d.target_pct);
+//               })
+//               .attr("fill", function(d) {
+//                   return color;
+//               })
+//               .attr("attrib-value", function(d) { return d.attrib_value; })    /* storing the Acxiom attrib value on the element */
+//               .attr("attrib-category", function(d) { return d.category; })
+//               .attr("target-pct", function(d) { return d.target_pct; })
+//               .attr("index", function(d) { return d.index; })
+//               ;
+//
+//         }
+//
+//         function addCompHbarText(plot, series, aud, barHeight, barPadding, maxAttrLength) {
+//           plot.selectAll("text."+series)
+//               .data(aud)
+//               .transition()
+//               .duration(600)
+//               .text(function(d) {
+//                    return formatAsInteger(d3.format("d")(d.index));
+//               })
+//               .attr("class", series)
+//               .attr("text-anchor", "middle")
+//               /* Set y position to the top edge of each bar plus half the bar width */
+//               .attr("y", function(d, i) {
+//                   if (series == "series1") {
+//                     return (i * numSeries * (barHeight + barPadding) + barHeight / 2 + barPadding * 2);
+//                   } else if (series == "series2") {
+//                     return (i * numSeries * (barHeight + barPadding) + barHeight * 1.5 + barPadding * 2);
+//                   } else if (series == "series3") {
+//                     return (i * numSeries * (barHeight + barPadding) + barHeight + barHeight * 1.5 + barPadding * 2);
+//                   }
+//
+//               })
+//               .attr("x", function(d) { return textInside(d) ? maxAttrLength + xScale(d.target_pct) - 20 : maxAttrLength + xScale(d.target_pct) + 20 })
+//               .attr("font-family", "sans-serif")
+//               .attr("font-size", "11px")
+//               .attr("fill", function(d) { return textInside(d) ? "white" : "#505050" });
+//         }
+//
+//         plot.selectAll("text.yAxis")
+//                .data(out[0][0])
+//                .transition()
+//                .duration(600)
+//                .attr("class", "series1 yAxis")
+//                .text(function(d) {
+//                  let yLabel = d.attrib_value;
+//                  if (d.attrib_value.length > 26) {
+//                    yLabel = yLabel.slice(0, 26) + "...";
+//                  }
+//                  return yLabel;
+//                })
+//                .attr("fill", function(d) {
+//                    return DS_VIS_STORE[attrName+"Colors"][0];
+//                })
+//                .attr("text-anchor", "start")
+//                /* Set y position to the top edge of each bar plus half the bar width */
+//                .attr("y", function(d, i) {
+//                    return (i * numSeries * (barHeight + barPadding) + barHeight * numSeries/2 + barPadding * 2);
+//                })
+//                .attr("x", 66);
+//     }
+//
+//     function mouseover(d) {
+//         // Add tooltip based on position of the mouse
+//         let e = window.event;
+//         var x = e.clientX,
+//             y = e.clientY;
+//
+//         let tipY = (y - 80) + 'px';
+//         let tipX = (x) + 'px';
+//
+//         // Move tooltip to the left of the cursor if it gets too close to right edge
+//         if  (window.innerWidth - x < 200) {
+//           tipX = (x - 130) + 'px';
+//         }
+//
+//         tooltip.html(d.attrib_value + "<br/>" + "<br/>" + "Category: " + d.category + "<br/>" + "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index)
+//             .style("opacity", .9)
+//             .style('left', `${(tipX)}`)
+//             .style('top', `${(tipY)}`);
+//     }
+//
+//     function mouseout() {
+//         // Hide tooltip when the mouse leaves the element
+//         tooltip.style('opacity', 0);
+//     }
+//
+// }
 
 
 // /*******************************************************************************
