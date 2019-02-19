@@ -130,13 +130,14 @@ function addTooltip(tooltipNode, htmlString, xOffset, yOffset) {
         .style('top', `${(tipY)}`);
 }
 
-
+/*******************************************************************************
+*** Apply Filter ***************************************************************
+*******************************************************************************/
 function applyFilter(attrName, attrValue, shapeString, targetAuds) {
     /* update all charts when user selects a single bar in this chart */
     /* if clicking on already selected item, then reset the charts */
     isSelected = d3.select(".selected-tile #"+attrName+"Chart " + shapeString + "[attrib-value='"+attrValue+"'][selected='yes']")._groups[0][0];
-    //isSelected = d3.select(".selected-tile #"+attrName+"Chart path[attrib-value="+d.data.attrib_value+"][selected='yes']")
-    //                ._groups[0][0];
+
     if (isSelected){
         DS_VIS_STORE["activeFilter"] = null;
         drawCharts(targetAuds);
@@ -552,8 +553,6 @@ function hBarChart(attrName, innerWidth, indexArray, hasToggle=false) {
         let compIndexArray = []
         indexArray[0].forEach(function(aud) {
           newIndexArray.push(aud)
-          // compIndexArray.push(aud[1])
-          // compIndexArray2.push(aud[2])
         });
     } else {
         newIndexArray = indexArray.slice();
