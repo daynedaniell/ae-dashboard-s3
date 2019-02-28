@@ -9,10 +9,10 @@ distkey(idl_id);
 
 insert into #random_aud_ids_xwalk
 SELECT idl_id
-from acxiom.audience_attributes__2018_03
+from acxiom.audience_attributes__2018_09
 group by 1
 order by random()
-limit 5000;
+limit 10000;
 
 -- output to tsv, if needed
 -- \pset footer OFF
