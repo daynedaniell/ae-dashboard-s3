@@ -25,7 +25,7 @@ distkey(idl_id);
 
 insert into #competitive
 select distinct idl_id
-from acxiom.audience_attributes__2018_06
+from acxiom.audience_attributes__2018_09
 where attribute_name in (9044)
 and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER');
 
@@ -37,7 +37,7 @@ distkey(idl_id);
 
 insert into #comp_first
 select distinct idl_id
-from acxiom.audience_attributes__2018_06
+from acxiom.audience_attributes__2018_09
 where attribute_name = 9042
 and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019');
 
@@ -56,7 +56,7 @@ distkey(idl_id);
 
 insert into #competitive2
 select distinct idl_id
-from acxiom.audience_attributes__2018_06
+from acxiom.audience_attributes__2018_09
 where attribute_name in (9054)
 and attribute_value in ('AVALON','LACROSSE','IMPALA','CHARGER','GENESIS','TAURUS','MAXIMA','STINGER');
 
@@ -68,7 +68,7 @@ distkey(idl_id);
 
 insert into #comp_second
 select idl_id
-from acxiom.audience_attributes__2018_06
+from acxiom.audience_attributes__2018_09
 where attribute_name = 9052
 and attribute_value in ('2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019')
 group by 1;
@@ -94,7 +94,7 @@ SELECT idl_id
 from #comp
 group by 1
 order by random()
-limit 5000;
+limit 10000;
 
 -- output to tsv, if needed
 -- \pset footer OFF
@@ -121,8 +121,9 @@ SELECT
   idl_id,
   attribute_name,
   attribute_value
-from acxiom.audience_attributes__2018_03
-join #target_aud_ids_xwalk using(idl_id);
+from acxiom.audience_attributes__2018_09
+join #target_aud_ids_xwalk using(idl_id)
+where attribute_name in (select attribute_name from jumpshot_data_science.acxiom_ds_taxonomy where use_as_ab_filter = 't' group by 1);
 
 create table #taxonomy (
   attribute_name varchar(200) encode zstd,
@@ -142,77 +143,12 @@ select distinct
   subcategory,
   clean_attribute_name_description,
   case
-    when clean_attribute_value_description in ('1 Most Likely', '2 Somewhat Likely') then 'Likely'
+    when clean_attribute_value_description ilike '%Most Likely%' or clean_attribute_value_description ilike '%Somewhat Likely%' then 'Likely'
     else clean_attribute_value_description
   end as clean_attribute_value_description
 from jumpshot_data_science.acxiom_ds_taxonomy
-where action in ('ok','limit to 1','split')
-and use_as_idx_filter = 't'
-and clean_attribute_value_description not in ('3 Average','4 Somewhat Unlikely','5 Most Unlikely')
-;
-
-create table #states (
-  fipsstate varchar(2) encode zstd,
-  state varchar(2) encode zstd
-)
-distkey(fipsstate);
-
-insert into #states (fipsstate, state)
-VALUES
-  ('01', 'AL'),
-  ('02', 'AK'),
-  ('04', 'AZ'),
-  ('05', 'AR'),
-  ('06', 'CA'),
-  ('08', 'CO'),
-  ('09', 'CT'),
-  ('10', 'DE'),
-  ('11', 'DC'),
-  ('12', 'FL'),
-  ('13', 'GA'),
-  ('15', 'HI'),
-  ('16', 'ID'),
-  ('17', 'IL'),
-  ('18', 'IN'),
-  ('19', 'IA'),
-  ('20', 'KS'),
-  ('21', 'KY'),
-  ('22', 'LA'),
-  ('23', 'ME'),
-  ('24', 'MD'),
-  ('25', 'MA'),
-  ('26', 'MI'),
-  ('27', 'MN'),
-  ('28', 'MS'),
-  ('29', 'MO'),
-  ('30', 'MT'),
-  ('31', 'NE'),
-  ('32', 'NV'),
-  ('33', 'NH'),
-  ('34', 'NJ'),
-  ('35', 'NM'),
-  ('36', 'NY'),
-  ('37', 'NC'),
-  ('38', 'ND'),
-  ('39', 'OH'),
-  ('40', 'OK'),
-  ('41', 'OR'),
-  ('42', 'PA'),
-  ('44', 'RI'),
-  ('45', 'SC'),
-  ('46', 'SD'),
-  ('47', 'TN'),
-  ('48', 'TX'),
-  ('49', 'UT'),
-  ('50', 'VT'),
-  ('51', 'VA'),
-  ('53', 'WA'),
-  ('54', 'WV'),
-  ('55', 'WI'),
-  ('56', 'WY')
-;
-
-
+where use_as_ab_filter = 't'
+and clean_attribute_value_description not like '%Average%' and clean_attribute_value_description not like '%Somewhat Unlikely%' and clean_attribute_value_description not like '%Least Likely%';
 
 create table #aud_attributes (
   temp_id bigint encode zstd,
@@ -220,11 +156,9 @@ create table #aud_attributes (
   category varchar(200) encode zstd,
   subcategory varchar(200) encode zstd,
   clean_attribute_name_description varchar(200) encode zstd,
-  clean_attribute_value_description varchar(200) encode zstd,
-  fipsstate varchar(2) encode zstd
+  clean_attribute_value_description varchar(200) encode zstd
 )
 distkey(temp_id);
-
 
 insert into #aud_attributes
 SELECT
@@ -233,19 +167,16 @@ SELECT
   category,
   subcategory,
   clean_attribute_name_description,
-  clean_attribute_value_description,
-  fipsstate
+  clean_attribute_value_description
 from #aud
 join #taxonomy
 using(attribute_name, attribute_value)
-join acxiom.audience__2018_03 using (idl_id)
+join acxiom.audience__2018_09 using (idl_id)
 where attribute_name in(
-    '8626', '8688', '3101', '7609', '7602', '9514', '7641')
-  or (category = 'Interest'
-      and clean_attribute_value_description = 'TRUE')
-  or (category = 'Retail'
-      and subcategory <> 'Categories'
-      and clean_attribute_value_description = 'TRUE')
+    '8626', '8688', '3101', '7609', '7602', '9514', '7641','AFLGC433','AFLGC430','AFLGC438','AFLGC432','AFLGC439','AFLGC434','AFLGC435','AFLGC431','AFLGC436',
+    'AP005751','AP005746','AP005750','AP005741','AP005740','AP005739','AP005731','AP005730','AP005745','AP005733','AP005736','AP005734','AP005743','AP005754','AP005735','AP005732','AP005737','7755','7802','7803','7804','7823','7812','7781','7782','7783','7784','7785','7786','7787','8257','7810','7811','7814','7847','7805','7806','7807','7840','8315','2776','6134','6638','6757','6846','7730','7841','8271','8272','8274','8276','8277','8278','8279','8321','8322','8326','7721','7723','7724','7728','7729','8239','GFLG1860','7725','7732','GFLG1841','GFLG1847','GFLG1865','GFLG1866','2777','7766','7799','7764','7768','AP001492','7762','7763','GFLG1843','GFLG1844','GFLG1864','7733','GFLG1853','RBGMN381','RBGMN385','RBGMN388','RBGMN387','RBGMN379','RBGMN362','RBGMN383','RBGMN384','RBGMN378','RBGMN367','RBGMN393','RBGMN386','RBGMN389','RBGMN364','RBGMN343','RBGMN369','RBGMN361','RBGMN339','RBGMN370','RBGMN373','RBGMN358','RBGMN374','RBGMN391','RBGMN366','RBGMN390','RBGMN392','7739','7741','7740','7856','7826','GFLG1849','AP004401','GFLG1854','GFLG1848','6144','6152','6172','6173','6246','6259','6367','6379','6484','6498','6503','6505','6511','6513','6514','6515','6516','6517','6543','6545','6547','6548','6549','6753','6768','6809','6848','7776','7815','7816','7817','3588','6335','6741','6779','AP006167','RBGMN436','RBGMN441','RBGMN442','RBGMN450','RBGNR002','TP000001','TP000151','TP000152','TP000153','TP000154', 'state')
+  or (category = 'Media'
+      and subcategory not in ('Media Attitudinal','Yellow Pages'))
 ;
 
 -- demographic attributes that are unique by id
@@ -291,19 +222,8 @@ from #aud_attributes
 where attribute_name = '8626';
 
 -- remove any dups by id
-create table #age_dups (
-  temp_id bigint encode zstd,
-  age varchar(5) encode zstd
-)
-distkey(temp_id);
 
-insert into #age_dups
-select temp_id
-from #age
-group by temp_id
-having count(temp_id) > 1;
-
-delete from #age where temp_id in (select temp_id from #age_dups);
+delete from #age where temp_id in (select temp_id from #age group by 1 having count(*) > 1);
 
 
 
@@ -325,19 +245,8 @@ from #aud_attributes
 where attribute_name = '8688';
 
 -- remove any dups by id
-create table #gender_dups (
-  temp_id bigint encode zstd,
-  gender varchar(1) encode zstd
-)
-distkey(temp_id);
 
-insert into #gender_dups
-select temp_id
-from #gender
-group by temp_id
-having count(temp_id) > 1;
-
-delete from #gender where temp_id in (select temp_id from #gender_dups);
+delete from #gender where temp_id in (select temp_id from #gender group by 1 having count(*) > 1);
 
 
 
@@ -356,22 +265,7 @@ SELECT distinct
 from #aud_attributes
 where attribute_name = '3101';
 
--- remove any dups by id
-create table #ethnicity_dups (
-  temp_id bigint encode zstd,
-  ethnicity varchar(70) encode zstd
-)
-distkey(temp_id);
-
-insert into #ethnicity_dups
-select temp_id
-from #ethnicity
-group by temp_id
-having count(temp_id) > 1;
-
-delete from #ethnicity where temp_id in (select temp_id from #ethnicity_dups);
-
-
+delete from #ethnicity where temp_id in (select temp_id from #ethnicity group by 1 having count(*) > 1);
 
 -- marital status
 create table #marital (
@@ -392,19 +286,8 @@ from #aud_attributes
 where attribute_name = '7609';
 
 -- remove any dups by id
-create table #marital_dups (
-  temp_id bigint encode zstd,
-  marital varchar(7) encode zstd
-)
-distkey(temp_id);
 
-insert into #marital_dups
-select temp_id
-from #marital
-group by temp_id
-having count(temp_id) > 1;
-
-delete from #marital where temp_id in (select temp_id from #marital_dups);
+delete from #marital where temp_id in (select temp_id from #marital group by 1 having count(*) > 1);
 
 
 
@@ -420,6 +303,7 @@ insert into #children
 SELECT distinct
   temp_id,
   case
+    when clean_attribute_value_description = 'No Children' then '0'
     when clean_attribute_value_description::int >= 5 then '5+'
     else clean_attribute_value_description
   end as children
@@ -427,20 +311,8 @@ from #aud_attributes
 where attribute_name = '7602';
 
 -- remove any dups by id
-create table #children_dups (
-  temp_id bigint encode zstd,
-  children varchar(10) encode zstd
-)
-distkey(temp_id);
 
-insert into #children_dups
-select temp_id
-from #children
-group by temp_id
-having count(temp_id) > 1;
-
-delete from #children where temp_id in (select temp_id from #children_dups);
-
+delete from #children where temp_id in (select temp_id from #children group by 1 having count(*) > 1);
 
 
 -- education
@@ -462,20 +334,7 @@ SELECT distinct
 from #aud_attributes
 where attribute_name = '9514';
 
--- remove any dups by id
-create table #education_dups (
-  temp_id bigint encode zstd,
-  education varchar(50) encode zstd
-)
-distkey(temp_id);
-
-insert into #education_dups
-select temp_id
-from #education
-group by temp_id
-having count(temp_id) > 1;
-
-delete from #education where temp_id in (select temp_id from #education_dups);
+delete from #education where temp_id in (select temp_id from #education group by 1 having count(*) > 1);
 
 
 
@@ -504,41 +363,30 @@ from #aud_attributes
 where attribute_name = '7641';
 
 -- remove any dups by id
-create table #income_dups (
-  temp_id bigint encode zstd,
-  income varchar(50) encode zstd
-)
-distkey(temp_id);
 
-insert into #income_dups
-select temp_id
-from #income
-group by temp_id
-having count(temp_id) > 1;
-
-delete from #income where temp_id in (select temp_id from #income_dups);
+delete from #income where temp_id in (select temp_id from #income group by 1 having count(*) > 1);
 
 
 -- state
-create table #aud_states (
+create table #states (
   temp_id bigint encode zstd,
-  state varchar(2) encode zstd
+  state varchar(20) encode zstd
 )
 distkey(temp_id);
 
-insert into #aud_states
+insert into #states
 select distinct
   temp_id,
-  state
+  clean_attribute_value_description
 from #aud_attributes
-join #states using(fipsstate)
+where attribute_name = 'state'
 ;
 
 
 -- output all id-level vars
 create table #aud_demographics (
   temp_id bigint encode zstd,
-  state varchar(2) encode zstd,
+  state varchar(20) encode zstd,
   age varchar(5) encode zstd,
   gender varchar(1) encode zstd,
   ethnicity varchar(70) encode zstd,
@@ -560,14 +408,14 @@ select
   children,
   education,
   income
-from #aud_states
-left join #age using(temp_id)
-left join #gender using(temp_id)
-left join #ethnicity using(temp_id)
-left join #marital using(temp_id)
-left join #children using(temp_id)
-left join #education using(temp_id)
-left join #income using(temp_id)
+from #states
+full outer join #age using(temp_id)
+full outer join #gender using(temp_id)
+full outer join #ethnicity using(temp_id)
+full outer join #marital using(temp_id)
+full outer join #children using(temp_id)
+full outer join #education using(temp_id)
+full outer join #income using(temp_id)
 ;
 
 
@@ -582,9 +430,6 @@ select * from #aud_demographics order by temp_id;
 \pset footer on
 
 
-
-
-
 -- interests
 create table #interests (
   temp_id bigint encode zstd,
@@ -596,11 +441,11 @@ distkey(temp_id);
 insert into #interests
 select distinct
   temp_id,
-  subcategory as interests_category,
-  clean_attribute_name_description as interests
+  category as interests_category,
+  case when clean_attribute_value_description = 'Likely' then clean_attribute_name_description||' - '||clean_attribute_value_description else clean_attribute_name_description end as interests
 from #aud_attributes
-where category = 'Interest' and clean_attribute_value_description = 'TRUE'
-;
+where attribute_name in ('AFLGC433','AFLGC430','AFLGC438','AFLGC432','AFLGC439','AFLGC434','AFLGC435','AFLGC431','AFLGC436',
+'AP005751','AP005746','AP005750','AP005741','AP005740','AP005739','AP005731','AP005730','AP005745','AP005733','AP005736','AP005734','AP005743','AP005754','AP005735','AP005732','AP005737','7755','7802','7803','7804','7823','7812','7781','7782','7783','7784','7785','7786','7787','8257','7810','7811','7814','7847','7805','7806','7807','7840','8315','2776','6134','6638','6757','6846','7730','7841','8271','8272','8274','8276','8277','8278','8279','8321','8322','8326','7721','7723','7724','7728','7729','8239','GFLG1860','7725','7732','GFLG1841','GFLG1847','GFLG1865','GFLG1866','2777','7766','7799','7764','7768','AP001492','7762','7763','GFLG1843','GFLG1844','GFLG1864','7733','GFLG1853','RBGMN381','RBGMN385','RBGMN388','RBGMN387','RBGMN379','RBGMN362','RBGMN383','RBGMN384','RBGMN378','RBGMN367','RBGMN393','RBGMN386','RBGMN389','RBGMN364','RBGMN343','RBGMN369','RBGMN361','RBGMN339','RBGMN370','RBGMN373','RBGMN358','RBGMN374','RBGMN391','RBGMN366','RBGMN390','RBGMN392','7739','7741','7740','7856','7826','GFLG1849','AP004401','GFLG1854','GFLG1848','6144','6152','6172','6173','6246','6259','6367','6379','6484','6498','6503','6505','6511','6513','6514','6515','6516','6517','6543','6545','6547','6548','6549','6753','6768','6809','6848','7776','7815','7816','7817','3588','6335','6741','6779','AP006167','RBGMN436','RBGMN441','RBGMN442','RBGMN450','RBGNR002','TP000001','TP000151','TP000152','TP000153','TP000154');
 
 -- output to tsv
 \pset footer OFF
@@ -613,30 +458,30 @@ select * from #interests order by temp_id;
 \pset footer on
 
 
--- retail
-create table #retail (
+-- media
+
+create table #media (
   temp_id bigint encode zstd,
-  retail_category varchar(200) encode zstd,
-  retail varchar(200) encode zstd
+  media_category varchar(200) encode zstd,
+  media varchar(200) encode zstd
 )
 distkey(temp_id);
 
-insert into #retail
+insert into #media
 select distinct
   temp_id,
-  subcategory as retail_category,
-  clean_attribute_name_description as retail
+  subcategory as media_category,
+  case when clean_attribute_value_description = 'Likely' then clean_attribute_name_description||' - '||clean_attribute_value_description else clean_attribute_name_description end as interests
 from #aud_attributes
-where category = 'Retail' and clean_attribute_value_description = 'TRUE'
-  and subcategory <> 'Categories'
+where category = 'Media' and subcategory not in ('Media Attitudinal','Yellow Pages')
 ;
 
 -- output to tsv
 \pset footer OFF
 \f '\t'
 \a
-\o '../data/target_aud_2/retail_target.tsv'
-select * from #retail order by temp_id;
+\o '../data/target_aud_2/media_target.tsv'
+select * from #media order by temp_id;
 \o
 \a
 \pset footer on
