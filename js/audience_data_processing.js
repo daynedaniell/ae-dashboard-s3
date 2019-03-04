@@ -111,59 +111,113 @@ function makeIndexCats(){
       {attrib_value: '> 125K', target_count: 0, random_count: 0}
   ];
 
-  const stateIndexCats = [
-      {attrib_value: 'AL', target_count: 0, random_count: 0},
-      {attrib_value: 'AK', target_count: 0, random_count: 0},
-      {attrib_value: 'AZ', target_count: 0, random_count: 0},
-      {attrib_value: 'AR', target_count: 0, random_count: 0},
-      {attrib_value: 'CA', target_count: 0, random_count: 0},
-      {attrib_value: 'CO', target_count: 0, random_count: 0},
-      {attrib_value: 'CT', target_count: 0, random_count: 0},
-      {attrib_value: 'DE', target_count: 0, random_count: 0},
-      {attrib_value: 'DC', target_count: 0, random_count: 0},
-      {attrib_value: 'FL', target_count: 0, random_count: 0},
-      {attrib_value: 'GA', target_count: 0, random_count: 0},
-      {attrib_value: 'HI', target_count: 0, random_count: 0},
-      {attrib_value: 'ID', target_count: 0, random_count: 0},
-      {attrib_value: 'IL', target_count: 0, random_count: 0},
-      {attrib_value: 'IN', target_count: 0, random_count: 0},
-      {attrib_value: 'IA', target_count: 0, random_count: 0},
-      {attrib_value: 'KS', target_count: 0, random_count: 0},
-      {attrib_value: 'KY', target_count: 0, random_count: 0},
-      {attrib_value: 'LA', target_count: 0, random_count: 0},
-      {attrib_value: 'ME', target_count: 0, random_count: 0},
-      {attrib_value: 'MD', target_count: 0, random_count: 0},
-      {attrib_value: 'MA', target_count: 0, random_count: 0},
-      {attrib_value: 'MI', target_count: 0, random_count: 0},
-      {attrib_value: 'MN', target_count: 0, random_count: 0},
-      {attrib_value: 'MS', target_count: 0, random_count: 0},
-      {attrib_value: 'MO', target_count: 0, random_count: 0},
-      {attrib_value: 'MT', target_count: 0, random_count: 0},
-      {attrib_value: 'NE', target_count: 0, random_count: 0},
-      {attrib_value: 'NV', target_count: 0, random_count: 0},
-      {attrib_value: 'NH', target_count: 0, random_count: 0},
-      {attrib_value: 'NJ', target_count: 0, random_count: 0},
-      {attrib_value: 'NM', target_count: 0, random_count: 0},
-      {attrib_value: 'NY', target_count: 0, random_count: 0},
-      {attrib_value: 'NC', target_count: 0, random_count: 0},
-      {attrib_value: 'ND', target_count: 0, random_count: 0},
-      {attrib_value: 'OH', target_count: 0, random_count: 0},
-      {attrib_value: 'OK', target_count: 0, random_count: 0},
-      {attrib_value: 'OR', target_count: 0, random_count: 0},
-      {attrib_value: 'PA', target_count: 0, random_count: 0},
-      {attrib_value: 'RI', target_count: 0, random_count: 0},
-      {attrib_value: 'SC', target_count: 0, random_count: 0},
-      {attrib_value: 'SD', target_count: 0, random_count: 0},
-      {attrib_value: 'TN', target_count: 0, random_count: 0},
-      {attrib_value: 'TX', target_count: 0, random_count: 0},
-      {attrib_value: 'UT', target_count: 0, random_count: 0},
-      {attrib_value: 'VT', target_count: 0, random_count: 0},
-      {attrib_value: 'VA', target_count: 0, random_count: 0},
-      {attrib_value: 'WA', target_count: 0, random_count: 0},
-      {attrib_value: 'WV', target_count: 0, random_count: 0},
-      {attrib_value: 'WI', target_count: 0, random_count: 0},
-      {attrib_value: 'WY', target_count: 0, random_count: 0}
-  ];
+  // const stateIndexCats = [
+  //     {attrib_value: 'AL', target_count: 0, random_count: 0},
+  //     {attrib_value: 'AK', target_count: 0, random_count: 0},
+  //     {attrib_value: 'AZ', target_count: 0, random_count: 0},
+  //     {attrib_value: 'AR', target_count: 0, random_count: 0},
+  //     {attrib_value: 'CA', target_count: 0, random_count: 0},
+  //     {attrib_value: 'CO', target_count: 0, random_count: 0},
+  //     {attrib_value: 'CT', target_count: 0, random_count: 0},
+  //     {attrib_value: 'DE', target_count: 0, random_count: 0},
+  //     {attrib_value: 'DC', target_count: 0, random_count: 0},
+  //     {attrib_value: 'FL', target_count: 0, random_count: 0},
+  //     {attrib_value: 'GA', target_count: 0, random_count: 0},
+  //     {attrib_value: 'HI', target_count: 0, random_count: 0},
+  //     {attrib_value: 'ID', target_count: 0, random_count: 0},
+  //     {attrib_value: 'IL', target_count: 0, random_count: 0},
+  //     {attrib_value: 'IN', target_count: 0, random_count: 0},
+  //     {attrib_value: 'IA', target_count: 0, random_count: 0},
+  //     {attrib_value: 'KS', target_count: 0, random_count: 0},
+  //     {attrib_value: 'KY', target_count: 0, random_count: 0},
+  //     {attrib_value: 'LA', target_count: 0, random_count: 0},
+  //     {attrib_value: 'ME', target_count: 0, random_count: 0},
+  //     {attrib_value: 'MD', target_count: 0, random_count: 0},
+  //     {attrib_value: 'MA', target_count: 0, random_count: 0},
+  //     {attrib_value: 'MI', target_count: 0, random_count: 0},
+  //     {attrib_value: 'MN', target_count: 0, random_count: 0},
+  //     {attrib_value: 'MS', target_count: 0, random_count: 0},
+  //     {attrib_value: 'MO', target_count: 0, random_count: 0},
+  //     {attrib_value: 'MT', target_count: 0, random_count: 0},
+  //     {attrib_value: 'NE', target_count: 0, random_count: 0},
+  //     {attrib_value: 'NV', target_count: 0, random_count: 0},
+  //     {attrib_value: 'NH', target_count: 0, random_count: 0},
+  //     {attrib_value: 'NJ', target_count: 0, random_count: 0},
+  //     {attrib_value: 'NM', target_count: 0, random_count: 0},
+  //     {attrib_value: 'NY', target_count: 0, random_count: 0},
+  //     {attrib_value: 'NC', target_count: 0, random_count: 0},
+  //     {attrib_value: 'ND', target_count: 0, random_count: 0},
+  //     {attrib_value: 'OH', target_count: 0, random_count: 0},
+  //     {attrib_value: 'OK', target_count: 0, random_count: 0},
+  //     {attrib_value: 'OR', target_count: 0, random_count: 0},
+  //     {attrib_value: 'PA', target_count: 0, random_count: 0},
+  //     {attrib_value: 'RI', target_count: 0, random_count: 0},
+  //     {attrib_value: 'SC', target_count: 0, random_count: 0},
+  //     {attrib_value: 'SD', target_count: 0, random_count: 0},
+  //     {attrib_value: 'TN', target_count: 0, random_count: 0},
+  //     {attrib_value: 'TX', target_count: 0, random_count: 0},
+  //     {attrib_value: 'UT', target_count: 0, random_count: 0},
+  //     {attrib_value: 'VT', target_count: 0, random_count: 0},
+  //     {attrib_value: 'VA', target_count: 0, random_count: 0},
+  //     {attrib_value: 'WA', target_count: 0, random_count: 0},
+  //     {attrib_value: 'WV', target_count: 0, random_count: 0},
+  //     {attrib_value: 'WI', target_count: 0, random_count: 0},
+  //     {attrib_value: 'WY', target_count: 0, random_count: 0}
+  // ];
+
+    const stateIndexCats = [
+        {attrib_value: 'Alabama', target_count: 0, random_count: 0},
+        {attrib_value: 'Alaska', target_count: 0, random_count: 0},
+        {attrib_value: 'Arizona', target_count: 0, random_count: 0},
+        {attrib_value: 'Arkansas', target_count: 0, random_count: 0},
+        {attrib_value: 'California', target_count: 0, random_count: 0},
+        {attrib_value: 'Colorado', target_count: 0, random_count: 0},
+        {attrib_value: 'Connecticut', target_count: 0, random_count: 0},
+        {attrib_value: 'Delaware', target_count: 0, random_count: 0},
+        {attrib_value: 'District of Columbia', target_count: 0, random_count: 0},
+        {attrib_value: 'Florida', target_count: 0, random_count: 0},
+        {attrib_value: 'Georgia', target_count: 0, random_count: 0},
+        {attrib_value: 'Hawaii', target_count: 0, random_count: 0},
+        {attrib_value: 'Idaho', target_count: 0, random_count: 0},
+        {attrib_value: 'Illinois', target_count: 0, random_count: 0},
+        {attrib_value: 'Indiana', target_count: 0, random_count: 0},
+        {attrib_value: 'Iowa', target_count: 0, random_count: 0},
+        {attrib_value: 'Kansas', target_count: 0, random_count: 0},
+        {attrib_value: 'Kentucky', target_count: 0, random_count: 0},
+        {attrib_value: 'Louisiana', target_count: 0, random_count: 0},
+        {attrib_value: 'Maine', target_count: 0, random_count: 0},
+        {attrib_value: 'Maryland', target_count: 0, random_count: 0},
+        {attrib_value: 'Massachusetts', target_count: 0, random_count: 0},
+        {attrib_value: 'Michigan', target_count: 0, random_count: 0},
+        {attrib_value: 'Minnesota', target_count: 0, random_count: 0},
+        {attrib_value: 'Mississippi', target_count: 0, random_count: 0},
+        {attrib_value: 'Missouri', target_count: 0, random_count: 0},
+        {attrib_value: 'Montana', target_count: 0, random_count: 0},
+        {attrib_value: 'Nebraska', target_count: 0, random_count: 0},
+        {attrib_value: 'Nevada', target_count: 0, random_count: 0},
+        {attrib_value: 'New Hampshire', target_count: 0, random_count: 0},
+        {attrib_value: 'New Jersey', target_count: 0, random_count: 0},
+        {attrib_value: 'New Mexico', target_count: 0, random_count: 0},
+        {attrib_value: 'New York', target_count: 0, random_count: 0},
+        {attrib_value: 'North Carolina', target_count: 0, random_count: 0},
+        {attrib_value: 'North Dakota', target_count: 0, random_count: 0},
+        {attrib_value: 'Ohio', target_count: 0, random_count: 0},
+        {attrib_value: 'Oklahoma', target_count: 0, random_count: 0},
+        {attrib_value: 'Oregon', target_count: 0, random_count: 0},
+        {attrib_value: 'Pennsylvania', target_count: 0, random_count: 0},
+        {attrib_value: 'Rhode Island', target_count: 0, random_count: 0},
+        {attrib_value: 'South Carolina', target_count: 0, random_count: 0},
+        {attrib_value: 'South Dakota', target_count: 0, random_count: 0},
+        {attrib_value: 'Tennessee', target_count: 0, random_count: 0},
+        {attrib_value: 'Texas', target_count: 0, random_count: 0},
+        {attrib_value: 'Utah', target_count: 0, random_count: 0},
+        {attrib_value: 'Vermont', target_count: 0, random_count: 0},
+        {attrib_value: 'Virginia', target_count: 0, random_count: 0},
+        {attrib_value: 'Washington', target_count: 0, random_count: 0},
+        {attrib_value: 'West Virginia', target_count: 0, random_count: 0},
+        {attrib_value: 'Wisconsin', target_count: 0, random_count: 0},
+        {attrib_value: 'Wyoming', target_count: 0, random_count: 0}
+    ];
 
 	return {
 		age : ageIndexCats,
@@ -175,16 +229,16 @@ function makeIndexCats(){
     income : incomeIndexCats,
     state : stateIndexCats,
     interests: [],
-    retail: []
+    media: []
 	};
 }
 
 
-/* Indexing for interests/retail */
+/* Indexing for interests/media */
 
-/* calculate an array of pct and indexes for interests/retail */
-function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
-
+/* calculate an array of pct and indexes for interests/media */
+function indexInterestsMedia(attrName, targetData, randomData, bubble=false) {
+    var t0 = performance.now()
     let targetCounts = d3.nest()
       .key(function(d) { return d[attrName+"_category"] + "|" + d[attrName]; })
       .rollup(function(v) { return v.length; })
@@ -197,6 +251,9 @@ function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
             target_count: d.value
           }
       });
+
+      var t1 = performance.now()
+      console.log("maths: ", t1 - t0)
 
     let targetIdsCount = d3.nest()
       .key(function(d) { return d["temp_id"]; })
@@ -222,6 +279,8 @@ function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
       .rollup(function(v) { return v.length; })
       .entries(randomData)
       .length;
+
+
 
     targetCounts.forEach(function(catEntryIndex) {
         if (targetIdsCount > 0) {
@@ -254,8 +313,8 @@ function indexInterestsRetail(attrName, targetData, randomData, bubble=false) {
 }
 
 
-/* for interests/retail, get the max indexing item for each category, and pick top 5 among that list */
-function indexInterestsRetailTop5(indexDs, indexDs2 = null, indexDs3 = null) {
+/* for interests/media, get the max indexing item for each category, and pick top 5 among that list */
+function indexInterestsMediaTop5(indexDs, indexDs2 = null, indexDs3 = null) {
   let f = indexDs.filter((d) => ( d.index <= 300 && d.target_pct >= 5))
 
   let a = d3.nest()
@@ -393,7 +452,7 @@ function unpack(rows, key) {
 
 /* get state name from state code */
 function getStateName(stateCode) {
-  return statesPaths.features.filter(d => ( d.properties.code == stateCode ) ).map(function(d){return d.properties.name;})[0];
+  return statesPaths.features.filter(d => ( d.properties.name == stateCode ) ).map(function(d){return d.properties.name;})[0];
 }
 
 /* get median category */

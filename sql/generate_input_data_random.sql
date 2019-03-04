@@ -267,7 +267,7 @@ insert into #income
 SELECT distinct
   temp_id,
   case clean_attribute_value_description
-    when 'Less than $15,000' then '< 15K'
+    when 'Under $15,000' then '< 15K'
     when '$15,000 - $19,999' then '15K-20K'
     when '$20,000 - $29,999' then '20K-30K'
     when '$30,000 - $39,999' then '30K-40K'
@@ -275,7 +275,7 @@ SELECT distinct
     when '$50,000 - $74,999' then '50K-75K'
     when '$75,000 - $99,999' then '75K-100K'
     when '$100,000 - $124,999' then '100K-125K'
-    when 'Greater than $124,999' then '> 125K'
+    when '$125,000+' then '> 125K'
   end as income
 from #aud_attributes
 where attribute_name = '7641';
