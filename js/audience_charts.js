@@ -9,7 +9,7 @@ let DS_VIS_STORE = {
     activeFilter: null,
     stateActive: [1,2,3],
     interestsActive: [1,2,3],
-    retailActive: [1,2,3],
+    mediaActive: [1,2,3],
     activeView: 1,
     activeTab: 'dashboard',
     scaleWeight: 1,
@@ -20,10 +20,10 @@ let DS_VIS_STORE = {
 function resetCompareAuds() {
     DS_VIS_STORE.stateColors = [colorSeries1,colorSeries2,colorSeries3]; //Set colors to be indexable to active audience in toggle
     DS_VIS_STORE.interestsColors = [colorSeries1,colorSeries2,colorSeries3]
-    DS_VIS_STORE.retailColors = [colorSeries1,colorSeries2,colorSeries3]
+    DS_VIS_STORE.mediaColors = [colorSeries1,colorSeries2,colorSeries3]
     DS_VIS_STORE.interestsActive = [1,2,3]
     DS_VIS_STORE.stateActive = [1,2,3]
-    DS_VIS_STORE.retailActive = [1,2,3]
+    DS_VIS_STORE.mediaActive = [1,2,3]
 }
 
 /*******************************************************************************
@@ -488,7 +488,7 @@ function mapChart(attrName, indexDs) {
   data.forEach(function(catEntryIndex) {
       // Find the corresponding state inside the GeoJSON
       for (let j = 0; j < statesPaths.features.length; j++)  {
-        let jsonState = statesPaths.features[j].properties.code;
+        let jsonState = statesPaths.features[j].properties.name;
         if (catEntryIndex["attrib_value"] == jsonState) {
           // Copy the data values into the JSON
           statesPaths.features[j].properties.target_pct = catEntryIndex["target_pct"];
@@ -516,7 +516,7 @@ function mapChart(attrName, indexDs) {
         }
         return stateColor;
     })
-    .attr("attrib-value", function(d) { return d.properties.code; })    /* storing the Acxiom attrib value on the element */
+    .attr("attrib-value", function(d) { return d.properties.name; })    /* storing the Acxiom attrib value on the element */
     .on("mouseover", mouseover)
     .on("mouseout", mouseout)
     .on("mousemove", mouseover)
@@ -1094,7 +1094,7 @@ function dnaChart(indexArray, barWidth=4) {
       income: "Income",
       state: "Location",
       interests: "Interests",
-      retail: "Retail"
+      media: "Media"
     };
     let t = indexDs.map(function(row) {
       // the white spaces are needed here to create padding, b/c plotly
@@ -1647,8 +1647,8 @@ $("#interests-tab").click(function() {
     $(".ds-filter-tip").css("display","none");
 });
 
-$("#retail-tab").click(function() {
-    DS_VIS_STORE.activeTab = 'retail';
+$("#media-tab").click(function() {
+    DS_VIS_STORE.activeTab = 'media';
     if (DS_VIS_STORE.activeFilter != null) {
         DS_VIS_STORE.activeFilter = null;
         //showActiveFilter(DS_VIS_STORE);
@@ -1740,9 +1740,9 @@ function drawCharts(targetAuds) {
         demogAttributesList.forEach(function(demogAttributeListName) {
             let index;
             if (demogAttributeListName == "interests") {
-                index = indexInterestsRetail(demogAttributeListName, aud.interests, randomInterests);
-            } else if (demogAttributeListName == "retail") {
-                index = indexInterestsRetail(demogAttributeListName, aud.retail, randomRetail);
+                index = indexInterestsMedia(demogAttributeListName, aud.interests, randomInterests);
+            } else if (demogAttributeListName == "media") {
+                index = indexInterestsMedia(demogAttributeListName, aud.media, randomMedia);
             } else {
                 index = indexAttr(demogAttributeListName, indexCats[demogAttributeListName], aud.demog, randomDemog);
             }
@@ -1762,11 +1762,11 @@ function drawCharts(targetAuds) {
     audData.forEach(function(aud, i) {
         if (audData.length > 1) {
             aud["topStates"] = indexStatesTop5(...getCompIndexes(audData, "state", i));
-            aud["topInterests"] = indexInterestsRetailTop5(...getCompIndexes(audData, "interests", i));
-            aud["topRetail"] = indexInterestsRetailTop5(...getCompIndexes(audData, "retail", i));
+            aud["topInterests"] = indexInterestsMediaTop5(...getCompIndexes(audData, "interests", i));
+            aud["topMedia"] = indexInterestsMediaTop5(...getCompIndexes(audData, "media", i));
         } else {
-            aud["topInterests"] = [indexInterestsRetailTop5(...getCompIndexes(audData, "interests", i))];
-            aud["topRetail"] = [indexInterestsRetailTop5(...getCompIndexes(audData, "retail", i))];
+            aud["topInterests"] = [indexInterestsMediaTop5(...getCompIndexes(audData, "interests", i))];
+            aud["topMedia"] = [indexInterestsMediaTop5(...getCompIndexes(audData, "media", i))];
 
         }
 
@@ -1783,7 +1783,7 @@ function drawCharts(targetAuds) {
         income: aud.income,
         state: aud.state,
         interests: aud.topInterests[0],
-        retail: aud.topRetail[0]
+        media: aud.topMedia[0]
       });
     });
     dnaChart(indexes,barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
@@ -1802,7 +1802,7 @@ function drawCharts(targetAuds) {
         "income": "income",
         "location": "state",
         "interests": "interests",
-        "retail": "retail"
+        "media": "media"
       }
       document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
       $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
@@ -1837,23 +1837,23 @@ function drawCharts(targetAuds) {
           ? hBarChart("interests", 630,getTopIndexArray(audData, "topInterests", 1),hasToggle=true) :
           hBarChart("interests", 630,getTopIndexArray(audData, "topInterests", 2),hasToggle=true);
 
-        (DS_VIS_STORE["retailActive"][0] === 1)
-          ? hBarChart("retail", 630, getTopIndexArray(audData, "topRetail", 0),hasToggle=true) : (DS_VIS_STORE["retailActive"][0] === 2)
-          ? hBarChart("retail", 630, getTopIndexArray(audData, "topRetail", 1),hasToggle=true) :
-          hBarChart("retail", 630,getTopIndexArray(audData, "topRetail", 2),hasToggle=true);
+        (DS_VIS_STORE["mediaActive"][0] === 1)
+          ? hBarChart("media", 630, getTopIndexArray(audData, "topMedia", 0),hasToggle=true) : (DS_VIS_STORE["mediaActive"][0] === 2)
+          ? hBarChart("media", 630, getTopIndexArray(audData, "topMedia", 1),hasToggle=true) :
+          hBarChart("media", 630,getTopIndexArray(audData, "topMedia", 2),hasToggle=true);
     } else {
         mapChart("state", [audData[0].state][0]);
         hBarChart("interests", 630, [audData[0].topInterests][0]);
-        hBarChart("retail", 630, [audData[0].topRetail][0])
+        hBarChart("media", 630, [audData[0].topMedia][0])
     }
 
     $( ".tile" ).removeClass("selected-tile");
 
     bubbleChart('interests', getIndexArray(audData, "interests"));
-    bubbleChart('retail', getIndexArray(audData, "retail"));
+    bubbleChart('media', getIndexArray(audData, "media"));
 
     addBubbleHighlighting('interests');
-    addBubbleHighlighting('retail');
+    addBubbleHighlighting('media');
 
 }
 
@@ -1890,7 +1890,7 @@ function updateCharts(attrName, attrValue, targetAuds) {
     let demogAttributesList = Object.keys(indexCats);
     let barChartAttributesList = ["age", "ethnicity", "children", "education", "income"]
     let sBarChartAttributesList = ["gender", "marital"]
-    let hBarChartAttributesList = ["state", "interests", "retail"]
+    let hBarChartAttributesList = ["state", "interests", "media"]
 
 
     let filteredData = [];
@@ -1921,11 +1921,11 @@ function updateCharts(attrName, attrValue, targetAuds) {
 
         tmpData = []
         orderedTargetFilter(aud.interests, filteredData[i].filteredIds, tmpData);
-        filteredData[i]["interests"] = indexInterestsRetail("interests", tmpData, randomInterests);
+        filteredData[i]["interests"] = indexInterestsMedia("interests", tmpData, randomInterests);
 
         tmpData = []
-        orderedTargetFilter(aud.retail, filteredData[i].filteredIds, tmpData);
-        filteredData[i]["retail"] = indexInterestsRetail("retail", tmpData, randomRetail);
+        orderedTargetFilter(aud.media, filteredData[i].filteredIds, tmpData);
+        filteredData[i]["media"] = indexInterestsMedia("media", tmpData, randomMedia);
 
         filteredData[i]["ageStat"] = getMedianCategory(filteredData[i].age);
         filteredData[i]["childrenStat"] = getNonZeroPct(filteredData[i].children);
@@ -1935,11 +1935,11 @@ function updateCharts(attrName, attrValue, targetAuds) {
     targetAuds.forEach(function(aud, i) {
         if (targetAuds.length > 1) {
             filteredData[i].topState = indexStatesTop5(...getCompIndexes(filteredData, 'state', i));
-            filteredData[i].topInterests = indexInterestsRetailTop5(...getCompIndexes(filteredData, 'interests', i));
-            filteredData[i].topRetail = indexInterestsRetailTop5(...getCompIndexes(filteredData, 'retail', i));
+            filteredData[i].topInterests = indexInterestsMediaTop5(...getCompIndexes(filteredData, 'interests', i));
+            filteredData[i].topMedia = indexInterestsMediaTop5(...getCompIndexes(filteredData, 'media', i));
         } else {
-            filteredData[i].topInterests = [indexInterestsRetailTop5(...getCompIndexes(filteredData, "interests", i))];
-            filteredData[i].topRetail = [indexInterestsRetailTop5(...getCompIndexes(filteredData, "retail", i))];
+            filteredData[i].topInterests = [indexInterestsMediaTop5(...getCompIndexes(filteredData, "interests", i))];
+            filteredData[i].topMedia = [indexInterestsMediaTop5(...getCompIndexes(filteredData, "media", i))];
         }
 
     });
@@ -2108,7 +2108,7 @@ function updateCharts(attrName, attrValue, targetAuds) {
   }
 
   hBarChart("interests",630,getTopIndexArray(filteredData, "topInterests", DS_VIS_STORE["interestsActive"][0] - 1),hasToggle=true);
-  hBarChart("retail",630,getTopIndexArray(filteredData, "topRetail", DS_VIS_STORE["retailActive"][0] - 1),hasToggle=true);
+  hBarChart("media",630,getTopIndexArray(filteredData, "topMedia", DS_VIS_STORE["mediaActive"][0] - 1),hasToggle=true);
 
   if (attrName != "age") {
       addSeriesStats("age", getStatArray(filteredData, "age"), prefix = "Median: ", suffix = " years");
@@ -2132,7 +2132,7 @@ function updateCharts(attrName, attrValue, targetAuds) {
         income: aud.income,
         state: aud.state,
         interests: aud.topInterests[0],
-        retail: aud.topRetail[0]
+        media: aud.topMedia[0]
       });
     });
     dnaChart(indexes,barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
@@ -2152,7 +2152,7 @@ function updateCharts(attrName, attrValue, targetAuds) {
         "income": "income",
         "location": "state",
         "interests": "interests",
-        "retail": "retail"
+        "media": "media"
       }
       document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
       $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")

@@ -47,9 +47,9 @@
                 </a>
               </li>
               <li class="ds-nav-item3">
-                <a class="nav-link" id="retail-tab" data-toggle="tab" href="#retail">
+                <a class="nav-link" id="media-tab" data-toggle="tab" href="#media">
                   <i class="fas fa-shopping-cart"></i>
-                  Retail
+                  Media
                 </a>
               </li>
             </ul>
@@ -205,9 +205,9 @@
               </div>
               <div class="ds-chart-big well tile">
                   <div class="tile-header col-sm-2">
-                      <h4 class="ds-chart-title">Retail</h4>
+                      <h4 class="ds-chart-title">Media</h4>
                   </div>
-                  <div id="retailChart">
+                  <div id="mediaChart">
                     <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
                     <div class="ds-toggle-button col-sm-2">
                         <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
@@ -228,12 +228,12 @@
                   <div id="interestsDetailChart" class="mikej-chart" style="width:1460px;height:1334px;"></div>
               </div>
           </div>
-          <div class="tab-pane" id="retail" role="tabpanel">
+          <div class="tab-pane" id="media" role="tabpanel">
               <div class="well tile ds-grid-full">
                   <div class="tile-header">
-                      <h4 class="ds-chart-title">Retail</h4>
+                      <h4 class="ds-chart-title">Media</h4>
                   </div>
-                  <div id="retailDetailChart" class="mikej-chart" style="width:1260px;height:1334px;"></div>
+                  <div id="mediaDetailChart" class="mikej-chart" style="width:1260px;height:1334px;"></div>
               </div>
 
           </div>
@@ -279,33 +279,66 @@
 
               randomDemog = await d3.tsv("data/random_audience/demographics_random.tsv");
               randomInterests = await d3.tsv("data/random_audience/interests_random.tsv");
-              randomRetail = await d3.tsv("data/random_audience/retail_random.tsv");
+              randomMedia = await d3.tsv("data/random_audience/media_random.tsv");
 
               statesPaths = await d3.json("js/us-states.json");
 
               targetAuds = [];
               targetAud = await d3.json("data/target_aud_" + audIds[0] + "/audience.json");
               targetDemog = await d3.tsv("data/target_aud_" + audIds[0] + "/demographics_target.tsv");
+
+
               targetInterests = await d3.tsv("data/target_aud_" + audIds[0] + "/interests_target.tsv");
-              targetRetail = await d3.tsv("data/target_aud_" + audIds[0] + "/retail_target.tsv");
+
+              var t0 = performance.now();
+              targetMedia = await d3.tsv("data/target_aud_" + audIds[0] + "/media_target.tsv");
+              var t1 = performance.now();
               targetAuds.push({
                   name: targetAud.name,
                   demog: targetDemog,
                   interests: targetInterests,
-                  retail: targetRetail
+                  media: targetMedia
               });
+
+              console.log(t1 - t0)
+
+
+              randomDemog2 = await d3.tsv("data/random_audience/demographics_random_old.tsv");
+              randomInterests2 = await d3.tsv("data/random_audience/interests_random_old.tsv");
+              randomMedia2 = await d3.tsv("data/random_audience/retail_random_old.tsv");
+
+              statesPaths2 = await d3.json("js/us-states.json");
+
+              targetAuds2 = [];
+              targetAud2 = await d3.json("data/target_aud_" + audIds[0] + "/audience.json");
+              targetDemog2 = await d3.tsv("data/target_aud_" + audIds[0] + "/demographics_target_old.tsv");
+
+
+              targetInterests2 = await d3.tsv("data/target_aud_" + audIds[0] + "/interests_target_old.tsv");
+
+              var t2 = performance.now();
+              targetMedia2 = await d3.tsv("data/target_aud_" + audIds[0] + "/retail_target_old.tsv");
+              var t3 = performance.now();
+              targetAuds2.push({
+                  name: targetAud.name,
+                  demog: targetDemog,
+                  interests: targetInterests,
+                  media: targetMedia
+              });
+
+              console.log(t3 - t2)
 
               if (audIds.length > 1) {
                   targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
                   targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
                   targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
-                  targetRetail2 = await d3.tsv("data/target_aud_" + audIds[1] + "/retail_target.tsv");
+                  targetMedia2 = await d3.tsv("data/target_aud_" + audIds[1] + "/media_target.tsv");
 
                   targetAuds.push({
                       name: targetAud2.name,
                       demog: targetDemog2,
                       interests: targetInterests2,
-                      retail: targetRetail2
+                      media: targetMedia2
                   });
               }
 
@@ -313,13 +346,13 @@
                   targetAud3 = await d3.json("data/target_aud_" + audIds[2] + "/audience.json");
                   targetDemog3 = await d3.tsv("data/target_aud_" + audIds[2] + "/demographics_target.tsv");
                   targetInterests3 = await d3.tsv("data/target_aud_" + audIds[2] + "/interests_target.tsv");
-                  targetRetail3 = await d3.tsv("data/target_aud_" + audIds[2] + "/retail_target.tsv");
+                  targetMedia3 = await d3.tsv("data/target_aud_" + audIds[2] + "/media_target.tsv");
 
                   targetAuds.push({
                       name: targetAud3.name,
                       demog: targetDemog3,
                       interests: targetInterests3,
-                      retail: targetRetail3
+                      media: targetMedia3
                   });
 
               }
