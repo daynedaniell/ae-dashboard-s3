@@ -157,10 +157,10 @@ function applyFilter(attrName, attrValue, shapeString, targetAuds) {
 *******************************************************************************/
 function toggleFromStore(store, key) {
     /* Takes in the store and a key and switches position of elements in an array */
-    tmp1 = store[key][0]
-    tmp2 = store[key][1]
-    store[key][0] = tmp2
-    store[key][1] = tmp1
+    tmp1 = store[key][0];
+    tmp2 = store[key][1];
+    store[key][0] = tmp2;
+    store[key][1] = tmp1;
 }
 
 

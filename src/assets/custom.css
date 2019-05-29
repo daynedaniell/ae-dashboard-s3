@@ -1,0 +1,496 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: white;
+    background: #252937;
+}
+body a{
+    color: white;
+}
+
+main {
+    background: white;
+    color: #252937;
+}
+
+h4.ds-chart-title {
+  font-size: 22px;
+}
+
+.ds-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    position: fixed;
+    top: 60px;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+.ds-grid-nav {
+    /* grid-column: 1 / -1;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    width: 100%; */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* display: flex;
+    align-items: center; */
+    height: 60px;
+    display: grid;
+    grid-template-columns: 400px auto 400px;
+    align-items: center;
+}
+
+.ds-nav-logo {
+    /* padding: 0 40px;
+    position: relative;
+    -ms-flex-item-align: stretch;
+    align-self: stretch;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center; */
+    grid-column: 1 / 2;
+    padding-left: 30px;
+}
+
+.ds-nav-middle {
+    grid-column: 2 / 3;
+
+}
+
+.ds-nav-middle nav {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-nav-end {
+    grid-column: 3 / -1;
+
+}
+
+ul.ds-nav {
+    list-style: none;
+    display: inline;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    align-content: space-evenly;
+}
+
+.ds-nav li {
+  float: left;
+  margin: 0 40px;
+}
+
+.ds-nav>li>a:focus, .ds-nav>li>a:hover {
+    border-radius: 4px;
+    background: #eee;
+    color: #505050;
+    text-decoration: none;
+    padding: 5px;
+}
+
+.ds-nav-item1 {
+  grid-column: 2 / 3;
+}
+.ds-nav-item2 {
+  grid-column: 3 / 4;
+}
+.ds-nav-item3 {
+  grid-column: 4 / 5;
+}
+
+.ds-grid-main {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-gap: 10px;
+    padding: 0 30px;
+    margin-bottom: 100px;
+}
+
+.ds-audience-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+.ds-grid-charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    /* grid-template-rows: repeat(auto-fit, minmax(460px, 1fr)); */
+    grid-gap: 30px;
+    justify-content: space-evenly;
+    margin-bottom: 30px;
+    padding: 10px;
+}
+
+.ds-grid-charts-big {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+    grid-gap: 30px;
+    padding: 10px;
+}
+
+.ds-grid-full {
+    grid-column: 1 / -1;
+    overflow: auto;
+}
+
+/* Legend */
+.ds-audience-legend {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  display: grid;
+  justify-content: end;
+  white-space: nowrap;
+}
+.ds-audience-legend-row {
+  margin-top: 5px;
+  overflow: auto;
+}
+.ds-audience-legend-color {
+  height: 20px;
+  width: 50px;
+  content: "";
+  border: 1px solid #e8e8e8;
+}
+
+.ds-audience-legend-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 5px;
+}
+
+.ds-grid-tabs {
+  overflow-x: scroll;
+}
+
+.ds-chart {
+  font-size: 13px;
+}
+
+
+
+.well {
+    border-radius: 6px;
+    box-shadow: 0 0 2px 0 rgba(32, 32, 32, 0.12);
+    background-color: #fafafa;
+    border: #fafafa;
+}
+
+/* .tile {
+    height: 400px;
+    padding-top: 1px;
+} */
+
+.tile-header {
+    margin-top: 10px;
+}
+
+.tile-header h4 {
+    //margin-bottom: 0;
+    display: inline;
+}
+
+.tile-header .ds-stats {
+    display: inline;
+    float: right;
+}
+.tile-header .ds-stats strong {
+    font-size: 1.1em;
+}
+.tile-header .ds-stats .ds-stat-1, .tile-header .ds-stats .ds-stat-2, .tile-header .ds-stats .ds-stat-3 {
+  float: left;
+}
+.tile-header .ds-stats .ds-stats-name {
+  float: left;
+  color: #505050;
+  margin-right: 3px;
+}
+
+.selected-tile {
+    box-shadow: 0px 0px 10px 2px rgb(178, 183, 195);
+}
+
+.ds-chart-base {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+/* .ds-audience-title {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+} */
+
+.ds-audience-title h1 {
+    font-weight: bold;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.ds-aud-title-2, .ds-aud-title-3 {
+  margin-left: 15px;
+}
+
+
+
+
+
+/* temp fixes */
+/* #incomeChart svg g text {
+    font-size: 12px;
+}
+
+#incomeChart svg g.axis text {
+    font-size: 10px;
+} */
+
+
+
+/* temp layout for nav etc */
+body {
+    /* min-height: 2000px; */
+    padding-top: 70px;
+}
+.ds-grid-brand a {
+  padding: 15px 5px;
+}
+.nav {
+    position: fixed;
+    width: 106px;
+}
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 0px 10px 0px;
+    margin-bottom: 10px;
+}
+.nav>li>a:focus, .nav>li>a:hover {
+    border-radius: 4px;
+}
+.fas {
+    margin-right: 4px;
+}
+.aud-nav {
+    /* position: fixed;
+    width: 106px;
+    top: 206px; */
+    display: grid;
+    justify-content: end;
+}
+.ds-active-filters {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    /* padding-right: 30px; */
+    height: 60px;
+    align-content: center;
+    float: left;
+}
+.ds-current-filter-remove {
+  cursor: pointer;
+  display: none;
+  margin-right: 5px;
+}
+
+
+/* Tooltips */
+.ds-tooltip {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-width: 500px;
+  padding: 15px;
+  word-break: break-all;
+  position: fixed;
+  background-color: #fff;
+  margin-top: -20px;
+  font: 15px "MuseoSans-300", sans-serif;
+  color: #333;
+  pointer-events: none;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+  opacity: 0;
+  z-index: 1;
+}
+
+.ds-tooltip-bubble {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-width: 500px;
+  padding: 15px;
+  word-break: break-all;
+  position: fixed;
+  background-color: #fff;
+  margin-top: -20px;
+  font: 15px "MuseoSans-300", sans-serif;
+  color: #333;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1;
+  border: 1px solid #ddd;
+}
+
+
+
+.ds-grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+
+.ds-grid path {
+  stroke-width: 0;
+}
+
+.ds-stats {
+  font-weight: 400;
+}
+
+.ds-hbar-status {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.ds-toggle-button {
+  margin-top: 10px;
+  float: right;
+  text-align: right;
+  display: none;
+}
+
+.ds-t1.active, .ds-t2.active, .ds-t3.active {
+    border: 2px solid gold;
+}
+
+/* .ds-toggle-button-aud {
+  width: 20px;
+  height: 20px;
+  float: left;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.2)
+} */
+
+/* .ds-hbar-toggle {
+    width: 50px;
+    height: 20px;
+    border-radius: 5px;
+} */
+
+.ds-toggle-main {
+  float: right;
+  text-align: right;
+  display: inline-block;
+  background: #ddd;
+  width: 50px;
+  height: 20px;
+  overflow: hidden;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin: 0 10px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1)
+}
+
+ .ds-toggle-after {
+    content: " ";
+    display: block;
+    width: 30px;
+    height: 20px;
+    /* background-color: @active; */
+    /*background-color: blue; */
+    border: 3px solid #fff;
+    border-top: 0;
+    border-bottom: 0;
+    margin-left: -3px;
+    transition: all 0.3s ease-in-out;
+  }
+
+.ds-toggle-button.active .ds-toggle-after {
+
+      margin-left: 25px;
+
+}
+
+.toggle-label {
+  display: inline-block;
+  line-height: 30px;
+}
+
+.toggle-label-off {
+  color: #eee;
+}
+
+.ds-triple-toggle {
+  width: 150px;
+  height: 25px;
+}
+
+.ds-triple-toggle div {
+  height: 25px;
+  width: 25px;
+  float: left;
+}
+
+.active {
+
+  .toggle-label-off {
+    color: #ccc;
+  }
+
+  .toggle-label-on {
+    color: #eee;
+  }
+}
+
+.ds-number-value {
+  font-size: 48px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  float: left;
+}
+
+/* @media only screen and (max-width: 1280px) {
+  h4 {
+    font-size: 14px;
+  }
+
+  .ds-grid-charts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-gap: 30px;
+      justify-content: space-evenly;
+  }
+
+  .ds-grid-charts svg  g  text {
+    font-size: 11px;
+  }
+
+  .ds-grid-charts-big {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      grid-gap: 30px;
+  }
+
+  .ds-grid-charts-big svg  g  text {
+    font-size: 11px;
+  }
+} */
+
+/* To discard */
+.checkbox+.checkbox {
+  margin-top: 0;
+}
+
+.checkbox {
+  float: left;
+  height: 60px;
+  margin: 0;
+}
