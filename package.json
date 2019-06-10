@@ -1,0 +1,33 @@
+{
+  "name": "lit-element-build-rollup",
+  "version": "1.0.0",
+  "description": "Build config for lit-element with Rollup",
+  "main": "index.js",
+  "repository": "PolymerLabs/lit-element-build-rollup",
+  "scripts": {
+    "copyindex": "cp src/index.html build",
+    "copywc": "cp -r node_modules/@webcomponents/webcomponentsjs/bundles build && cp node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js build",
+    "copyds": "cp -r src/data build",
+    "copyaf": "cp -r src/assets build",
+    "copyvc": "cp -r src/components build",
+    "build": "rm -rf build && mkdir build && npm run copyindex && npm run copywc  && npm run copyvc && npm run copyds && npm run copyaf && rollup -c",
+    "start": "serve build"
+  },
+  "author": "The Polymer Authors",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "^2.2.4",
+    "node-fetch": "^2.6.0",
+    "rollup": "^1.1.0",
+    "rollup-plugin-commonjs": "^10.0.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "serve": "^11.0.1"
+  },
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "d3": "^5.9.2",
+    "jquery": "^3.4.1",
+    "lit-element": "^2.0.0-rc.2",
+    "lodash": "^4.17.11"
+  }
+}

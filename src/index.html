@@ -18,10 +18,9 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 
     <link rel= "stylesheet" type= "text/css" href= "assets/custom.css">
-<script src="assets/jquery.js"></script>
-    <script src="assets/bootstrap.bundle.js"></script>
-    <script src="assets/lodash.js"></script>
-<script src="assets/d3.custom.min.js"></script>
+
+    <script src="index.js"></script>
+
 </head>
 <body>
     <!-- <nav class="navbar navbar-dark navbar-fixed-top bg-dark flex-md-nowrap p-0 shadow col-sm-3 col-md-2 ds-grid-brand">
@@ -91,12 +90,10 @@
     <div class="ds-grid-container">
       <!-- <div class="row"> -->
 
-
-
         <main role="main" class="ds-grid-main">
-
+            <bubble-chart-classic></bubble-chart-classic>
+            <donut-chart style="height: 500px; width: 500px;"></donut-chart>
           <div class="ds-audience-header">
-
               <div class="ds-audience-title">
               </div>
               <div class="ds-audience-legend">
@@ -135,7 +132,7 @@
                   <div class="tile-header">
                       <h4 class="ds-chart-title">Gender</h4>
                   </div>
-                  <div id="genderChart"></div>
+                <donut-chart></donut-chart>
             </div>
             <div class="ds-chart well tile">
                   <div class="tile-header">
@@ -247,7 +244,15 @@
 
 
 
+    <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 
+    <!-- Bootstrap compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
 
     <script src="assets/audience_charts.js"></script>
     <script src="assets/audience_comparison_charts.js"></script>

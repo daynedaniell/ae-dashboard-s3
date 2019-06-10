@@ -1,0 +1,5 @@
+class PieChart {
+    constructor(config){
+
+    }
+}

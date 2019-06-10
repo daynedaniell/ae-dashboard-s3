@@ -1,0 +1,58 @@
+<div class="ds-grid-nav">
+    <div class="ds-nav-logo">
+
+    </div>
+    <div class="ds-nav-middle">
+        <nav>
+            <ul class="ds-nav">
+                {{#each nav-item}}
+
+                <li class="ds-nav-item1">
+                    <a class="nav-link active" id="dashboard-tab" data-toggle="tab" href="#dashboard">
+                        <i class="fas fa-columns"></i>
+                        Dashboard <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="ds-nav-item2">
+                    <a class="nav-link" id="interests-tab" data-toggle="tab" href="#interests">
+                        <i class="fas fa-heart"></i>
+                        Interests
+                    </a>
+                </li>
+                <li class="ds-nav-item3">
+                    <a class="nav-link" id="media-tab" data-toggle="tab" href="#media">
+                        <i class="fas fa-shopping-cart"></i>
+                        Media
+                    </a>
+                </li>
+                {{/each}}
+            </ul>
+        </nav>
+    </div>
+    <div class="ds-nav-end">
+
+        <div class="ds-active-filters">
+            <span>
+
+            <!-- <i class="fas fa-filter"></i>  -->
+                <!-- Active Filter -->
+            </span>
+
+            <div style="font-style:italic;"><span class="ds-filter-tip"><i class="fas fa-lightbulb"></i></span><span class="ds-current-filter-remove">Active Filter<br/><i class="fas fa-times"></i></span><span class="ds-current-filter"></span></div>
+        </div>
+        <div class="aud-nav">
+            <form class="ds-audience-selection-form">
+                <div class="checkbox">
+                    <label><input type="checkbox" value="1" checked>1</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="2">2</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="3">3</label>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
