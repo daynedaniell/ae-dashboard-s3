@@ -1772,7 +1772,7 @@ function drawCharts(targetAuds) {
 
     });
 
-    let indexes = []
+    let indexes = [];
     audData.forEach(function(aud) {
       indexes.push({
         age: aud.age,
@@ -1805,7 +1805,7 @@ function drawCharts(targetAuds) {
         "media": "media"
       }
       document.getElementById(mapping[d[0]]+"Chart").parentNode.scrollIntoView();
-      $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold")
+      $("#"+mapping[d[0]]+"Chart").css("border", "1px solid gold");
       setTimeout(function() {$("#"+mapping[d[0]]+"Chart").css("border", "none")}, 3000);
     });
 

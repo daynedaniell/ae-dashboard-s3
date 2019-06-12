@@ -6,7 +6,7 @@ export class DonutChart extends LitElement {
         super();
         this.loadingMsg = 'Loading';
         this.chartTitle = 'Gender';
-        this.chartIdentifier = 'gender';
+        this.chartIdentifier = 'genderChart';
     }
 
     static get styles() {
@@ -14,11 +14,10 @@ export class DonutChart extends LitElement {
     :host {
     
     }
-    
-    .donut-chart {
-        width: 500px;
-        height: 500px;
-    }
+    .ds-chart-base {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
     
     `;
     }
@@ -69,7 +68,7 @@ export class DonutChart extends LitElement {
             if (index >= 120) {
                 return colorOverIndex;
             } else if (index > 80) {
-                if (indexCats.findIndex(x => x.attrib_value == attrValue) == 0) {
+                if (indexCats.findIndex(x => x.attrib_value === attrValue) === 0) {
                     return colorNeutralIndex1;
                 } else {
                     return colorNeutralIndex2;
@@ -123,7 +122,7 @@ export class DonutChart extends LitElement {
         function pieChart(attrName, indexDs){
             let width = 360 * DS_VIS_STORE["scaleWeight"],
                 height = 360 * DS_VIS_STORE["scaleWeight"],
-                outerRadius = Math.min(width, height) / 2,
+                outerRadius = Math.min(width - 60, height - 60) / 2,
                 innerRadius = outerRadius * .999,
                 innerRadiusFinal = outerRadius * .5,
                 innerRadiusFinal3 = outerRadius* .45,
@@ -148,7 +147,7 @@ export class DonutChart extends LitElement {
             /* Create an arc generator, and configure its inner and outer radii */
             let arc = d3.arc() /* Generates path data for an arc */
                 .outerRadius(outerRadius)
-                .innerRadius(100);
+                .innerRadius(innerRadius);
 
             /* Create configured arc generators for animation */
             let arcFinal = d3.arc()

@@ -111,60 +111,6 @@ function makeIndexCats(){
       {attrib_value: '> 125K', target_count: 0, random_count: 0}
   ];
 
-  // const stateIndexCats = [
-  //     {attrib_value: 'AL', target_count: 0, random_count: 0},
-  //     {attrib_value: 'AK', target_count: 0, random_count: 0},
-  //     {attrib_value: 'AZ', target_count: 0, random_count: 0},
-  //     {attrib_value: 'AR', target_count: 0, random_count: 0},
-  //     {attrib_value: 'CA', target_count: 0, random_count: 0},
-  //     {attrib_value: 'CO', target_count: 0, random_count: 0},
-  //     {attrib_value: 'CT', target_count: 0, random_count: 0},
-  //     {attrib_value: 'DE', target_count: 0, random_count: 0},
-  //     {attrib_value: 'DC', target_count: 0, random_count: 0},
-  //     {attrib_value: 'FL', target_count: 0, random_count: 0},
-  //     {attrib_value: 'GA', target_count: 0, random_count: 0},
-  //     {attrib_value: 'HI', target_count: 0, random_count: 0},
-  //     {attrib_value: 'ID', target_count: 0, random_count: 0},
-  //     {attrib_value: 'IL', target_count: 0, random_count: 0},
-  //     {attrib_value: 'IN', target_count: 0, random_count: 0},
-  //     {attrib_value: 'IA', target_count: 0, random_count: 0},
-  //     {attrib_value: 'KS', target_count: 0, random_count: 0},
-  //     {attrib_value: 'KY', target_count: 0, random_count: 0},
-  //     {attrib_value: 'LA', target_count: 0, random_count: 0},
-  //     {attrib_value: 'ME', target_count: 0, random_count: 0},
-  //     {attrib_value: 'MD', target_count: 0, random_count: 0},
-  //     {attrib_value: 'MA', target_count: 0, random_count: 0},
-  //     {attrib_value: 'MI', target_count: 0, random_count: 0},
-  //     {attrib_value: 'MN', target_count: 0, random_count: 0},
-  //     {attrib_value: 'MS', target_count: 0, random_count: 0},
-  //     {attrib_value: 'MO', target_count: 0, random_count: 0},
-  //     {attrib_value: 'MT', target_count: 0, random_count: 0},
-  //     {attrib_value: 'NE', target_count: 0, random_count: 0},
-  //     {attrib_value: 'NV', target_count: 0, random_count: 0},
-  //     {attrib_value: 'NH', target_count: 0, random_count: 0},
-  //     {attrib_value: 'NJ', target_count: 0, random_count: 0},
-  //     {attrib_value: 'NM', target_count: 0, random_count: 0},
-  //     {attrib_value: 'NY', target_count: 0, random_count: 0},
-  //     {attrib_value: 'NC', target_count: 0, random_count: 0},
-  //     {attrib_value: 'ND', target_count: 0, random_count: 0},
-  //     {attrib_value: 'OH', target_count: 0, random_count: 0},
-  //     {attrib_value: 'OK', target_count: 0, random_count: 0},
-  //     {attrib_value: 'OR', target_count: 0, random_count: 0},
-  //     {attrib_value: 'PA', target_count: 0, random_count: 0},
-  //     {attrib_value: 'RI', target_count: 0, random_count: 0},
-  //     {attrib_value: 'SC', target_count: 0, random_count: 0},
-  //     {attrib_value: 'SD', target_count: 0, random_count: 0},
-  //     {attrib_value: 'TN', target_count: 0, random_count: 0},
-  //     {attrib_value: 'TX', target_count: 0, random_count: 0},
-  //     {attrib_value: 'UT', target_count: 0, random_count: 0},
-  //     {attrib_value: 'VT', target_count: 0, random_count: 0},
-  //     {attrib_value: 'VA', target_count: 0, random_count: 0},
-  //     {attrib_value: 'WA', target_count: 0, random_count: 0},
-  //     {attrib_value: 'WV', target_count: 0, random_count: 0},
-  //     {attrib_value: 'WI', target_count: 0, random_count: 0},
-  //     {attrib_value: 'WY', target_count: 0, random_count: 0}
-  // ];
-
     const stateIndexCats = [
         {attrib_value: 'Alabama', target_count: 0, random_count: 0},
         {attrib_value: 'Alaska', target_count: 0, random_count: 0},
@@ -474,21 +420,3 @@ function getNonZeroPct(indexDs) {
     .filter(function(d) { return d["attrib_value"] == "0"; })[0].target_pct;
   return 100 - zeroPct;
 }
-
-
-
-
-
-
-
-
-/* data for audience wave chart */
-/*
-const ageIndex0_copy = _.cloneDeep(ageIndex0);
-ageIndex0.map(item => {item.attrib_name = "age"; return item;})
-const genderIndex0_copy = _.cloneDeep(genderIndex0);
-genderIndex0.map(item => {item.attrib_name = "gender"; return item;})
-*/
-//const ageIndex0_copy = _.cloneDeep(ageIndex0);
-//ageIndex0.map(item => {item.attrib_name = "age"; return item;})
-//allIndexes0 =

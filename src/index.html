@@ -92,7 +92,7 @@
 
         <main role="main" class="ds-grid-main">
             <bubble-chart-classic></bubble-chart-classic>
-            <donut-chart style="height: 500px; width: 500px;"></donut-chart>
+            <donut-chart></donut-chart>
           <div class="ds-audience-header">
               <div class="ds-audience-title">
               </div>
@@ -123,10 +123,7 @@
             <div class="ds-grid-charts">
 
             <div class="ds-chart well tile">
-                  <div class="tile-header">
-                      <h4 class="ds-chart-title">Age</h4>
-                  </div>
-                  <div id="ageChart"></div>
+                <bar-chart chartTitle="Age"></bar-chart>
             </div>
             <div class="ds-chart well tile">
                   <div class="tile-header">
@@ -236,8 +233,6 @@
 
           </div>
         </div>
-      </div>
-
         </main>
     </div>
 
@@ -291,9 +286,6 @@
                   media: targetMedia
               });
 
-              console.log(t1 - t0)
-
-
               randomDemog2 = await d3.tsv("data/random_audience/demographics_random.tsv");
               randomInterests2 = await d3.tsv("data/random_audience/interests_random.tsv");
               randomMedia2 = await d3.tsv("data/random_audience/media_random.tsv");
@@ -316,8 +308,6 @@
                   interests: targetInterests,
                   media: targetMedia
               });
-
-              console.log(t3 - t2)
 
               if (audIds.length > 1) {
                   targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");

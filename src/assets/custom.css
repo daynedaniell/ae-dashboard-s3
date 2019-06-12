@@ -439,16 +439,14 @@ body {
   float: left;
 }
 
-.active {
-
-  .toggle-label-off {
+  .active .toggle-label-off {
     color: #ccc;
   }
 
-  .toggle-label-on {
+ .active .toggle-label-on {
     color: #eee;
   }
-}
+
 
 .ds-number-value {
   font-size: 48px;

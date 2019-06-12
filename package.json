@@ -10,13 +10,16 @@
     "copyds": "cp -r src/data build",
     "copyaf": "cp -r src/assets build",
     "copyvc": "cp -r src/components build",
-    "build": "rm -rf build && mkdir build && npm run copyindex && npm run copywc  && npm run copyvc && npm run copyds && npm run copyaf && rollup -c",
+    "build": "rm -rf build && mkdir build && npm run copyindex && npm run copywc  && npm run copyvc && npm run copyds && npm run copyaf  && rollup -c",
     "start": "serve build"
   },
   "author": "The Polymer Authors",
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^2.2.4",
+    "gulp": "^4.0.2",
+    "gulp-compile-handlebars": "^0.6.1",
+    "gulp-rename": "^1.4.0",
     "node-fetch": "^2.6.0",
     "rollup": "^1.1.0",
     "rollup-plugin-commonjs": "^10.0.0",

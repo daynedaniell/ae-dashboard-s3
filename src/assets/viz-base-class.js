@@ -1,9 +1,9 @@
-class Visualization {
-    constructor(config) {
+export class Visualization {
+    constructor() {
 
-        this.colorSeries1 = config.colorSeries1 || "#4d3c96";
-        this.colorSeries2 = config.colorSeries2 || "#0fbbc1";
-        this.colorSeries3 = config.colorSeries3 || "#ff9999";
+        this.colorSeries1 =  "#4d3c96";
+        this.colorSeries2 =  "#0fbbc1";
+        this.colorSeries3 =  "#ff9999";
 
         let DS_VIS_STORE = {
             activeFilter: null,
@@ -39,6 +39,7 @@ class Visualization {
             .style('left', `${(tipX)}`)
             .style('top', `${(tipY)}`);
     }
+
     //end tooltip
 
 
