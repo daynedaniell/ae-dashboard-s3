@@ -4,14 +4,14 @@ import { BarChartBase } from "../assets/bar-chart-class";
 
 export class BarChart extends LitElement {
     static get properties() {
-        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}, orientation: {type: String}}
+        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}, orientation: {type: String}, dataSource: {type: Object}}
     }
     constructor() {
         super();
-        this.loadingMsg = 'Loading';
         this.chartTitle = "Age";
         this.chartIdentifier = 'ageChart';
         this.orientation = 'vertical';
+        this.dataSource = {};
     }
 
     static get styles() {
@@ -54,22 +54,6 @@ export class BarChart extends LitElement {
             ]
         };
 
-
-
-
-        function makeIndexCats(config) {
-            let ageIndexCats = [];
-            config.categories.forEach(function (value) {
-                ageIndexCats.push({attrib_value: value, target_count: 0, random_count: 0})
-            });
-
-            return {
-                age: ageIndexCats
-            };
-        }
-
-
-
         function drawCharts(targetAuds) {
             console.log('draw charts called');
             let activeView = barChart.DS_VIS_STORE.activeView;
@@ -81,7 +65,7 @@ export class BarChart extends LitElement {
             addAudienceLegend(targetAuds);
             addAudienceTitle(targetAuds);
 
-            let indexCats = makeIndexCats(config);
+            let indexCats = barChart.makeIndexCats(config);
             let demogAttributesList = Object.keys(indexCats);
 
             let audData = [];
@@ -120,7 +104,7 @@ export class BarChart extends LitElement {
                 });
             });
 
-            barChart.drawChart("age", barChart.getIndexArray(audData, "age"));
+            barChart.drawChart("age", barChart.getIndexArray(this.dataSource, "age"));
         }
 
 

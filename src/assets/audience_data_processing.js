@@ -166,8 +166,8 @@ function makeIndexCats(){
     ];
 
 	return {
-		age : ageIndexCats,
-		ethnicity : ethnicityIndexCats,
+	age : ageIndexCats,
+	ethnicity : ethnicityIndexCats,
     gender : genderIndexCats,
     marital : maritalIndexCats,
     children : childrenIndexCats,

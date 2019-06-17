@@ -440,10 +440,6 @@ export class Visualization {
 
 }
 
-/* simple data cache */
-var dataCache = {};
-
-
 async function f(audIds) {
     // setting these as globals for now
     if (audIds.length > 0 & audIds.length <= 3) {
