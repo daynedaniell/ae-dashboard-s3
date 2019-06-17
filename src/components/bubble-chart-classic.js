@@ -2,15 +2,13 @@ import { LitElement, html, css, customElement } from  'lit-element';
 import * as d3 from 'd3';
 
 export class BubbleChartClassic extends LitElement {
+    static get properties() {
+        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}}
+    }
     constructor() {
         super();
         this.loadingMsg = 'Loading';
     }
-
-
-
-
-
 
     static get styles() {
         return css `

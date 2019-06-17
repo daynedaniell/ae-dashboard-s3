@@ -91,8 +91,6 @@
       <!-- <div class="row"> -->
 
         <main role="main" class="ds-grid-main">
-            <bubble-chart-classic></bubble-chart-classic>
-            <donut-chart></donut-chart>
           <div class="ds-audience-header">
               <div class="ds-audience-title">
               </div>
@@ -112,10 +110,7 @@
               </div>
               <!-- <div style="float:none;width:100%;overflow:auto;"></div> -->
               <div class="well ds-grid-full">
-                <div class="tile-header">
-                    <h4 class="ds-chart-title">Audience DNA</h4>
-                </div>
-                  <div id="waveChart" style="width:100%;height:150px;"></div>
+                <wave-chart chartTitle="Audience DNA"></wave-chart>
               </div>
         </div>
         <div class="tab-content relative ds-grid-tabs">
@@ -123,13 +118,12 @@
             <div class="ds-grid-charts">
 
             <div class="ds-chart well tile">
-                <bar-chart chartTitle="Age"></bar-chart>
+                <bar-chart chartTitle="Age" orientation="vertical"></bar-chart>
             </div>
             <div class="ds-chart well tile">
-                  <div class="tile-header">
-                      <h4 class="ds-chart-title">Gender</h4>
-                  </div>
-                <donut-chart></donut-chart>
+                <donut-chart chartTitle="Gender" dataSource='[{"attrib_value": "F", "index": 102,
+                "random_count": 4946, "random_pct": 53, "target_count": 5231, "target_pct": 54},
+                {"attrib_value": "M", "index": 98, "random_count": 4361, "random_pct": 47, "target_count": 4553, "target_pct": 46}]'></donut-chart>
             </div>
             <div class="ds-chart well tile">
                   <div class="tile-header">
@@ -258,6 +252,7 @@
           e.preventDefault()
           $(this).tab('show')
         })
+
 */
         async function f(audIds) {
             // setting these as globals for now

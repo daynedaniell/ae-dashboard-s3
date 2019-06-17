@@ -2,11 +2,14 @@ import { LitElement, html, css, customElement } from  'lit-element';
 import * as d3 from 'd3';
 
 export class DonutChart extends LitElement {
+    static get properties() {
+        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}, dataSource: {type: Object}}
+    }
     constructor() {
         super();
-        this.loadingMsg = 'Loading';
         this.chartTitle = 'Gender';
         this.chartIdentifier = 'genderChart';
+        this.dataSource = {};
     }
 
     static get styles() {
@@ -14,6 +17,14 @@ export class DonutChart extends LitElement {
     :host {
     
     }
+     h4.ds-chart-title {
+            display: inline;
+            font-size: 22px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            line-height: 1.1
+        }
     .ds-chart-base {
     margin-left: auto;
     margin-right: auto;
@@ -29,7 +40,6 @@ export class DonutChart extends LitElement {
 
     render() {
         return html`
-    <div class="loading">${this.loadingMsg}</div>
      <div class="tile-header">
      <h4 class="ds-chart-title">${this.chartTitle}</h4>
      </div>
@@ -90,9 +100,9 @@ export class DonutChart extends LitElement {
                     tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
                 /* Split horizontal bar text on last dash */
                 if (type === "hbar") {
-                    words = words.map(function (word) { return word.trim() })
+                    words = words.map(function (word) { return word.trim() });
 
-                    let numWords = words.length
+                    let numWords = words.length;
                     let firstLine = words.slice(0, -1).join(" - ");
                     let secondLine = (numWords > 1) ? "- " + words.slice(-1)[0] : words.slice(-1)[0];
                     words = (numWords > 1) ? [secondLine, firstLine] : [secondLine];
@@ -123,14 +133,13 @@ export class DonutChart extends LitElement {
             let width = 360 * DS_VIS_STORE["scaleWeight"],
                 height = 360 * DS_VIS_STORE["scaleWeight"],
                 outerRadius = Math.min(width - 60, height - 60) / 2,
-                innerRadius = outerRadius * .999,
+                innerRadius = outerRadius * .5,
                 innerRadiusFinal = outerRadius * .5,
                 innerRadiusFinal3 = outerRadius* .45,
                 marginShift = {top: outerRadius + 30, left: outerRadius + 30};
 
 
             let vis = d3.select(element)
-               // .append("svg:svg")
                 .attr("class", "ds-chart-base")
                 .attr("id", attrName+"ChartPlot")
                 .data([indexDs])          /* associate our data with the document */
@@ -152,9 +161,6 @@ export class DonutChart extends LitElement {
             /* Create configured arc generators for animation */
             let arcFinal = d3.arc()
                 .innerRadius(innerRadiusFinal)
-                .outerRadius(outerRadius);
-            let arcFinal3 = d3.arc()
-                .innerRadius(innerRadiusFinal3)
                 .outerRadius(outerRadius);
 
             /* Create arc data from a list of values */
@@ -201,17 +207,8 @@ export class DonutChart extends LitElement {
                 applyFilter(attrName, d.data.attrib_value, "path", targetAuds);
             }
         }
-        pieChart("gender",[{attrib_value: 'F', index: 102,
-            random_count: 4946, random_pct: 53, target_count: 5231, target_pct: 54},
-            {attrib_value: 'M', index: 98, random_count: 4361, random_pct: 47, target_count: 4553, target_pct: 46}]);
-
-
+        pieChart("gender",this.dataSource);
 
     }
 }
-
-
-
-
-
 customElements.define('donut-chart', DonutChart);

@@ -184,7 +184,7 @@ function makeIndexCats(){
 
 /* calculate an array of pct and indexes for interests/media */
 function indexInterestsMedia(attrName, targetData, randomData, bubble=false) {
-    var t0 = performance.now()
+    var t0 = performance.now();
     let targetCounts = d3.nest()
       .key(function(d) { return d[attrName+"_category"] + "|" + d[attrName]; })
       .rollup(function(v) { return v.length; })
@@ -261,7 +261,7 @@ function indexInterestsMedia(attrName, targetData, randomData, bubble=false) {
 
 /* for interests/media, get the max indexing item for each category, and pick top 5 among that list */
 function indexInterestsMediaTop5(indexDs, indexDs2 = null, indexDs3 = null) {
-  let f = indexDs.filter((d) => ( d.index <= 300 && d.target_pct >= 5))
+  let f = indexDs.filter((d) => ( d.index <= 300 && d.target_pct >= 5));
 
   let a = d3.nest()
     .key(function(d) { return d["category"]; })
@@ -306,7 +306,6 @@ function indexInterestsMediaTop5(indexDs, indexDs2 = null, indexDs3 = null) {
     })
     .slice(0, 5);
 
-
     if (indexDs2 != null) {
         let c = a.map(function(d) {
             return {
@@ -316,7 +315,7 @@ function indexInterestsMediaTop5(indexDs, indexDs2 = null, indexDs3 = null) {
               random_pct: d.random_pct,
               index: d.compare_index
             }
-        })
+        });
         if (indexDs3 != null) {
             let c2 = a.map(function(d) {
                 return {
@@ -335,8 +334,6 @@ function indexInterestsMediaTop5(indexDs, indexDs2 = null, indexDs3 = null) {
     } else {
       return a;
     }
-
-
 }
 
 function indexStatesTop5(indexDs1, indexDs2, indexDs3 = null) {
@@ -372,7 +369,7 @@ function indexStatesTop5(indexDs1, indexDs2, indexDs3 = null) {
         random_pct: d.random_pct,
         index: d.compare_index
       }
-  })
+  });
 
   if (triple === true) {
       let c2 = a.map(function(d) {

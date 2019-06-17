@@ -340,7 +340,7 @@ function drawBarChart(attrName, indexArray, innerWidth=400) {
       .call(axis);
 
   /* Remove vertical and extra horizontal gridlines */
-  svg.selectAll(".domain").remove()
+  svg.selectAll(".domain").remove();
 
 
   function up(d, i) {
@@ -359,97 +359,6 @@ function drawBarChart(attrName, indexArray, innerWidth=400) {
   }
 
 }
-
-
-
-/*******************************************************************************
-*** PIE CHART ******************************************************************
-*******************************************************************************/
-
-function pieChart(attrName, indexDs){
-  let width = 360 * DS_VIS_STORE["scaleWeight"],
-		  height = 360 * DS_VIS_STORE["scaleWeight"],
-		  outerRadius = Math.min(width - 60, height - 60) / 2,
-      innerRadius = outerRadius * .999,
-      innerRadiusFinal = outerRadius * .5,
-      innerRadiusFinal3 = outerRadius* .45,
-      marginShift = {top: outerRadius + 30, left: outerRadius + 30}
-      ;
-
-
-	let vis = d3.select("#"+attrName+"Chart")
-              .append("svg:svg")
-              .attr("class", "ds-chart-base")
-              .attr("id", attrName+"ChartPlot")
-              .data([indexDs])          /* associate our data with the document */
-              .attr("width", width)
-              .attr("height", height)
-              .append("svg:g")          /* make a group to hold our pie chart */
-              .attr(
-                "transform",
-                "translate(" + marginShift.top + "," + marginShift.left + ")"
-              ) /* move the center of the pie chart from 0, 0 to radius, radius */
-              ;
-
-
-  /* Create an arc generator, and configure its inner and outer radii */
-  let arc = d3.arc() /* Generates path data for an arc */
-              .outerRadius(outerRadius)
-              .innerRadius(innerRadius);
-
-  /* Create configured arc generators for animation */
-  let arcFinal = d3.arc()
-                   .innerRadius(innerRadiusFinal)
-                   .outerRadius(outerRadius);
-  let arcFinal3 = d3.arc()
-                    .innerRadius(innerRadiusFinal3)
-                    .outerRadius(outerRadius);
-
-  /* Create arc data from a list of values */
-  let pie = d3.pie()
-              .value(function(d) { return d.target_pct; });
-
-  let arcs = vis.selectAll("g.slice") /* select all <g> elements with class slice (there aren't any yet) */
-                .data(pie)            /* associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties) */
-                .enter()              /* create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array */
-                .append("svg:g")      /* create a group to hold each slice (we will have a <path> and a <text> element associated with each slice) */
-                .attr("class", "slice")
-                .on("click", up);
-
-  arcs.append("svg:path")
-      .attr("cursor", "pointer")
-      .attr("attrib-value", function(d) { return d.data.attrib_value; })    /* storing the Acxiom attrib value on the element */
-      .attr("target-pct", function(d) { return d.data.target_pct; })
-      .attr("index", function(d) { return d.data.index; })
-      .attr("fill", function(d) {
-          return colorByIndexPie(d.data.index, indexDs, d.data.attrib_value);
-      })
-      .attr("d", arc)     /* this creates the actual SVG path using the associated data (pie) with the arc drawing function */
-      .append("svg:title") /* mouseover title showing the figures */
-      ;
-
-  d3.selectAll("g.slice").selectAll("path").attr("d", arcFinal );
-
-  /* Add a label to the larger arcs, translated to the arc centroid and rotated.
-  // source: http://bl.ocks.org/1305337#index.html */
-  let labeledArcs = arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; })
-      .append("svg:text")
-	    .attr("dy", "0.35em")
-      .attr("text-anchor", "middle")
-	    .attr("transform", function(d) { return "translate(" + arcFinal.centroid(d)[0] + ',' + (arcFinal.centroid(d)[1] - 20) + ")"; });
-
-	labeledArcs
-      .text(function(d) { return d.data.attrib_value + "|" + d.data.index + "|" + d.data.target_pct + "%" })
-      .attr("dy", 0)
-      .attr("class", "arc-name")
-      .call(wrap, 1, "|", type = 'pie');
-
-
-  function up(d) {
-      applyFilter(attrName, d.data.attrib_value, "path", targetAuds);
-  }
-}
-
 
 /*******************************************************************************
 *** MAP CHART ******************************************************************

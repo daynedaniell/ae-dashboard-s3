@@ -1,6 +1,9 @@
 import { LitElement, html, css } from  'lit-element';
 
 export class ClusteredBarChart extends LitElement {
+    static get properties() {
+        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}}
+    }
     constructor() {
         super();
     }
