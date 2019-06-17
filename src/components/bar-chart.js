@@ -42,7 +42,8 @@ export class BarChart extends LitElement {
 
         var chartConfig = {
             element: element,
-            showTooltips: true
+            showTooltips: true,
+            orientation: this.orientation
         };
 
         const barChart = new BarChartBase(chartConfig);
@@ -71,8 +72,8 @@ export class BarChart extends LitElement {
 
         function drawCharts(targetAuds) {
             console.log('draw charts called');
-            let activeView = DS_VIS_STORE.activeView;
-            showActiveFilter(DS_VIS_STORE);
+            let activeView = barChart.DS_VIS_STORE.activeView;
+            showActiveFilter(barChart.DS_VIS_STORE);
             /* Remove any active tooltips */
             d3.selectAll(".ds-tooltip").remove();
 
@@ -119,7 +120,7 @@ export class BarChart extends LitElement {
                 });
             });
 
-            barChart.drawBarChart("age", barChart.getIndexArray(audData, "age"));
+            barChart.drawChart("age", barChart.getIndexArray(audData, "age"));
         }
 
 

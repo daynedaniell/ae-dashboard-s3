@@ -430,4 +430,99 @@ export class Visualization {
         return 100 - zeroPct;
     }
 
+    /* drawCharts */
+    drawChart(chartType) {
+        let activeView = DS_VIS_STORE.activeView;
+        showActiveFilter(DS_VIS_STORE);
+
+    }
+
+
+}
+
+/* simple data cache */
+var dataCache = {};
+
+
+async function f(audIds) {
+    // setting these as globals for now
+    if (audIds.length > 0 & audIds.length <= 3) {
+
+        randomDemog = await d3.tsv("data/random_audience/demographics_random.tsv");
+        randomInterests = await d3.tsv("data/random_audience/interests_random.tsv");
+        randomMedia = await d3.tsv("data/random_audience/media_random.tsv");
+
+        statesPaths = await d3.json("assets/us-states.json");
+
+        targetAuds = [];
+        targetAud = await d3.json("data/target_aud_" + audIds[0] + "/audience.json");
+        targetDemog = await d3.tsv("data/target_aud_" + audIds[0] + "/demographics_target.tsv");
+
+
+        targetInterests = await d3.tsv("data/target_aud_" + audIds[0] + "/interests_target.tsv");
+
+        var t0 = performance.now();
+        targetMedia = await d3.tsv("data/target_aud_" + audIds[0] + "/media_target.tsv");
+        var t1 = performance.now();
+        targetAuds.push({
+            name: targetAud.name,
+            demog: targetDemog,
+            interests: targetInterests,
+            media: targetMedia
+        });
+
+        randomDemog2 = await d3.tsv("data/random_audience/demographics_random.tsv");
+        randomInterests2 = await d3.tsv("data/random_audience/interests_random.tsv");
+        randomMedia2 = await d3.tsv("data/random_audience/media_random.tsv");
+
+        statesPaths2 = await d3.json("assets/us-states.json");
+
+        targetAuds2 = [];
+        targetAud2 = await d3.json("data/target_aud_" + audIds[0] + "/audience.json");
+        targetDemog2 = await d3.tsv("data/target_aud_" + audIds[0] + "/demographics_target.tsv");
+
+
+        targetInterests2 = await d3.tsv("data/target_aud_" + audIds[0] + "/interests_target.tsv");
+
+        var t2 = performance.now();
+        targetMedia2 = await d3.tsv("data/target_aud_" + audIds[0] + "/media_target.tsv");
+        var t3 = performance.now();
+        targetAuds2.push({
+            name: targetAud.name,
+            demog: targetDemog,
+            interests: targetInterests,
+            media: targetMedia
+        });
+
+        if (audIds.length > 1) {
+            targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
+            targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
+            targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
+            targetMedia2 = await d3.tsv("data/target_aud_" + audIds[1] + "/media_target.tsv");
+
+            targetAuds.push({
+                name: targetAud2.name,
+                demog: targetDemog2,
+                interests: targetInterests2,
+                media: targetMedia2
+            });
+        }
+
+        if (audIds.length > 2) {
+            targetAud3 = await d3.json("data/target_aud_" + audIds[2] + "/audience.json");
+            targetDemog3 = await d3.tsv("data/target_aud_" + audIds[2] + "/demographics_target.tsv");
+            targetInterests3 = await d3.tsv("data/target_aud_" + audIds[2] + "/interests_target.tsv");
+            targetMedia3 = await d3.tsv("data/target_aud_" + audIds[2] + "/media_target.tsv");
+
+            targetAuds.push({
+                name: targetAud3.name,
+                demog: targetDemog3,
+                interests: targetInterests3,
+                media: targetMedia3
+            });
+
+        }
+        // drawCharts(targetAuds);
+
+    }
 }

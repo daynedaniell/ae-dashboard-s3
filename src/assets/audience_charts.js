@@ -577,7 +577,7 @@ function hBarChart(attrName, innerWidth, indexArray, hasToggle=false) {
               addHbarText(aud, i);
           }
 
-        })
+        });
 
 
   /* Will set x position and color dependent on size of bar */
@@ -1173,7 +1173,7 @@ function dnaChart(indexArray, barWidth=4) {
       }
     }]
   };
-  Plotly.newPlot("waveChart", traces, layout, {displayModeBar: false, responsive: true});
+ // Plotly.newPlot("waveChart", traces, layout, {displayModeBar: false, responsive: true});
 
 }
 
@@ -1631,7 +1631,7 @@ function drawCharts(targetAuds) {
     /* View setup */
     addAudienceLegend(targetAuds);
 
-    addAudienceTitle(targetAuds)
+    addAudienceTitle(targetAuds);
 
     let indexCats = makeIndexCats();
     let demogAttributesList = Object.keys(indexCats);
@@ -1697,7 +1697,7 @@ function drawCharts(targetAuds) {
     });
     dnaChart(indexes,barWidth=DS_VIS_STORE.dnaBarWidths[DS_VIS_STORE.activeView - 1]);
 
-    var myPlot = document.getElementById('waveChart');
+   // var myPlot = document.getElementById('waveChart');
     myPlot.on('plotly_click', function(data){
       let d = data.points[0].hovertext.split("<br>")[2].trim().split(":");
       d[0] = d[0][0].toLowerCase() + d[0].slice(1)
