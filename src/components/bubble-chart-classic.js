@@ -7,7 +7,6 @@ export class BubbleChartClassic extends LitElement {
     }
     constructor() {
         super();
-        this.loadingMsg = 'Loading';
     }
 
     static get styles() {

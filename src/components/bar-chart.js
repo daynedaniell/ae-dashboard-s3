@@ -38,77 +38,22 @@ export class BarChart extends LitElement {
     }
 
     firstUpdated(_changedProperties) {
-        var element = this.shadowRoot.querySelector(".bar-chart");
+        let element = this.shadowRoot.querySelector(".bar-chart");
 
-        var chartConfig = {
+        let chartConfig = {
             element: element,
             showTooltips: true,
-            orientation: this.orientation
+            orientation: this.orientation,
+            dataSource: this.dataSource
         };
 
-        const barChart = new BarChartBase(chartConfig);
+        let barChart = new BarChartBase(chartConfig);
 
-        const config = {
-            "categories": [
-                "18-25", "26-35", "36-45", "46-55", "56-65", "66+"
-            ]
-        };
-
-        function drawCharts(targetAuds) {
-            console.log('draw charts called');
-            let activeView = barChart.DS_VIS_STORE.activeView;
-            showActiveFilter(barChart.DS_VIS_STORE);
-            /* Remove any active tooltips */
-            d3.selectAll(".ds-tooltip").remove();
-
-            /* View setup */
-            addAudienceLegend(targetAuds);
-            addAudienceTitle(targetAuds);
-
-            let indexCats = barChart.makeIndexCats(config);
-            let demogAttributesList = Object.keys(indexCats);
-
-            let audData = [];
-
-            /* Remove the current svg from each chart div */
-            demogAttributesList.forEach(function (demogAttributeListName) {
-                d3.select("#" + demogAttributeListName + "Chart svg").remove();
-            });
-            targetAuds.forEach(function (aud, i) {
-                let targetData = {
-                    name: aud.name
-                };
-                demogAttributesList.forEach(function (demogAttributeListName) {
-                    let index;
-                    if (demogAttributeListName === "interests") {
-                        index = indexInterestsMedia(demogAttributeListName, aud.interests, randomInterests);
-                    } else if (demogAttributeListName === "media") {
-                        index = indexInterestsMedia(demogAttributeListName, aud.media, randomMedia);
-                    } else {
-                        index = indexAttr(demogAttributeListName, indexCats[demogAttributeListName], aud.demog, randomDemog);
-                    }
-
-                    targetData[demogAttributeListName] = index;
+        barChart.drawChart().then(function(data) {
+            barChart.drawBarChart('gender', data);
+        })
 
 
-                });
-                targetData["ageStat"] = getMedianCategory(targetData.age);
-
-                audData.push(targetData)
-            });
-
-            let indexes = [];
-            audData.forEach(function (aud) {
-                indexes.push({
-                    age: aud.age,
-                });
-            });
-
-            d3.json("data/mock/" + this.dataSource + '.json').then(function(data) {
-                barChart.drawChart("age", data);
-            })
-
-        }
     }
 }
 

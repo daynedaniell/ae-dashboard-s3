@@ -5,7 +5,6 @@ import  './components/donut-chart';
 import './components/bar-chart';
 import './components/map-chart';
 import './assets/template-base-class';
-import * as d3 from 'd3';
 
 const app = angular.module('vizApp',[]);
 

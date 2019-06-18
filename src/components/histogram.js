@@ -2,13 +2,13 @@ import { LitElement, html, css } from  'lit-element';
 
 export class Histogram extends LitElement {
     static get properties() {
-        return { chartTitle: {type: String }, chartIdentifier: {type: String}, dataSource: {type: Object}}
+        return { chartTitle: {type: String }, chartIdentifier: {type: String}, dataSource: {type: String}}
     }
     constructor() {
         super();
         this.chartTitle = "Age";
         this.chartIdentifier = 'ageChart';
-        this.dataSource = {};
+        this.dataSource = '';
     }
 
     static get styles() {
@@ -30,6 +30,12 @@ export class Histogram extends LitElement {
     </div>
     `;
     }
+
+    firstUpdated(_changedProperties) {
+        var element = this.shadowRoot.querySelector(".bubble-chart-svg");
+    }
+
+
 }
 
 customElements.define('histogram', Histogram);

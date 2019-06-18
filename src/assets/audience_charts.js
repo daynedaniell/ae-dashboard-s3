@@ -192,6 +192,7 @@ function drawBarChart(attrName, indexArray, innerWidth=400) {
   }
 
   let numSeries = indexArray.length;
+  console.log(numSeries);
 
   let basics = barChartSetup(innerWidth);
   let margin = basics.margin,
