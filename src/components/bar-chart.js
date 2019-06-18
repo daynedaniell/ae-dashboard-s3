@@ -1,5 +1,4 @@
 import {LitElement, html, css} from 'lit-element';
-import * as d3 from 'd3';
 import { BarChartBase } from "../assets/bar-chart-class";
 
 export class BarChart extends LitElement {
@@ -33,8 +32,7 @@ export class BarChart extends LitElement {
        </div>
        <div id="${this.chartIdentifier}">
          <svg class="bar-chart"></svg>
-       </div>
-    `;
+       </div>`;
     }
 
     firstUpdated(_changedProperties) {
@@ -49,7 +47,7 @@ export class BarChart extends LitElement {
 
         let barChart = new BarChartBase(chartConfig);
 
-        barChart.drawChart().then(function(data) {
+        barChart.getData().then(function(data) {
             barChart.drawBarChart('gender', data);
         })
 

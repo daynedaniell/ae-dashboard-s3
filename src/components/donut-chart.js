@@ -51,7 +51,7 @@ export class DonutChart extends LitElement {
     }
 
     firstUpdated(_changedProperties) {
-        var element = this.shadowRoot.querySelector(".donut-chart");
+        let element = this.shadowRoot.querySelector(".donut-chart");
 
         let colorSeries1 = "#4d3c96",
             colorSeries2 = "#0fbbc1",

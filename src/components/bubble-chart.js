@@ -1,6 +1,5 @@
 import { LitElement, html, css, customElement } from  'lit-element';
 import * as d3 from "d3";
-import {Histogram} from "./histogram";
 
 export class BubbleChart extends LitElement {
     static get properties() {
