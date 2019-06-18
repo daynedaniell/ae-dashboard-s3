@@ -4,14 +4,14 @@ import { BarChartBase } from "../assets/bar-chart-class";
 
 export class BarChart extends LitElement {
     static get properties() {
-        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}, orientation: {type: String}, dataSource: {type: Object}}
+        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}, orientation: {type: String}, dataSource: {type: String}}
     }
     constructor() {
         super();
         this.chartTitle = "Age";
-        this.chartIdentifier = 'ageChart';
+        this.chartIdentifier = 'age';
         this.orientation = 'vertical';
-        this.dataSource = {};
+        this.dataSource = '';
     }
 
     static get styles() {
@@ -104,82 +104,11 @@ export class BarChart extends LitElement {
                 });
             });
 
-            barChart.drawChart("age", barChart.getIndexArray(this.dataSource, "age"));
+            d3.json("data/mock/" + this.dataSource + '.json').then(function(data) {
+                barChart.drawChart("age", data);
+            })
+
         }
-
-
-
-        async function f(audIds) {
-            console.log('running async function');
-            // setting these as globals for now
-            if (audIds.length > 0 & audIds.length <= 3) {
-                var targetAuds = [];
-                let targetAud = await d3.json("data/target_aud_" + audIds[0] + "/audience.json");
-                let targetDemog = await d3.tsv("data/target_aud_" + audIds[0] + "/demographics_target.tsv");
-
-
-                let targetInterests = await d3.tsv("data/target_aud_" + audIds[0] + "/interests_target.tsv");
-
-                var t0 = performance.now();
-                let targetMedia = await d3.tsv("data/target_aud_" + audIds[0] + "/media_target.tsv");
-                var t1 = performance.now();
-                targetAuds.push({
-                    name: targetAud.name,
-                    demog: targetDemog,
-                    interests: targetInterests,
-                    media: targetMedia
-                });
-
-                let targetAuds2 = [];
-                let targetAud2 = await d3.json("data/target_aud_" + audIds[0] + "/audience.json");
-                let targetDemog2 = await d3.tsv("data/target_aud_" + audIds[0] + "/demographics_target.tsv");
-
-
-                let targetInterests2 = await d3.tsv("data/target_aud_" + audIds[0] + "/interests_target.tsv");
-
-                var t2 = performance.now();
-                let targetMedia2 = await d3.tsv("data/target_aud_" + audIds[0] + "/media_target.tsv");
-                var t3 = performance.now();
-                targetAuds2.push({
-                    name: targetAud.name,
-                    demog: targetDemog,
-                    interests: targetInterests,
-                    media: targetMedia
-                });
-
-                if (audIds.length > 1) {
-                    targetAud2 = await d3.json("data/target_aud_" + audIds[1] + "/audience.json");
-                    targetDemog2 = await d3.tsv("data/target_aud_" + audIds[1] + "/demographics_target.tsv");
-                    targetInterests2 = await d3.tsv("data/target_aud_" + audIds[1] + "/interests_target.tsv");
-                    targetMedia2 = await d3.tsv("data/target_aud_" + audIds[1] + "/media_target.tsv");
-
-                    targetAuds.push({
-                        name: targetAud2.name,
-                        demog: targetDemog2,
-                        interests: targetInterests2,
-                        media: targetMedia2
-                    });
-                }
-
-                if (audIds.length > 2) {
-                    let targetAud3 = await d3.json("data/target_aud_" + audIds[2] + "/audience.json");
-                    let targetDemog3 = await d3.tsv("data/target_aud_" + audIds[2] + "/demographics_target.tsv");
-                    let targetInterests3 = await d3.tsv("data/target_aud_" + audIds[2] + "/interests_target.tsv");
-                    let targetMedia3 = await d3.tsv("data/target_aud_" + audIds[2] + "/media_target.tsv");
-
-                    targetAuds.push({
-                        name: targetAud3.name,
-                        demog: targetDemog3,
-                        interests: targetInterests3,
-                        media: targetMedia3
-                    });
-                }
-                drawCharts(targetAuds);
-            }
-        }
-
-        f(["1"]);
-
     }
 }
 

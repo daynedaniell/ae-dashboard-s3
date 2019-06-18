@@ -3,13 +3,13 @@ import * as d3 from "d3";
 
 export class BubbleChart extends LitElement {
     static get properties() {
-        return { chartTitle: {type: String }, chartIdentifier: {type: String}, dataSource: {type: Object}}
+        return { chartTitle: {type: String }, chartIdentifier: {type: String}, dataSource: {type: String}}
     }
     constructor() {
         super();
         this.chartTitle = 'Gender';
         this.chartIdentifier = 'gender';
-        this.dataSource = {};
+        this.dataSource = '';
     };
     let _this = this,
         bubbles,

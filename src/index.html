@@ -113,16 +113,13 @@
             <div class="ds-grid-charts">
 
             <div class="ds-chart well tile">
-                <bar-chart chartTitle="Age" orientation="vertical"></bar-chart>
+                <bar-chart chartTitle="Age" orientation="vertical" dataSource="age" attrName="age"></bar-chart>
             </div>
             <div class="ds-chart well tile">
-                <donut-chart chartTitle="Gender" dataSource="{{vizCtrl.genderData}}"></donut-chart>
+                <donut-chart chartTitle="Gender" dataSource="gender" attrName="gender"></donut-chart>
             </div>
             <div class="ds-chart well tile">
-                  <div class="tile-header">
-                      <h4 class="ds-chart-title">Ethnicity</h4>
-                  </div>
-                  <div id="ethnicityChart" dataSource="{{vizCtrl.ethnicityData}}"></div>
+                <bar-chart chartTitle="Ethnicity" dataSource="ethnicity" attrName="ethnicity"></bar-chart>
             </div>
           <!-- </div> -->
 

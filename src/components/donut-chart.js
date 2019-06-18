@@ -3,13 +3,14 @@ import * as d3 from 'd3';
 
 export class DonutChart extends LitElement {
     static get properties() {
-        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}, dataSource: {type: Object}}
+        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}, dataSource: {type: String}, attrName: {type: String}}
     }
     constructor() {
         super();
-        this.chartTitle = 'Gender';
-        this.chartIdentifier = 'genderChart';
-        this.dataSource = {};
+        this.chartTitle = '';
+        this.chartIdentifier = '';
+        this.dataSource = '';
+        this.attrName = '';
     }
 
     static get styles() {
@@ -108,7 +109,6 @@ export class DonutChart extends LitElement {
                     words = (numWords > 1) ? [secondLine, firstLine] : [secondLine];
                 }
 
-
                 let ct = 0;
                 while (word = words.pop()) {
                     line.push(word);
@@ -149,8 +149,7 @@ export class DonutChart extends LitElement {
                 .attr(
                     "transform",
                     "translate(" + marginShift.top + "," + marginShift.left + ")"
-                ) /* move the center of the pie chart from 0, 0 to radius, radius */
-            ;
+                );
 
 
             /* Create an arc generator, and configure its inner and outer radii */
@@ -207,7 +206,13 @@ export class DonutChart extends LitElement {
                 applyFilter(attrName, d.data.attrib_value, "path", targetAuds);
             }
         }
-        pieChart("gender",this.dataSource);
+
+        let dataFile = [];
+        d3.json("data/mock/" + this.dataSource + '.json').then(function(data){
+            pieChart('gender',data);
+        });
+
+
 
     }
 }
