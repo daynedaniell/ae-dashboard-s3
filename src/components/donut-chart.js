@@ -1,5 +1,6 @@
 import { LitElement, html, css, customElement } from  'lit-element';
 import * as d3 from 'd3';
+import {Visualization} from "../assets/viz-base-class";
 
 export class DonutChart extends LitElement {
     static get properties() {
@@ -11,6 +12,9 @@ export class DonutChart extends LitElement {
         this.chartIdentifier = '';
         this.dataSource = '';
         this.attrName = '';
+
+        let viz = new Visualization;
+
     }
 
     static get styles() {
