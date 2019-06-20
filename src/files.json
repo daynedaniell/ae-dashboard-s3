@@ -1,0 +1,7 @@
+[
+  "data/random_audience/demographics_random.tsv",
+  "data/random_audience/interests_random.tsv",
+  "data/random_audience/interests_random_wide.tsv",
+  "data/random_audience/media_random.tsv",
+  "data/random_audience/media_random_wide.tsv"
+]
