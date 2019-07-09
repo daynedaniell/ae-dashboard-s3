@@ -2021,18 +2021,18 @@ function updateCharts(attrName, attrValue, targetAuds) {
   hBarChart("interests",630,getTopIndexArray(filteredData, "topInterests", DS_VIS_STORE["interestsActive"][0] - 1),hasToggle=true);
   hBarChart("media",630,getTopIndexArray(filteredData, "topMedia", DS_VIS_STORE["mediaActive"][0] - 1),hasToggle=true);
 
-  if (attrName != "age") {
+  if (attrName !== "age") {
       addSeriesStats("age", getStatArray(filteredData, "age"), prefix = "Median: ", suffix = " years");
   }
-  if (attrName != "children") {
+  if (attrName !== "children") {
       addSeriesStats("children", getStatArray(filteredData, "children"), prefix = "Child present: ", suffix = "%");
   }
-  if (attrName != "income") {
+  if (attrName !== "income") {
       addSeriesStats("income", getStatArray(filteredData, "income"), prefix = "Median: ");
   }
 
     // update the wave chart
-    let indexes = []
+    let indexes = [];
     filteredData.forEach(function(aud) {
       indexes.push({
         age: aud.age,

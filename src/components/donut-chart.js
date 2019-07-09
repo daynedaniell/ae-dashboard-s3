@@ -1,10 +1,9 @@
-import { LitElement, html, css, customElement } from  'lit-element';
+import { LitElement, html, css } from  'lit-element';
 import * as d3 from 'd3';
-import {Visualization} from "../assets/viz-base-class";
 
 export class DonutChart extends LitElement {
     static get properties() {
-        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}, dataSource: {type: String}, attrName: {type: String}}
+        return { chartTitle: {type: String }, chartIdentifier: {type: String}, dataSource: {type: String}, attrName: {type: String}, config: {type: Object}}
     }
     constructor() {
         super();
@@ -12,9 +11,7 @@ export class DonutChart extends LitElement {
         this.chartIdentifier = '';
         this.dataSource = '';
         this.attrName = '';
-
-        let viz = new Visualization;
-
+        this.config = {};
     }
 
     static get styles() {
@@ -50,34 +47,17 @@ export class DonutChart extends LitElement {
      </div>
      <div id="${this.chartIdentifier}">
      <svg class="donut-chart"></svg>
-    </div>
-    `;
+    </div>`;
     }
 
     firstUpdated(_changedProperties) {
         let element = this.shadowRoot.querySelector(".donut-chart");
-
-        let colorSeries1 = "#4d3c96",
-            colorSeries2 = "#0fbbc1",
-            colorSeries3 = "#ff9999";
 
         let colorOverIndex = '#ffb14e',
             colorUnderIndex = '#4880da',
             colorNeutralIndex1 = 'grey',
             colorNeutralIndex2 = 'rgb(192,192,192)',
             colorZeroIndex = 'rgba(53, 128, 224, 0.07)';
-
-        let DS_VIS_STORE = {
-            activeFilter: null,
-            stateActive: [1,2,3],
-            interestsActive: [1,2,3],
-            mediaActive: [1,2,3],
-            activeView: 1,
-            activeTab: 'dashboard',
-            scaleWeight: 1,
-            seriesColors: [colorSeries1,colorSeries2,colorSeries3],
-            dnaBarWidths: [4,3,2]
-        };
 
         function colorByIndexPie(index, indexCats, attrValue) {
             if (index >= 120) {
@@ -134,8 +114,8 @@ export class DonutChart extends LitElement {
 
 
         function pieChart(attrName, indexDs){
-            let width = 360 * DS_VIS_STORE["scaleWeight"],
-                height = 360 * DS_VIS_STORE["scaleWeight"],
+            let width = 360 * 1,
+                height = 360 * 1,
                 outerRadius = Math.min(width - 60, height - 60) / 2,
                 innerRadius = outerRadius * .5,
                 innerRadiusFinal = outerRadius * .5,
@@ -211,12 +191,13 @@ export class DonutChart extends LitElement {
             }
         }
 
-        let dataFile = [];
-        d3.json("data/mock/" + this.dataSource + '.json').then(function(data){
-            pieChart('gender',data);
-        });
+          d3.json("data/mock/" + this.dataSource + ".json").then(function(data){
+              pieChart(data.chartIdentifier ,data);
+          });
 
 
+
+            //pieChart('gender', this.dataSource);
 
     }
 }

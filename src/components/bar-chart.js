@@ -1,16 +1,20 @@
 import {LitElement, html, css} from 'lit-element';
-import * as d3 from "../assets/d3";
+import * as d3 from 'd3';
+import  dataStore  from '../assets/viz-base-class';
+import * as dataConfig from "../../dataVis";
 
 export class BarChart extends LitElement {
     static get properties() {
-        return { chartTitle: {type: String }, loadingMsg: {type: String}, chartIdentifier: {type: String}, orientation: {type: String}, dataSource: {type: String}}
+        return { chartTitle: { type: String }, chartIdentifier: {type: String}, orientation: {type: String}, dataSource: {type: String}, config: {type: Object}, elementConfig: {type:Array}}
     }
     constructor() {
         super();
-        this.chartTitle = "Age";
-        this.chartIdentifier = 'age';
-        this.orientation = 'vertical';
+        this.chartTitle = "my Chart";
+        this.chartIdentifer = "identifier";
+        this.orientation = "vertical";
         this.dataSource = '';
+        this.config = {};
+        this.elementConfig = [];
     }
 
     static get styles() {
@@ -35,7 +39,7 @@ export class BarChart extends LitElement {
        </div>`;
     }
 
-    firstUpdated(_changedProperties) {
+    firstUpdated(changedProperties) {
         let element = this.shadowRoot.querySelector(".bar-chart");
 
         function barChartSetup(innerWidth=360) {
@@ -50,7 +54,7 @@ export class BarChart extends LitElement {
                 height : height,
                 barPadding : barPadding
             };
-        };
+        }
 
         function drawBarChart(attrName, indexArray, innerWidth=400) {
 
@@ -71,32 +75,25 @@ export class BarChart extends LitElement {
 
             let barWidth = width / (indexArray[0].length * numSeries);
 
-            let xScale = d3.scaleLinear()
-                .domain([0, indexArray[0].length])
-                .range([0, width]);
-
             let largest = 0;
             indexArray.forEach(function (aud) {
                let thisMax = d3.max(aud, function(d) { return d.target_pct; });
                 largest = Math.max(thisMax, largest);
-            })
+            });
             let yScale = d3.scaleLinear()
                 .domain([0, largest])
                 .range([height, 0]);
 
-            /* Create SVG element */
             let svg = d3.select(element)
-                .append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .attr("id", attrName+"ChartPlot")
                 .attr("class", "ds-chart-base");
 
-            const tooltip = d3.select(element).append("div")
+            const tooltip = d3.select("#"+attrName+"Chart").append("div")
                 .attr("class", "ds-tooltip")
                 .style("opacity", 0);
 
-            /* Add horizontal grid lines */
             function make_y_gridlines() {
                 return d3.axisLeft(yScale)
                     .ticks(5)
@@ -108,13 +105,26 @@ export class BarChart extends LitElement {
                 .call(make_y_gridlines()
                     .tickSize(-width)
                     .tickFormat("")
-                )
+                );
 
             let plot = svg.append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
             /* Will set y position and color dependent on size of bar */
-            function textInside(d) { return (height - yScale(d.target_pct)) > 20 };
+            function textInside(d) { return (height - yScale(d.target_pct)) > 20 }
+
+            /* color-by-index functions */
+            function colorByIndexBar(index) {
+                if (index >= 120) {
+                    return dataConfig.config.colorOverIndex;
+                } else if (index > 80) {
+                    return dataConfig.config.colorNeutralIndex1;
+                } else if (index === 0) {
+                    return dataConfig.config.colorZeroIndex;
+                }
+                return dataConfig.config.colorUnderIndex;
+            }
 
             function addBar(data,series,color) {
                 plot.selectAll("rect.series"+(series+1))
@@ -146,15 +156,8 @@ export class BarChart extends LitElement {
             function addBarText(data, series) {
 
                 let fontSize = "12px";
-                if (numSeries == 3) {
+                if (numSeries === 3) {
                     fontSize = "9px";
-                }
-
-                function getData() {
-                    return   d3.json("data/mock/" + this.dataSource + '.json').then(function (data) {
-                        return data;
-                    });
-
                 }
 
 
@@ -184,9 +187,9 @@ export class BarChart extends LitElement {
             }
 
             indexArray.forEach(function (aud, i) {
-                addBar(aud,i,DS_VIS_STORE.seriesColors[i]);
+                addBar(aud,i,dataConfig.config.seriesColors[i]);
                 addBarText(aud,i);
-            })
+            });
 
             /* Add x labels to chart */
             let xLabels = svg.append("g")
@@ -236,13 +239,11 @@ export class BarChart extends LitElement {
             }
 
         }
-
-        this.getData().then(function(data) {
-            drawBarChart('gender', data);
-        })
-
-
     }
+
+
+
+
 }
 
 customElements.define('bar-chart', BarChart);

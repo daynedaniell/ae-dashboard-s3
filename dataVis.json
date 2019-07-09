@@ -1,6 +1,157 @@
 {
   "title": "this is the page title",
-    "components": [
+  "audiences": [1, 2, 3],
+  "files": [
+    {"title": "audience", "audience": 1, "url":  "http://localhost:5000/data/target_aud_1/audience.json"},
+    {"title":"demographics",  "audience": 1, "url":  "http://localhost:5000/data/target_aud_1/demographics_target.tsv"},
+    {"title": "interests", "audience": 1, "url":  "http://localhost:5000/data/target_aud_1/interests_target.tsv"},
+    {"title": "retail",   "audience": 1, "url":  "http://localhost:5000/data/target_aud_1/retail_target.tsv"},
+    {"title": "audience-2", "audience": 2, "url":  "http://localhost:5000/data/target_aud_2/audience.json"},
+    {"title":"demographics-2",  "audience": 2, "url":  "http://localhost:5000/data/target_aud_2/demographics_target.tsv"},
+    {"title": "interests-2", "audience": 2, "url":  "http://localhost:5000/data/target_aud_2/interests_target.tsv"},
+    {"title": "retail-2",  "audience": 2,  "url":  "http://localhost:5000/data/target_aud_2/retail_target.tsv"},
+    {"title": "audience-3", "audience": 3, "url":  "http://localhost:5000/data/target_aud_3/audience.json"},
+    {"title":"demographics-3",  "audience": 3, "url":  "http://localhost:5000/data/target_aud_3/demographics_target.tsv"},
+    {"title": "interests-3", "audience": 3, "url":  "http://localhost:5000/data/target_aud_3/interests_target.tsv"},
+    {"title": "retail-3",   "audience": 3, "url":  "http://localhost:5000/data/target_aud_3/retail_target.tsv"},
+    {"title":  "randomDemog", "audience": 1, "url":  "http://localhost:5000/data/random_audience/demographics_random.tsv"},
+    {"title":  "randomInterests", "audience": 1, "url":  "http://localhost:5000/data/random_audience/interests_random.tsv"},
+    {"title":  "randomRetail", "audience": 1, "url":  "http://localhost:5000/data/random_audience/retail_random.tsv"}
+  ],
+  "config": {
+    "activeFilter": null,
+    "stateActive": [1,2,3],
+    "interestsActive": [1,2,3],
+    "retailActive": [1,2,3],
+    "activeView": 1,
+    "activeAudience": 1,
+    "activeTab": "dashboard",
+    "scaleWeight": 1,
+    "seriesColors": ["#4d3c96", "#0fbbc1", "#ff9999"],
+    "colorOverIndex": "#ffb14e",
+    "colorUnderIndex": "#4880da",
+    "colorNeutralIndex1": "grey",
+    "colorNeutralIndex2": "rgb(192,192,192)",
+    "colorZeroIndex": "rgba(53, 128, 224, 0.07)",
+    "dnaBarWidths": [4,3,2]
+  },
+  "indexAttributes": {
+    "ageIndexCats": [
+      {
+        "attrib_value": "18-25",  "target_count": 0, "random_count": 0
+      },
+      {
+        "attrib_value": "26-35", "target_count": 0, "random_count": 0
+      },
+      {
+        "attrib_value": "36-45", "target_count": 0, "random_count": 0
+      },
+      {
+        "attrib_value": "46-55", "target_count": 0, "random_count": 0
+      },
+      {
+        "attrib_value": "56-65", "target_count": 0, "random_count": 0
+      },
+      {
+        "attrib_value": "66+", "target_count": 0, "random_count": 0
+      }
+    ],
+    "genderIndexCats": [
+      {"attrib_value": "F", "target_count": 0, "random_count": 0},
+      {"attrib_value": "M", "target_count": 0, "random_count": 0}
+    ],
+    "ethnicityIndexCats": [
+      {"attrib_value": "Asian", "target_count": 0, "random_count": 0},
+      {"attrib_value": "African American", "target_count": 0, "random_count": 0},
+      {"attrib_value": "Hispanic", "target_count": 0, "random_count": 0},
+      {"attrib_value": "White/Other", "target_count": 0, "random_count": 0}
+    ],
+    "maritalIndexCats": [
+      {"attrib_value": "Married", "target_count": 0, "random_count": 0},
+      {"attrib_value": "Single", "target_count": 0, "random_count": 0}
+    ],
+    "childrenIndexCats": [
+      {"attrib_value": "0", "target_count": 0, "random_count": 0},
+      {"attrib_value": "1", "target_count": 0, "random_count": 0},
+      {"attrib_value": "2", "target_count": 0, "random_count": 0},
+      {"attrib_value": "3", "target_count": 0, "random_count": 0},
+      {"attrib_value": "4", "target_count": 0, "random_count": 0},
+      {"attrib_value": "5+", "target_count": 0, "random_count": 0}
+    ],
+    "educationIndexCats": [
+      {"attrib_value": "High School", "target_count": 0, "random_count": 0},
+      {"attrib_value": "College", "target_count": 0, "random_count": 0},
+      {"attrib_value": "Grad School", "target_count": 0, "random_count": 0},
+      {"attrib_value": "Vocational", "target_count": 0, "random_count": 0}
+    ],
+    "incomeIndexCats": [
+      {"attrib_value": "< 15K", "target_count": 0, "random_count": 0},
+      {"attrib_value": "15K-20K", "target_count": 0, "random_count": 0},
+      {"attrib_value": "20K-30K", "target_count": 0, "random_count": 0},
+      {"attrib_value": "30K-40K", "target_count": 0, "random_count": 0},
+      {"attrib_value": "40K-50K", "target_count": 0, "random_count": 0},
+      {"attrib_value": "50K-75K", "target_count": 0, "random_count": 0},
+      {"attrib_value": "75K-100K", "target_count": 0, "random_count": 0},
+      {"attrib_value": "100K-125K", "target_count": 0, "random_count": 0},
+      {"attrib_value": "> 125K", "target_count": 0, "random_count": 0}
+    ],
+    "stateIndexCats": [
+  {"attrib_value": "AL", "target_count": 0, "random_count": 0},
+  {"attrib_value": "AK", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "AZ", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "AR", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "CA", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "CT", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "DE", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "DC", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "FL", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "GA", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "HI", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "ID", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "IL", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "IN", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "IA", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "KS", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "KY", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "LA", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "CO", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "ME", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "MD", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "MA", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "MI", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "MN", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "MS", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "MO", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "MT", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "NE", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "NV", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "NH", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "NJ", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "NM", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "NY", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "NC", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "ND", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "OH", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "OK", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "OR", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "PA", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "RI", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "SC", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "SD", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "TN", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "TX", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "UT", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "VT", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "VA", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "WA", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "WV", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "WI", "target_count": 0, "random_count": 0},
+  {"attrib_value":  "WY", "target_count": 0, "random_count": 0}
+],
+    "interests": [],
+    "retail": []
+  },
+   "components": [
       {
         "id": 1,
         "source": "",
@@ -22,187 +173,108 @@
         "branch": ""
       }
     ],
-    "views": {
-      "title": "testing title",
-      "template": "v1",
-      "rows": [
+   "view":
+     {
+       "rows": [
+         {
+           "title": "row 1",
+           "components": [
+             {
+               "title": "component1"
+             }
+           ]
+         },
+         {
+           "title": "row 2",
+           "components": [
+             {
+               "slot": 1,
+               "component": "<bar-chart chartTitle=\"Age\" orientation=\"vertical\" dataSource=\"age\" attrName=\"age\"></bar-chart>",
+               "title": "Age",
+               "chartIdentifier": "age",
+               "orientation": "vertical",
+               "dataSource": "age"
+             },
+             {
+               "slot": 2,
+               "component": "<donut-chart chartTitle=\"Gender\" dataSource=\"gender\" attrName=\"gender\" config=\"config.config\",\"></donut-chart>",
+               "title": "Gender",
+               "chartIdentifier": "gender",
+               "dataSource": "gender"
+             },
+             {
+               "slot": 3,
+               "component": "<bar-chart chartTitle=\"Ethnicity\" dataSource=\"ethnicity\" attrName=\"ethnicity\" config=\"config.config\"></bar-chart>",
+               "title": "Ethnicity",
+               "chartIdentifier": "ethnicity",
+               "orientation": "vertical",
+               "datSource": "ethnicity"
+             }
+           ]
+         },
+         {
+           "title": "row 3",
+           "components": [
+             {
+               "slot": 1,
+               "component": "<donut-chart chartTitle=\"Marital status\" dataSource=\"marital\" attrName=\"marital\" config=\"config.config\"></donut-chart>",
+               "title": "Marital status",
+               "chartIdentifier": "marital",
+               "datSource": "marital"
+             },
+             {
+               "slot": 3,
+               "component": "<bar-chart chartTitle=\"Number of children\" dataSource=\"children\" attrName=\"children\" config=\"config.config\"></bar-chart>",
+               "title": "Number of children",
+               "chartIdentifier": "children",
+               "orientation": "vertical",
+               "datSource": "children"
+             },
+             {
+               "slot": 3,
+               "component": "<bar-chart chartTitle=\"Education\" dataSource=\"education\" attrName=\"education\" config=\"config.config\"></bar-chart>",
+               "title": "Education",
+               "chartIdentifier": "education",
+               "orientation": "vertical",
+               "datSource": "education"
+             }
+           ]
+         },
+         {
+           "title": "row 4",
+           "components": [
+             {
+               "slot": 1,
+               "component": "<bar-chart chartTitle=\"Income\" dataSource=\"income\" attrName=\"income\" config=\"config.config\"></bar-chart>",
+               "title": "Income",
+               "chartIdentifier": "income",
+               "orientation": "vertical",
+               "datSource": "income"
+             }
+           ]
+         }
+       ]
+     },
+
+    "features": {
+      "audienceLegend": [
         {
-          "row-1": [
+          "activeView": 1,
+          "legends": [
             {
-              "slot": 1,
-              "component": 1,
-              "title": "Audience DNA",
-              "singleColumn": true
-            }
-          ]
-        },
-        {
-          "row-2": [
-            {
-              "slot": 1,
-              "component": 2,
-              "title": "Age",
-              "indexCats": [
-                {"attrib_value": "18-25", "target_count": 0, "random_count": 0},
-                {"attrib_value": "26-35", "target_count": 0, "random_count": 0},
-                {"attrib_value": "36-45", "target_count": 0, "random_count": 0},
-                {"attrib_value": "46-55", "target_count": 0, "random_count": 0},
-                {"attrib_value": "56-65", "target_count": 0, "random_count": 0},
-                {"attrib_value": "66+", "target_count": 0, "random_count": 0}
-              ]
+              "background-color": "#ffb14e",
+              "label" : "Over-Index"
             },
             {
-              "slot": 2,
-              "component": 3,
-              "title": "Gender",
-              "indexCats": [
-                {"attrib_value": "F", "target_count": 0, "random_count": 0},
-                {"attrib_value": "M", "target_count": 0, "random_count": 0}
-              ]
+              "background-color" : "#4880da",
+              "label": "Under-Index"
             },
             {
-              "slot": 3,
-              "component": 2,
-              "title": "Ethnicity",
-              "indexCats": [
-                {"attrib_value": "Asian", "target_count": 0, "random_count": 0},
-                {"attrib_value": "African American", "target_count": 0, "random_count": 0},
-                {"attrib_value": "Hispanic", "target_count": 0, "random_count": 0},
-                {"attrib_value": "White/Other", "target_count": 0, "random_count": 0}
-              ]
-            }
-          ]
-        },
-        {
-          "row-3": [
-            {
-              "slot": 1,
-              "component": 3,
-              "title": "Marital Status",
-              "indexCats": [
-                {"attrib_value": "Married", "target_count": 0, "random_count": 0},
-                {"attrib_value": "Single", "target_count": 0, "random_count": 0}
-              ]
-            },
-            {
-              "slot": 2,
-              "component": 2,
-              "title": "Number of children",
-              "indexCats": [
-                {"attrib_value": "0", "target_count": 0, "random_count": 0},
-                {"attrib_value": "1", "target_count": 0, "random_count": 0},
-                {"attrib_value": "2", "target_count": 0, "random_count": 0},
-                {"attrib_value": "3", "target_count": 0, "random_count": 0},
-                {"attrib_value": "4", "target_count": 0, "random_count": 0},
-                {"attrib_value": "5+", "target_count": 0, "random_count": 0}
-              ]
-            },
-            {
-              "slot": 3,
-              "component": 2,
-              "title": "Education",
-              "indexCats": [
-                {"attrib_value": "High School", "target_count": 0, "random_count": 0},
-                {"attrib_value": "College", "target_count": 0, "random_count": 0},
-                {"attrib_value": "Grad School", "target_count": 0, "random_count": 0},
-                {"attrib_value": "Vocational", "target_count": 0, "random_count": 0}
-              ]
-            }
-          ]
-        },
-        {
-          "row-4": [
-            {
-              "slot": 1,
-              "component": 2,
-              "title": "Income",
-              "indexCats": [
-                {"attrib_value": "< 15k", "target_count": 0, "random_count": 0},
-                {"attrib_value": "15k - 20k", "target_count": 0, "random_count": 0},
-                {"attrib_value": "20k - 30k", "target_count": 0, "random_count": 0},
-                {"attrib_value": "30k - 40k", "target_count": 0, "random_count": 0},
-                {"attrib_value": "40k - 50k", "target_count": 0, "random_count": 0},
-                {"attrib_value": "50k - 75k", "target_count": 0, "random_count": 0},
-                {"attrib_value": "75k - 100k", "target_count": 0, "random_count": 0},
-                {"attrib_value": "100k - 125k", "target_count": 0, "random_count": 0},
-                {"attrib_value": "> 125k", "target_count": 0, "random_count": 0}
-              ]
-            },
-            {
-              "slot": 1,
-              "component": 4,
-              "title": "Location",
-              "indexCats": [
-                {"attrib_value": "AL", "target_count": 0, "random_count": 0},
-                {"attrib_value": "AK", "target_count": 0, "random_count": 0},
-                {"attrib_value": "AZ", "target_count": 0, "random_count": 0},
-                {"attrib_value": "AR", "target_count": 0, "random_count": 0},
-                {"attrib_value": "CA", "target_count": 0, "random_count": 0},
-                {"attrib_value": "CO", "target_count": 0, "random_count": 0},
-                {"attrib_value": "CT", "target_count": 0, "random_count": 0},
-                {"attrib_value": "DE", "target_count": 0, "random_count": 0},
-                {"attrib_value": "DC", "target_count": 0, "random_count": 0},
-                {"attrib_value": "FL", "target_count": 0, "random_count": 0},
-                {"attrib_value": "GA", "target_count": 0, "random_count": 0},
-                {"attrib_value": "HI", "target_count": 0, "random_count": 0},
-                {"attrib_value": "ID", "target_count": 0, "random_count": 0},
-                {"attrib_value": "IL", "target_count": 0, "random_count": 0},
-                {"attrib_value": "IN", "target_count": 0, "random_count": 0},
-                {"attrib_value": "IA", "target_count": 0, "random_count": 0},
-                {"attrib_value": "KS", "target_count": 0, "random_count": 0},
-                {"attrib_value": "KY", "target_count": 0, "random_count": 0},
-                {"attrib_value": "LA", "target_count": 0, "random_count": 0},
-                {"attrib_value": "ME", "target_count": 0, "random_count": 0},
-                {"attrib_value": "MD", "target_count": 0, "random_count": 0},
-                {"attrib_value": "MA", "target_count": 0, "random_count": 0},
-                {"attrib_value": "MI", "target_count": 0, "random_count": 0},
-                {"attrib_value": "MN", "target_count": 0, "random_count": 0},
-                {"attrib_value": "MS", "target_count": 0, "random_count": 0},
-                {"attrib_value": "MO", "target_count": 0, "random_count": 0},
-                {"attrib_value": "MT", "target_count": 0, "random_count": 0},
-                {"attrib_value": "NE", "target_count": 0, "random_count": 0},
-                {"attrib_value": "NV", "target_count": 0, "random_count": 0},
-                {"attrib_value": "NH", "target_count": 0, "random_count": 0},
-                {"attrib_value": "NJ", "target_count": 0, "random_count": 0},
-                {"attrib_value": "NM", "target_count": 0, "random_count": 0},
-                {"attrib_value": "NY", "target_count": 0, "random_count": 0},
-                {"attrib_value": "NC", "target_count": 0, "random_count": 0},
-                {"attrib_value": "ND", "target_count": 0, "random_count": 0},
-                {"attrib_value": "OH", "target_count": 0, "random_count": 0},
-                {"attrib_value": "OK", "target_count": 0, "random_count": 0},
-                {"attrib_value": "OR", "target_count": 0, "random_count": 0},
-                {"attrib_value": "PA", "target_count": 0, "random_count": 0},
-                {"attrib_value": "RI", "target_count": 0, "random_count": 0},
-                {"attrib_value": "SC", "target_count": 0, "random_count": 0},
-                {"attrib_value": "SD", "target_count": 0, "random_count": 0},
-                {"attrib_value": "TN", "target_count": 0, "random_count": 0},
-                {"attrib_value": "TX", "target_count": 0, "random_count": 0},
-                {"attrib_value": "UT", "target_count": 0, "random_count": 0},
-                {"attrib_value": "VT", "target_count": 0, "random_count": 0},
-                {"attrib_value": "VA", "target_count": 0, "random_count": 0},
-                {"attrib_value": "WA", "target_count": 0, "random_count": 0},
-                {"attrib_value": "WV", "target_count": 0, "random_count": 0},
-                {"attrib_value": "WI", "target_count": 0, "random_count": 0},
-                {"attrib_value": "WY", "target_count": 0, "random_count": 0}
-              ]
-            }
-          ]
-        },
-        {
-          "row-5": [
-            {
-              "slot": 1,
-              "component": 1,
-              "title": "Audience DNA",
-              "singleColumn": true
+              "background-color": "rgba(53, 128, 224, 0.07)",
+              "label": "No Data"
             }
           ]
         }
       ]
-    },
-
-
-    "features": [
-
-    ]
+    }
 }

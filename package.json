@@ -11,8 +11,10 @@
     "copyaf": "cp -r src/assets build",
     "copysm": "cp -r src/state-management build",
     "copyvc": "cp -r src/components build",
-    "build": "rm -rf build && mkdir build && npm run copyindex && npm run copywc  && npm run copyvc && npm run copyds && npm run copyaf && npm run copysm && rollup -c",
-    "start": "serve build"
+    "copyLib": "cp -r src/lib build",
+    "build": "rm -rf build && mkdir build && npm run copyindex && npm run copywc  && npm run copyvc && npm run copyds && npm run copyaf && npm run copysm &&  npm run copyLib && rollup -c",
+    "start": "serve build",
+    "view": "npm run build && gulp && npm run start"
   },
   "author": "The Polymer Authors",
   "license": "BSD-3-Clause",
@@ -30,6 +32,7 @@
   },
   "dependencies": {
     "angular": "^1.7.8",
+    "angular-sanitize": "^1.7.8",
     "angularjs": "0.0.1",
     "bootstrap": "^4.3.1",
     "d3": "^5.9.2",

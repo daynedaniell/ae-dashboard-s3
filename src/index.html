@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>AE Dashboard</title>
-
     <!-- Bootstrap: Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -24,10 +23,6 @@
 </head>
 <body>
 <div ng-controller="VisualizationController as vizCtrl">
-    <!-- <nav class="navbar navbar-dark navbar-fixed-top bg-dark flex-md-nowrap p-0 shadow col-sm-3 col-md-2 ds-grid-brand">
-      <a class="navbar-brand mr-0" href="#">AE Insights</a>
-    </nav> -->
-
     <div class="ds-grid-nav">
         <div class="ds-nav-logo">
         </div>
@@ -69,17 +64,16 @@
           <div class="aud-nav">
               <form class="ds-audience-selection-form">
                 <div class="checkbox">
-                  <label><input type="checkbox" value="1" checked>1</label>
+                  <label><input type="checkbox" ng-model="vizCtrl.audienceNum1" checked ng-change="vizCtrl.selectAudience(1)">1</label>
                 </div>
                 <div class="checkbox">
-                  <label><input type="checkbox" value="2">2</label>
+                  <label><input type="checkbox" ng-model="vizCtrl.audienceNum2" ng-change="vizCtrl.selectAudience(2)">2</label>
                 </div>
                 <div class="checkbox">
-                  <label><input type="checkbox" value="3">3</label>
+                  <label><input type="checkbox" ng-model="vizCtrl.audienceNum3" ng-change="vizCtrl.selectAudience(3)">3</label>
                 </div>
               </form>
           </div>
-
         </div>
     </div>
 
@@ -88,6 +82,9 @@
         <main role="main" class="ds-grid-main">
           <div class="ds-audience-header">
               <div class="ds-audience-title">
+                  <h1 ng-style="audienceTitleStyle">{{vizCtrl.audienceTitle}}</h1>
+                  <h1 ng-if="vizCtrl.audienceNum2 === true"> VS {{vizCtrl.audience2Title}}</h1>
+                  <h1 ng-if="vizCtrl.audienceNum3 === true"> VS {{vizCtrl.audience3Title}}</h1>
               </div>
               <div class="ds-audience-legend">
                 <div class='ds-audience-legend-row' id="dsAudienceLegend1">
@@ -106,37 +103,36 @@
               <!-- <div style="float:none;width:100%;overflow:auto;"></div> -->
               <div class="well ds-grid-full">
                <!-- <wave-chart chartTitle="Audience DNA"></wave-chart> -->
+                  <div id="waveChart"></div>
               </div>
         </div>
         <div class="tab-content relative ds-grid-tabs">
           <div class="tab-pane active" role="tabpanel" ng-if="vizCtrl.view === 'dashboard'">
             <div class="ds-grid-charts">
+            <div class="ds-chart well tile">
+               <bar-chart chartTitle="Age" chartIdentifier="age" ng-attr-orientation="vertical" dataSource="age" attrName="age" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
+            </div>
+            <div class="ds-chart well tile">
+               <donut-chart chartTitle="Gender" chartIdentifier="gender" dataSource="gender" attrName="gender" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></donut-chart>
+            </div>
+            <div class="ds-chart well tile">
+                <bar-chart chartTitle="Ethnicity" chartIdentifier="ethnicity" dataSource="ethnicity" attrName="ethnicity" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
+            </div>
+           </div>
+
 
             <div class="ds-chart well tile">
-                <bar-chart chartTitle="Age" orientation="vertical" dataSource="age" attrName="age"></bar-chart>
+                <donut-chart chartTitle="Marital status" chartIdentifier="marital" dataSource="marital" attrName="marital" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"> </donut-chart>
             </div>
             <div class="ds-chart well tile">
-                <donut-chart chartTitle="Gender" dataSource="gender" attrName="gender"></donut-chart>
+                <bar-chart chartTitle="Number of children" chartIdentifier="children" orientation="vertical" dataSource="children" attrName="children" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
             </div>
             <div class="ds-chart well tile">
-                <bar-chart chartTitle="Ethnicity" dataSource="ethnicity" attrName="ethnicity"></bar-chart>
-            </div>
-          <!-- </div> -->
-
-
-            <div class="ds-chart well tile">
-                <donut-chart chartTitle="Marital status" dataSource="marital" attrName="marital"></donut-chart>
-            </div>
-            <div class="ds-chart well tile">
-                <bar-chart chartTitle="Number of children" orientation="vertical" dataSource="children" attrName="children"></bar-chart>
-            </div>
-            <div class="ds-chart well tile">
-                <bar-chart chartTitle="Education" orientation="vertical" dataSource="education" attrName="education"></bar-chart>
+                <bar-chart chartTitle="Education" chartIdentifier="education" orientation="vertical" dataSource="education" attrName="education" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
             </div>
             </div>
-
-            <div class="ds-grid-charts-big">
-                <bar-chart chartTitle="Income" orientation="vertical" dataSource="income" attrName="income"></bar-chart>
+              <div class="ds-grid-charts-big">
+                <bar-chart chartTitle="Income" chartIdentifier="income" orientation="vertical" dataSource="income" attrName="income" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
             </div>
             <div class="ds-chart-big well tile">
              <!--  <map-chart chartTitle="Location" dataSource=""></map-chart> -->
@@ -150,10 +146,6 @@
                     <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
                     <div class="ds-toggle-button col-sm-2">
                         <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
-
-
-                        <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
-                        <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
                     </div>
                   </div>
               </div>
@@ -165,15 +157,10 @@
                     <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
                     <div class="ds-toggle-button col-sm-2">
                         <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
-                        <!-- <div class="ds-toggle-button-aud ds-toggle-button-aud1"></div>
-                        <div class="ds-toggle-button-aud ds-toggle-button-aud2"></div> -->
                     </div>
                 </div>
               </div>
             </div>
-          </div>
-<button ng-click="vizCtrl.fireIt()">button</button>
-
           <div class="tab-pane" role="tabpanel" ng-if="vizCtrl.view === 'interests'">
               <div class="well tile ds-grid-full" style="height: 100%;">
                   <div class="tile-header">
@@ -191,7 +178,6 @@
               </div>
 
           </div>
-        </div>
         </main>
     </div>
 
@@ -205,10 +191,13 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
 
-
-       /* $(document).ready(function(){
+/*
+    this function has to be reproduced in the angular code for the controller
+ */
+        $(document).ready(function(){
           $(".ds-audience-selection-form").change(function(){
             let selectedAudiences =
               $('.ds-audience-selection-form input:checkbox:checked')
@@ -216,13 +205,14 @@
                 .get();
 
             if (selectedAudiences.length > 0 & selectedAudiences.length <= 3) {
-              f(selectedAudiences);
+             // f(selectedAudiences);
             } else {
 
             }
           }).change();
-        });*/
+        });
 
     </script>
+</div>
 </body>
 </html>
