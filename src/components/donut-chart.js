@@ -1,5 +1,6 @@
 import { LitElement, html, css } from  'lit-element';
 import * as d3 from 'd3';
+import { store } from '../state-management/store'
 
 export class DonutChart extends LitElement {
     static get properties() {
@@ -51,7 +52,10 @@ export class DonutChart extends LitElement {
     }
 
     firstUpdated(_changedProperties) {
+
         let element = this.shadowRoot.querySelector(".donut-chart");
+
+        let dataSource = this.dataSource;
 
         let colorOverIndex = '#ffb14e',
             colorUnderIndex = '#4880da',
@@ -191,10 +195,19 @@ export class DonutChart extends LitElement {
             }
         }
 
-          d3.json("data/mock/" + this.dataSource + ".json").then(function(data){
-              pieChart(data.chartIdentifier ,data);
-          });
+          // d3.json("data/mock/" + this.dataSource + ".json").then(function(data){
+          //     pieChart(data.chartIdentifier ,data);
+          // });
+        let currentValue;
+        function handleChange() {
+            let previousValue = currentValue;
+            currentValue = store.getState().data[dataSource];
+            if(previousValue !== currentValue) {
+                pieChart(dataSource, currentValue);
+            }
+        }
 
+        store.subscribe(handleChange);
 
 
             //pieChart('gender', this.dataSource);

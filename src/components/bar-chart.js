@@ -1,11 +1,11 @@
 import {LitElement, html, css} from 'lit-element';
 import * as d3 from 'd3';
-import  dataStore  from '../assets/viz-base-class';
 import * as dataConfig from "../../dataVis";
+import { store } from '../state-management/store';
 
 export class BarChart extends LitElement {
     static get properties() {
-        return { chartTitle: { type: String }, chartIdentifier: {type: String}, orientation: {type: String}, dataSource: {type: String}, config: {type: Object}, elementConfig: {type:Array}}
+        return { chartTitle: { type: String }, chartIdentifier: {type: String}, orientation: {type: String}, dataSource: {type: String}, config: {type: Object}}
     }
     constructor() {
         super();
@@ -14,7 +14,6 @@ export class BarChart extends LitElement {
         this.orientation = "vertical";
         this.dataSource = '';
         this.config = {};
-        this.elementConfig = [];
     }
 
     static get styles() {
@@ -41,6 +40,27 @@ export class BarChart extends LitElement {
 
     firstUpdated(changedProperties) {
         let element = this.shadowRoot.querySelector(".bar-chart");
+        let dataSource = this.dataSource;
+        let formatAsInteger = d3.format(",");
+
+        function addTooltip(tooltipNode, htmlString, xOffset, yOffset) {
+            let e = window.event;
+            var x = e.clientX,
+                y = e.clientY;
+
+            let tipY = (y + yOffset) + 'px';
+            let tipX = (x + xOffset) + 'px';
+
+            // Move tooltip to the left of the cursor if it gets too close to right edge
+            if  (window.innerWidth - x < 200) {
+                tipX = (x - 130) + 'px';
+            }
+
+            tooltipNode.html(htmlString)
+                .style("opacity", .9)
+                .style('left', `${(tipX)}`)
+                .style('top', `${(tipY)}`);
+        }
 
         function barChartSetup(innerWidth=360) {
             let margin = {top: 30, right: 0, bottom: 20, left: 30};
@@ -57,29 +77,34 @@ export class BarChart extends LitElement {
         }
 
         function drawBarChart(attrName, indexArray, innerWidth=400) {
-
+            if(!indexArray) {
+                return;
+            }
             // temp fix to remove any null elements from indexArray
             for( let i = indexArray.length; i--;){
-                if ( indexArray[i] == null) {
+                if ( indexArray[i] === null) {
                     indexArray.pop();
                 }
             }
 
             let numSeries = indexArray.length;
-
+console.log('num series is ' + numSeries);
             let basics = barChartSetup(innerWidth);
             let margin = basics.margin,
                 width = basics.width,
                 height = basics.height,
                 barPadding = basics.barPadding * 2;
-
             let barWidth = width / (indexArray[0].length * numSeries);
+
+            let xScale = d3.scaleLinear()
+                .domain([0, indexArray[0].length])
+                .range([0, width]);
 
             let largest = 0;
             indexArray.forEach(function (aud) {
                let thisMax = d3.max(aud, function(d) { return d.target_pct; });
                 largest = Math.max(thisMax, largest);
-            });
+           });
             let yScale = d3.scaleLinear()
                 .domain([0, largest])
                 .range([height, 0]);
@@ -229,7 +254,7 @@ export class BarChart extends LitElement {
 
 
             function mouseover(d) {
-                let htmlString = "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index
+                let htmlString = "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index;
                 addTooltip(tooltip, htmlString, 0, -40);
             }
 
@@ -239,10 +264,17 @@ export class BarChart extends LitElement {
             }
 
         }
+
+        let currentValue;
+       function handleChange() {
+           let previousValue = currentValue;
+           currentValue = store.getState().data[dataSource];
+           if(previousValue !== currentValue) {
+               drawBarChart(dataSource, currentValue)
+           }
+        }
+       store.subscribe(handleChange);
     }
-
-
-
 
 }
 

@@ -102,15 +102,14 @@
               </div>
               <!-- <div style="float:none;width:100%;overflow:auto;"></div> -->
               <div class="well ds-grid-full">
-               <!-- <wave-chart chartTitle="Audience DNA"></wave-chart> -->
-                  <div id="waveChart"></div>
+                  <dna-chart chartTitle="Audience DNA" chartIdentifier="dna" ng-attr-orientation="vertical" dataSource="dna" attrName="dna" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></dna-chart>
               </div>
         </div>
         <div class="tab-content relative ds-grid-tabs">
           <div class="tab-pane active" role="tabpanel" ng-if="vizCtrl.view === 'dashboard'">
             <div class="ds-grid-charts">
             <div class="ds-chart well tile">
-               <bar-chart chartTitle="Age" chartIdentifier="age" ng-attr-orientation="vertical" dataSource="age" attrName="age" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
+            <bar-chart chartTitle="Age" chartIdentifier="age" ng-attr-orientation="vertical" dataSource="age" attrName="age" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
             </div>
             <div class="ds-chart well tile">
                <donut-chart chartTitle="Gender" chartIdentifier="gender" dataSource="gender" attrName="gender" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></donut-chart>
@@ -120,7 +119,6 @@
             </div>
            </div>
 
-
             <div class="ds-chart well tile">
                 <donut-chart chartTitle="Marital status" chartIdentifier="marital" dataSource="marital" attrName="marital" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"> </donut-chart>
             </div>
@@ -128,37 +126,22 @@
                 <bar-chart chartTitle="Number of children" chartIdentifier="children" orientation="vertical" dataSource="children" attrName="children" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
             </div>
             <div class="ds-chart well tile">
-                <bar-chart chartTitle="Education" chartIdentifier="education" orientation="vertical" dataSource="education" attrName="education" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
+               <bar-chart chartTitle="Education" chartIdentifier="education" orientation="vertical" dataSource="education" attrName="education" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
             </div>
             </div>
+            <div class="ds-grid-charts-big">
               <div class="ds-grid-charts-big">
                 <bar-chart chartTitle="Income" chartIdentifier="income" orientation="vertical" dataSource="income" attrName="income" ng-attr-config="{{vizCtrl.config}}" ng-attr-elementConfig="{{vizCtrl.elementConfig}}"></bar-chart>
             </div>
             <div class="ds-chart-big well tile">
-             <!--  <map-chart chartTitle="Location" dataSource=""></map-chart> -->
+              <map-chart chartTitle="Location" dataSource="state" chartIdentifier="state" attrName="state"></map-chart>
             </div>
-
+            </div>
               <div class="ds-chart-big well tile">
-                  <div class="tile-header col-sm-2">
-                      <h4 class="ds-chart-title">Interests</h4>
-                  </div>
-                  <div id="interestsChart">
-                    <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
-                    <div class="ds-toggle-button col-sm-2">
-                        <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
-                    </div>
-                  </div>
+             <horiz-bar-chart chartTitle="Interests" dataSource="interests" chartIdentifier="interests" attrName="interests"></horiz-bar-chart>
               </div>
               <div class="ds-chart-big well tile">
-                  <div class="tile-header col-sm-2">
-                      <h4 class="ds-chart-title">Media</h4>
-                  </div>
-                  <div id="mediaChart">
-                    <div class="ds-hbar-status col-sm-8" style="float:left;"></div>
-                    <div class="ds-toggle-button col-sm-2">
-                        <div class="ds-toggle-main"><div class="ds-toggle-after"></div></div>
-                    </div>
-                </div>
+                  <horiz-bar-chart chartTitle="Media" dataSource="media" chartIdentifier="media" attrName="media"></horiz-bar-chart>
               </div>
             </div>
           <div class="tab-pane" role="tabpanel" ng-if="vizCtrl.view === 'interests'">
@@ -204,7 +187,7 @@
                 .map(function() { return $(this).val(); })
                 .get();
 
-            if (selectedAudiences.length > 0 & selectedAudiences.length <= 3) {
+            if (selectedAudiences.length > 0 && selectedAudiences.length <= 3) {
              // f(selectedAudiences);
             } else {
 

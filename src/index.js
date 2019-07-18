@@ -2,9 +2,12 @@ import angular from 'angular';
 import * as Visualization from "./assets/viz-base-class";
 import { DonutChart } from "./components/donut-chart";
 import { BarChart } from "./components/bar-chart";
-import {audienceTitles} from "../build/assets/viz-base-class";
+import { HorizBarChart } from "./components/horiz-bar-chart";
+import { DNAChart} from "./components/dna-chart";
+import { MapChart } from "./components/map-chart";
 import * as dataConfig from "../dataVis";
 
+let audienceTitles= ['temp1', 'temp2', 'temp3'];
 
 const app = angular.module('vizApp',[]);
 
@@ -13,7 +16,7 @@ app.controller('VisualizationController',["$scope",  function($scope) {
     let vizCtrl = this;
     let myViz = Visualization;
     vizCtrl.view = 'dashboard';
-    vizCtrl.audienceTitle = audienceTitles[0];
+    vizCtrl.audienceTitle = myViz.storeName;
     vizCtrl.audience2Title = audienceTitles[1];
     vizCtrl.audience3Title = audienceTitles[2];
     vizCtrl.selectedAudiences = [];
@@ -48,7 +51,7 @@ app.controller('VisualizationController',["$scope",  function($scope) {
             $(".ds-filter-tip").css("display","");
             $(".ds-current-filter-remove").css("display", "none");
         }
-        if (store.activeTab == "dashboard") {
+        if (store.activeTab === "dashboard") {
             $(".ds-current-filter").text(store["activeFilter"] != null ? cat + ": " + store["activeFilter"][1] : "Click chart item to apply filter.");
         } else {
             $(".ds-filter-tip").css("display","none");
@@ -113,7 +116,6 @@ app.controller('VisualizationController',["$scope",  function($scope) {
 
  (function() {
         myViz.getDataFiles().then(function(result) {
-            //console.log(result);
             if(result === 'queueEmpty') {
 
             }
