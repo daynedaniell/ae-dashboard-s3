@@ -19,7 +19,7 @@ app.controller('VisualizationController',["$scope",  function($scope) {
     vizCtrl.audienceTitle = myViz.storeName;
     vizCtrl.audience2Title = audienceTitles[1];
     vizCtrl.audience3Title = audienceTitles[2];
-    vizCtrl.selectedAudiences = [];
+    vizCtrl.selectedAudiences = [1];
     vizCtrl.audienceNum1 = true;
     vizCtrl.audienceNum2 = false;
     vizCtrl.audienceNum3 = false;
@@ -31,11 +31,8 @@ app.controller('VisualizationController',["$scope",  function($scope) {
     vizCtrl.selectAudience = function(audienceVal) {
         console.log('audienceVal is ' + audienceVal);
         vizCtrl.selectedAudiences.push(audienceVal);
-        myViz.displayAudienceData(1, vizCtrl.selectedAudiences);
+        vizCtrl.addAudienceLegend();
     };
-
-    vizCtrl.config = myViz.getConfig();
-    vizCtrl.elementConfig = myViz.getElementConfig();
 
     /*
     imported from base class
@@ -63,8 +60,8 @@ app.controller('VisualizationController',["$scope",  function($scope) {
        // drawCharts(targetAuds);
     };
 
-    vizCtrl.addAudienceLegend = function(targetAuds) {
-        if (dataConfig.config.activeView === 1) {
+    vizCtrl.addAudienceLegend = function() {
+        if (vizCtrl.selectedAudiences.length === 1) {
             $("#dsAudienceLegend1 .ds-audience-legend-color").css("background-color", dataConfig.config.colorOverIndex);
             $("#dsAudienceLegend1 .ds-audience-legend-label span").text("Over-Index");
             $("#dsAudienceLegend2 .ds-audience-legend-color").css("background-color", dataConfig.config.colorUnderIndex);
@@ -73,16 +70,18 @@ app.controller('VisualizationController',["$scope",  function($scope) {
             $("#dsAudienceLegend3 .ds-audience-legend-label span").text("No Data");
             $("#dsAudienceLegend3 .ds-audience-legend-label span").css("display", "block");
         } else {
-            targetAuds.forEach(function(aud, i) {
-                console.log('active view is not 1');
-                $(`#dsAudienceLegend${i+1} .ds-audience-legend-color`).css("background-color", dataConfig.config.seriesColors[i]);
-                $(`#dsAudienceLegend${i+1} .ds-audience-legend-label span`).text(aud.name);
-                $(`#dsAudienceLegend${i+1} .ds-audience-legend-color`).css("display", "block");
-                $(`#dsAudienceLegend${i+1} .ds-audience-legend-label span`).css("display", "block");
-            });
-            if (targetAuds.length < dataConfig.config.seriesColors.length) {
-                let i = targetAuds.length;
-                while (i <= targetAuds.length) {
+            if(vizCtrl.selectedAudiences.length > 1) {
+                vizCtrl.selectedAudiences.forEach(function(aud, i) {
+                    $(`#dsAudienceLegend${i+1} .ds-audience-legend-color`).css("background-color", dataConfig.config.seriesColors[i]);
+                    $(`#dsAudienceLegend${i+1} .ds-audience-legend-label span`).text(aud.name);
+                    $(`#dsAudienceLegend${i+1} .ds-audience-legend-color`).css("display", "block");
+                    $(`#dsAudienceLegend${i+1} .ds-audience-legend-label span`).css("display", "block");
+                })
+            }
+
+            if (vizCtrl.selectedAudiences.length < dataConfig.config.seriesColors.length) {
+                let i = vizCtrl.selectedAudiences.length;
+                while (i <= vizCtrl.selectedAudiences.length) {
                     $(`#dsAudienceLegend${i+1} .ds-audience-legend-color`).css("display", "none");
                     $(`#dsAudienceLegend${i+1} .ds-audience-legend-label span`).css("display", "none");
                     i += 1;
@@ -117,7 +116,7 @@ app.controller('VisualizationController',["$scope",  function($scope) {
  (function() {
         myViz.getDataFiles().then(function(result) {
             if(result === 'queueEmpty') {
-
+                vizCtrl.addAudienceLegend();
             }
         })
     })();

@@ -1,4 +1,5 @@
 import { LitElement, html, css } from  'lit-element';
+import _ from 'lodash';
 
 export class ClusteredBarChart extends LitElement {
     static get properties() {

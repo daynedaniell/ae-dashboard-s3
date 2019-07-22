@@ -1,19 +1,18 @@
 import {LitElement, html, css} from 'lit-element';
 import * as d3 from 'd3';
+import _ from 'lodash';
 import * as dataConfig from "../../dataVis";
 import { store } from '../state-management/store';
 
 export class BarChart extends LitElement {
     static get properties() {
-        return { chartTitle: { type: String }, chartIdentifier: {type: String}, orientation: {type: String}, dataSource: {type: String}, config: {type: Object}}
+        return { chartTitle: { type: String }, chartIdentifier: {type: String}, dataSource: {type: String}}
     }
     constructor() {
         super();
         this.chartTitle = "my Chart";
         this.chartIdentifer = "identifier";
-        this.orientation = "vertical";
         this.dataSource = '';
-        this.config = {};
     }
 
     static get styles() {
@@ -88,7 +87,6 @@ export class BarChart extends LitElement {
             }
 
             let numSeries = indexArray.length;
-console.log('num series is ' + numSeries);
             let basics = barChartSetup(innerWidth);
             let margin = basics.margin,
                 width = basics.width,

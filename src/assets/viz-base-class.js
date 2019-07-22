@@ -9,24 +9,24 @@ const myStore = store;
 let randomDemog = [];
 let randomInterests = [];
 let randomRetail = [];
-
-
-var finalObj = {};
+let finalObj = {};
 
 /*
 refactor this to make it not look stupid
  */
 function makeObject(input) {
+    let t0 = performance.now();
     for(let y in input) {
         if(y.includes('IndexCats')) {
             let result = y.split('IndexCats');
-            console.log(result);
             finalObj[result[0]] = input[y]
         } else {
             finalObj[y] = [];
         }
-        console.log(finalObj);
-    } return finalObj;
+    }
+    let t1 = performance.now();
+    console.log("call to makeObject took " + (t1 - t0) + ' milliseconds.');
+    return finalObj;
 }
 
 /* Make ordered category arrays */
@@ -36,18 +36,19 @@ function makeIndexCats(){
 }
 
 function getCompIndexes(audData, attrName, targetNum) {
+    let t0 = performance.now();
     let indexes = [audData[targetNum][attrName]];
     audData.forEach(function(aud, i) {
         if (i !== targetNum) {
             indexes.push(aud[attrName])
         }
     });
+    let t1 = performance.now();
+    console.log("call to getCompIndexes for " + attrName + ' took ' + (t1 - t0) + ' milliseconds.');
     return indexes
 }
 
 function getIndexArray(audData, attrName) {
-    console.log(audData);
-    console.log(attrName);
     let indexes = [];
     audData.forEach(function(aud) {
         indexes.push(aud[attrName])
@@ -68,23 +69,23 @@ function getStatArray(audData, attrName) {
  *******************************************************************************/
 function addSeriesStats(attrName, statsArray, prefix='', suffix='') {
     // remove existing stats, if any
-    $( "#" + attrName + "Chart" )
-        .prev(".tile-header")
+    let chart = $( "#" + attrName + "Chart" );
+
+        chart.prev(".tile-header")
         .find(".ds-stats")
         .remove();
 
     let statString = "<div class='ds-stats'><span class='ds-stats-name'>" + prefix + "</span>"
     statsArray.forEach(function(stat, i) {
-        statString += `<span class='ds-stat-${i+1}' style='color: ${dataConfig.config.seriesColors[i]}'>${stat} ${suffix}</span>`
-        if (i != statsArray.length - 1) {
+        statString += `<span class='ds-stat-${i+1}' style='color: ${dataConfig.config.seriesColors[i]}'>${stat} ${suffix}</span>`;
+        if (i !== statsArray.length - 1) {
             statString += "<span style='float:left;margin:0 3px;'> | </span>"
         }
     });
-    statString += "</div>"
+    statString += "</div>";
 
     // add in stats
-    $( "#" + attrName + "Chart" )
-        .prev(".tile-header")
+    chart.prev(".tile-header")
         .append(statString);
 }
 
@@ -137,7 +138,7 @@ function showActiveFilter(store) {
 
 
 function indexAttr(attrName, catsArray, targetData, randomData) {
-    console.log(attrName);
+    let t0 = performance.now();
     let targetCounts = d3.nest()
         .key(function(d) { return d[attrName]; })
         .rollup(function(v) { return v.length; })
@@ -189,11 +190,13 @@ function indexAttr(attrName, catsArray, targetData, randomData) {
             catEntryIndex["index"] = Math.round(100 * catEntryIndex["target_pct"] / catEntryIndex["random_pct"]);
         } else {catEntryIndex["index"] = 0}
     });
-
+    let t1 = performance.now();
+    console.log("call to indexArray took " + (t1 - t0) + ' milliseconds.');
     return indexArray;
 }
 
 function getTopIndexArray(audData, attrName, audNum) {
+    let t0 = performance.now();
     let indexes = [audData[audNum][attrName]];
 
     audData.forEach(function(aud, i) {
@@ -201,11 +204,14 @@ function getTopIndexArray(audData, attrName, audNum) {
             indexes.push(aud[attrName])
         }
     });
+    let t1 = performance.now();
+    console.log("call to getTopIndexArray took " + (t1 - t0) + ' milliseconds.');
     return indexes
 }
 
 /* calculate an array of pct and indexes for interests/retail */
 function indexInterestsMedia(attrName, targetData, randomData, bubble=false) {
+    let t0 = performance.now();
     let targetCounts = d3.nest()
         .key(function(d) { return d[attrName+"_category"] + "|" + d[attrName]; })
         .rollup(function(v) { return v.length; })
@@ -270,13 +276,15 @@ function indexInterestsMedia(attrName, targetData, randomData, bubble=false) {
             .filter(d => (d["index"] >= 100) & (d["index"] <= 300) & (d["target_pct"] > 5) )
         ;
     }
-
+    let t1 = performance.now();
+    console.log("call to indexInterestMedia took " + (t1 - t0) + ' milliseconds.');
     return targetCounts;
 }
 
 
 /* for interests/retail, get the max indexing item for each category, and pick top 5 among that list */
 function indexInterestsMediaTop5(indexDs, indexDs2 = null, indexDs3 = null) {
+    let t0 = performance.now();
     let f = indexDs.filter((d) => ( d.index <= 300 && d.target_pct >= 5));
 
     let a = d3.nest()
@@ -294,6 +302,7 @@ function indexInterestsMediaTop5(indexDs, indexDs2 = null, indexDs3 = null) {
         .entries(f)
         .map(function(d) {
             let comp;
+            let comp2;
             if (indexDs2 != null) {
                 comp = indexDs2.filter(function(d2) { return d2.index <= 300 && d2.attrib_value === d.value.attrib_value })
             }
@@ -349,13 +358,14 @@ function indexInterestsMediaTop5(indexDs, indexDs2 = null, indexDs3 = null) {
         }
 
     } else {
+        let t1 = performance.now();
+        console.log("call to indexInterestMediaTop5 took " + (t1 - t0) + ' milliseconds.');
         return a;
     }
-
-
 }
 
 function indexStatesTop5(indexDs1, indexDs2, indexDs3 = null) {
+    let t0 = performance.now();
     let triple = indexDs3 != null;
     let a = [...indexDs1].filter( d => ( d["random_pct"] > 0 ) )
         .sort(function(a,b){
@@ -401,7 +411,8 @@ function indexStatesTop5(indexDs1, indexDs2, indexDs3 = null) {
         });
         return [a, c, c2]
     }
-
+    let t1 = performance.now();
+    console.log("call to indexStatesTop5 took " + (t1 - t0) + ' milliseconds.');
 
     return [a, c];
 }
@@ -419,6 +430,7 @@ function getStateName(stateCode) {
 
 /* get median category */
 function getMedianCategory(indexDs) {
+    let t0 = performance.now();
     let medianCat = '';
     let sum = 0;
     let i = 0;
@@ -427,6 +439,8 @@ function getMedianCategory(indexDs) {
         sum += indexDs[i].target_pct;
         i++;
     }
+    let t1 = performance.now();
+    console.log("call to getMedianCategory took " + (t1 - t0) + ' milliseconds.');
     return medianCat;
 }
 
@@ -437,13 +451,11 @@ function getNonZeroPct(indexDs) {
     return 100 - zeroPct;
 }
 
-
-
-
 /*
 main function to generate data for charts
  */
 function parseData(targetAuds) {
+    let t0 = performance.now();
     let activeView = dataConfig.config.activeView;
     showActiveFilter(dataConfig.config);
     /* Remove any active tooltips */
@@ -458,7 +470,7 @@ function parseData(targetAuds) {
     demogAttributesList.forEach(function(demogAttributeListName) {
         d3.select("#"+demogAttributeListName+"Chart svg").remove();
     });
-    targetAuds.forEach(function(aud, i) {
+    targetAuds.forEach(function(aud) {
         let targetData = {
             name: aud.name
         };
@@ -484,7 +496,6 @@ function parseData(targetAuds) {
         audData.push(targetData);
     });
 
-
     audData.forEach(function(aud, i) {
         if (audData.length > 1) {
             aud["topStates"] = indexStatesTop5(...getCompIndexes(audData, "state", i));
@@ -493,7 +504,6 @@ function parseData(targetAuds) {
         } else {
             aud["topInterests"] = [indexInterestsMediaTop5(...getCompIndexes(audData, "interests", i))];
             aud["topMedia"] = [indexInterestsMediaTop5(...getCompIndexes(audData, "media", i))];
-console.log(aud["topMedia"]);
         }
     });
 
@@ -511,6 +521,18 @@ console.log(aud["topMedia"]);
             media: aud.topMedia[0]
         });
     });
+
+    /*
+
+    start of function to use config data for dispatching - need to handle audData.length values and the DNA outlier
+
+    dataCategories.forEach(function(category) {
+        if(category.getIndex) {
+            myStore.dispatch(addDataToStore(category, getIndexArray(audData, category)));
+        }
+    })
+    */
+
     myStore.dispatch(addDataToStore("dna", indexes));
     myStore.dispatch(addDataToStore("age", getIndexArray(audData, "age")));
     myStore.dispatch(addDataToStore("ethnicity", getIndexArray(audData,"ethnicity")));
@@ -525,7 +547,6 @@ console.log(aud["topMedia"]);
         myStore.dispatch(addDataToStore("gender", [audData[0].gender][0]));
         myStore.dispatch(addDataToStore("marital", [audData[0].marital][0]));
     }
-
 
     if (audData.length > 1) {
         myStore.dispatch(addDataToStore("interests", getTopIndexArray(audData, "interests")));
@@ -565,12 +586,17 @@ console.log(aud["topMedia"]);
   //  addBubbleHighlighting('interests');
  //   addBubbleHighlighting('retail');
 */
+    let t1 = performance.now();
+    console.log("call to parseData took " + (t1 - t0) + ' milliseconds.');
 }
+/*
+ processData builds the target audience object that gets passed to the parseData function
+ */
 
 function processData() {
+    let t0 = performance.now();
     let targetAuds = [];
     let targetObj = {};
-
     let storeName = store.getState().data.audience.name;
 
     randomDemog = store.getState().data.randomDemog;
@@ -584,12 +610,11 @@ function processData() {
     targetAuds.push(targetObj);
 
     parseData(targetAuds);
-
+    let t1 = performance.now();
+    console.log("call to processData took " + (t1 - t0) + ' milliseconds.');
 }
 
-
 let statusPhase = 'initial';
-
      function getDataFiles() {
         /*
             get list of data files
@@ -598,7 +623,6 @@ let statusPhase = 'initial';
         let fileList = dataConfig.files;
         let initFileList = [];
         let secondaryFileList = [];
-
         /*
             the initFileList array is the first group of files to be processed - the initial audience selected
             the secondaryFileList is the second group of files to be processed - the unselected audiences
@@ -610,8 +634,6 @@ let statusPhase = 'initial';
                 secondaryFileList.push(file);
             }
         });
-
-
 
         return new Promise(function(resolve, reject) {
             if(typeof (w) === "undefined") {
@@ -684,18 +706,9 @@ let statusPhase = 'initial';
         if(this.selectedAudienceArr.indexOf(selectedAudiences) !== -1) {
             this.selectedAudienceArr.push(selectedAudiences);
         } else {this.selectedAudienceArr.splice(this.selectedAudienceArr.indexOf(selectedAudiences))}
-
-
         // array must contain only unique values
      //   console.log('I was told to display audience data ' + this.selectedAudienceArr);
     }
 
-    function getConfig() {
-        return dataConfig;
-    }
 
-    function getElementConfig() {
-        return dataConfig.config;
-    }
-
-export { getConfig, getElementConfig, getDataFiles }
+export { getDataFiles }
