@@ -477,3 +477,7 @@ body {
   height: 60px;
   margin: 0;
 }
+
+#incomeChartPlot {
+    width: 600px;
+}

@@ -1,4 +1,4 @@
-import { LitElement, html, css, customElement } from  'lit-element';
+import { LitElement, html, css } from  'lit-element';
 import * as d3 from 'd3';
 import _ from 'lodash';
 

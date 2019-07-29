@@ -191,7 +191,7 @@ export class DonutChart extends LitElement {
 
 
             function up(d) {
-                applyFilter(attrName, d.data.attrib_value, "path", targetAuds);
+                applyFilter(attrName, d.data.attrib_value, "path", indexDs);
             }
         }
 

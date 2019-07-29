@@ -1,24 +1,26 @@
 {
   "title": "this is the page title",
-  "audiences": [1, 2, 3],
-  "files": [
-    {"title": "audience", "audience": 1, "url":  "http://localhost:5000/data/target_aud_1/audience.json"},
-    {"title": "us-states", "audience": 1, "url":  "http://localhost:5000/data/target_aud_1/us-states.json"},
-    {"title":"demographics",  "audience": 1, "url":  "http://localhost:5000/data/target_aud_1/demographics_target.tsv"},
-    {"title": "interests", "audience": 1, "url":  "http://localhost:5000/data/target_aud_1/interests_target.tsv"},
-    {"title": "media",   "audience": 1, "url":  "http://localhost:5000/data/target_aud_1/media_target.tsv"},
-    {"title": "audience-2", "audience": 2, "url":  "http://localhost:5000/data/target_aud_2/audience.json"},
-    {"title":"demographics-2",  "audience": 2, "url":  "http://localhost:5000/data/target_aud_2/demographics_target.tsv"},
-    {"title": "interests-2", "audience": 2, "url":  "http://localhost:5000/data/target_aud_2/interests_target.tsv"},
-    {"title": "media-2",  "audience": 2,  "url":  "http://localhost:5000/data/target_aud_2/media_target.tsv"},
-    {"title": "audience-3", "audience": 3, "url":  "http://localhost:5000/data/target_aud_3/audience.json"},
-    {"title":"demographics-3",  "audience": 3, "url":  "http://localhost:5000/data/target_aud_3/demographics_target.tsv"},
-    {"title": "interests-3", "audience": 3, "url":  "http://localhost:5000/data/target_aud_3/interests_target.tsv"},
-    {"title": "media-3",   "audience": 3, "url":  "http://localhost:5000/data/target_aud_3/media_target.tsv"},
-    {"title":  "randomDemog", "audience": 1, "url":  "http://localhost:5000/data/random_audience/demographics_random.tsv"},
-    {"title":  "randomInterests", "audience": 1, "url":  "http://localhost:5000/data/random_audience/interests_random.tsv"},
-    {"title":  "randomMedia", "audience": 1, "url":  "http://localhost:5000/data/random_audience/media_random.tsv"}
-  ],
+  "audienceFiles": {
+    "audience1": [
+      {"title": "audience", "url":  "http://localhost:5000/data/target_aud_1/audience.json"},
+      {"title": "us-states", "url":  "http://localhost:5000/data/target_aud_1/us-states.json"},
+      {"title":"demographics", "url":  "http://localhost:5000/data/target_aud_1/demographics_target.tsv"},
+      {"title": "interests", "url":  "http://localhost:5000/data/target_aud_1/interests_target.tsv"},
+      {"title": "media", "url":  "http://localhost:5000/data/target_aud_1/media_target.tsv"},
+      {"title":  "randomDemog", "url":  "http://localhost:5000/data/random_audience/demographics_random.tsv"},
+      {"title":  "randomInterests", "url":  "http://localhost:5000/data/random_audience/interests_random.tsv"},
+      {"title":  "randomMedia", "url":  "http://localhost:5000/data/random_audience/media_random.tsv"}
+  ], "audience2":  [
+      {"title": "audience-2", "url":  "http://localhost:5000/data/target_aud_2/audience.json"},
+      {"title":"demographics-2", "url":  "http://localhost:5000/data/target_aud_2/demographics_target.tsv"},
+      {"title": "interests-2", "url":  "http://localhost:5000/data/target_aud_2/interests_target.tsv"},
+      {"title": "media-2",  "url":  "http://localhost:5000/data/target_aud_2/media_target.tsv"}
+  ], "audience3": [
+      {"title": "audience-3", "url":  "http://localhost:5000/data/target_aud_3/audience.json"},
+      {"title":"demographics-3", "url":  "http://localhost:5000/data/target_aud_3/demographics_target.tsv"},
+      {"title": "interests-3", "url":  "http://localhost:5000/data/target_aud_3/interests_target.tsv"},
+      {"title": "media-3", "url":  "http://localhost:5000/data/target_aud_3/media_target.tsv"}
+  ]},
   "config": {
     "activeFilter": null,
     "stateActive": [1,2,3],
@@ -276,6 +278,9 @@
             }
           ]
         }
+      ],
+      "filters": [
+
       ]
     }
 }

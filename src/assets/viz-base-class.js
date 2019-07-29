@@ -10,6 +10,11 @@ let randomDemog = [];
 let randomInterests = [];
 let randomRetail = [];
 let finalObj = {};
+const indexCats = makeIndexCats();
+let initFileList = [];
+let secondaryFileList = [];
+let activeAudience = dataConfig.config.activeAudience;
+
 
 /*
 refactor this to make it not look stupid
@@ -454,47 +459,49 @@ function getNonZeroPct(indexDs) {
 /*
 main function to generate data for charts
  */
-function parseData(targetAuds) {
+function parseData(targetAud) {
     let t0 = performance.now();
     let activeView = dataConfig.config.activeView;
+    let demogAttributesList = Object.keys(indexCats);
+    let audience = store.getState().data[targetAud];
+    let audData = [];
     showActiveFilter(dataConfig.config);
     /* Remove any active tooltips */
-    d3.selectAll(".ds-tooltip").remove();
 
-    let indexCats = makeIndexCats();
-    let demogAttributesList = Object.keys(indexCats);
+    let audienceNameObj = _.find(audience, function(a) { return a.title === "audience"});
+    let audienceInterests = _.find(audience, function(a) { return a.title === "interests"});
+    let audienceMedia = _.find(audience, function(a) { return a.title === "media"});
+    let audienceDemographics = _.find(audience, function(a) { return a.title === "demographics"});
 
-    let audData = [];
-
-    /* Remove the current svg from each chart div */
-    demogAttributesList.forEach(function(demogAttributeListName) {
-        d3.select("#"+demogAttributeListName+"Chart svg").remove();
-    });
-    targetAuds.forEach(function(aud) {
         let targetData = {
-            name: aud.name
+            name: audienceNameObj.data.name
         };
-        demogAttributesList.forEach(function(demogAttributeListName) {
+
+        let demoI;
+        for(demoI = 0; demoI < demogAttributesList.length; demoI++){
+            let demogAttributeListName = demogAttributesList[demoI];
             let index;
+            console.log(demogAttributeListName);
             if (demogAttributeListName === "interests") {
-                let randomI = store.getState().data.randomInterests;
-                index = indexInterestsMedia(demogAttributeListName, aud.interests, randomI);
-             } else if (demogAttributeListName === "media") {
-                let randomM = store.getState().data.randomMedia;
-                 index = indexInterestsMedia(demogAttributeListName, aud.media, randomM);
-             } else {
-                let randomD = store.getState().data.randomDemog;
-                 index = indexAttr(demogAttributeListName, indexCats[demogAttributeListName], aud.demog, randomD);
-             }
+                let randomI = _.find(audience, function(a) { return a.title === "randomInterests"});
+                index = indexInterestsMedia(demogAttributeListName, audienceInterests.data, randomI.data);
+            } else if (demogAttributeListName === "media") {
+                let randomM = _.find(audience, function(a) { return a.title === "randomMedia"});
+                index = indexInterestsMedia(demogAttributeListName, audienceMedia.data, randomM.data);
+            } else {
+                let randomD = _.find(audience, function(a) { return a.title === "randomDemog"});
+                index = indexAttr(demogAttributeListName, indexCats[demogAttributeListName], audienceDemographics.data, randomD.data);
+            }
 
             targetData[demogAttributeListName] = index;
-        });
+        }
+
         targetData["ageStat"] = getMedianCategory(targetData.age);
         targetData["childrenStat"] = getNonZeroPct(targetData.children);
         targetData["incomeStat"] = getMedianCategory(targetData.income);
 
         audData.push(targetData);
-    });
+
 
     audData.forEach(function(aud, i) {
         if (audData.length > 1) {
@@ -508,7 +515,9 @@ function parseData(targetAuds) {
     });
 
     let indexes = [];
-    audData.forEach(function(aud) {
+    let audI;
+    for(audI = 0; audI < audData.length; audI++){
+        let aud = audData[audI];
         indexes.push({
             age: aud.age,
             gender: aud.gender,
@@ -520,18 +529,7 @@ function parseData(targetAuds) {
             interests: aud.topInterests[0],
             media: aud.topMedia[0]
         });
-    });
-
-    /*
-
-    start of function to use config data for dispatching - need to handle audData.length values and the DNA outlier
-
-    dataCategories.forEach(function(category) {
-        if(category.getIndex) {
-            myStore.dispatch(addDataToStore(category, getIndexArray(audData, category)));
-        }
-    })
-    */
+    }
 
     myStore.dispatch(addDataToStore("dna", indexes));
     myStore.dispatch(addDataToStore("age", getIndexArray(audData, "age")));
@@ -544,8 +542,9 @@ function parseData(targetAuds) {
         myStore.dispatch(addDataToStore("gender", getIndexArray(audData, "gender")));
         myStore.dispatch(addDataToStore("marital", getIndexArray(audData, "marital")));
     } else {
-        myStore.dispatch(addDataToStore("gender", [audData[0].gender][0]));
-        myStore.dispatch(addDataToStore("marital", [audData[0].marital][0]));
+        console.log(audData[0].gender);
+        myStore.dispatch(addDataToStore("gender", audData[0].gender));
+        myStore.dispatch(addDataToStore("marital", audData[0].marital));
     }
 
     if (audData.length > 1) {
@@ -556,159 +555,84 @@ function parseData(targetAuds) {
         myStore.dispatch(addDataToStore("media", [audData[0].topMedia][0]));
     }
 
-    /* Add Toggle-Ready HBar Charts for Comparison Views
-   if (audData.length > 1) {
-        (dataConfig.config["stateActive"][0] === 1)
-            ? hBarChart("state", 630, getTopIndexArray(audData, "topStates", 0),hasToggle=true) : (dataConfig.config["stateActive"][0] === 2)
-            ? hBarChart("state", 630,getTopIndexArray(audData, "topStates", 1),hasToggle=true) :
-            hBarChart("state", 630,getTopIndexArray(audData, "topStates", 2),hasToggle=true);
-
-        (dataConfig.config["interestsActive"][0] === 1)
-            ? hBarChart("interests", 630, getTopIndexArray(audData, "topInterests", 0),hasToggle=true) : (dataConfig.config["interestsActive"][0] === 2)
-            ? hBarChart("interests", 630,getTopIndexArray(audData, "topInterests", 1),hasToggle=true) :
-            hBarChart("interests", 630,getTopIndexArray(audData, "topInterests", 2),hasToggle=true);
-
-        (dataConfig.config["retailActive"][0] === 1)
-            ? hBarChart("retail", 630, getTopIndexArray(audData, "topRetail", 0),hasToggle=true) : (dataConfig.config["retailActive"][0] === 2)
-            ? hBarChart("retail", 630, getTopIndexArray(audData, "topRetail", 1),hasToggle=true) :
-            hBarChart("retail", 630,getTopIndexArray(audData, "topRetail", 2),hasToggle=true);
-    } else {
-        mapChart("state", [audData[0].state][0]);
-        hBarChart("interests", 630, [audData[0].topInterests][0]);
-        hBarChart("retail", 630, [audData[0].topMedia][0])
-    }
-
-    $( ".tile" ).removeClass("selected-tile");
-
-  //  bubbleChart('interests', getIndexArray(audData, "interests"));
-  //  bubbleChart('retail', getIndexArray(audData, "retail"));
-
-  //  addBubbleHighlighting('interests');
- //   addBubbleHighlighting('retail');
-*/
     let t1 = performance.now();
     console.log("call to parseData took " + (t1 - t0) + ' milliseconds.');
 }
-/*
- processData builds the target audience object that gets passed to the parseData function
- */
 
-function processData() {
-    let t0 = performance.now();
-    let targetAuds = [];
-    let targetObj = {};
-    let storeName = store.getState().data.audience.name;
+let targetObject = {};
+function buildTargetObject(audienceDataPoint) {
+    if(audienceDataPoint === 'randomDemog' || audienceDataPoint === 'randomInterests' || audienceDataPoint === 'randomRetail') {
+        return;
+    }
+    targetObject[audienceDataPoint] = store.getState().data[audienceDataPoint];
 
-    randomDemog = store.getState().data.randomDemog;
-    randomInterests = store.getState().data.randomInterests;
-    randomRetail = store.getState().data.randomRetail;
-    targetObj.name = storeName;
-    targetObj.demog = store.getState().data.demographics;
-    targetObj.interests = store.getState().data.interests;
-    targetObj.media = store.getState().data.media;
+    if(initFileList.length === 0 && statusPhase === 'initial') {
+        let targetAuds = [];
+        randomDemog = store.getState().data.randomDemog;
+        randomInterests = store.getState().data.randomInterests;
+        randomRetail = store.getState().data.randomRetail;
+        console.log('processing data');
+        targetAuds.push(targetObject);
+        parseData(targetAuds);
+        statusPhase = 'secondary'}
 
-    targetAuds.push(targetObj);
-
-    parseData(targetAuds);
-    let t1 = performance.now();
-    console.log("call to processData took " + (t1 - t0) + ' milliseconds.');
+    if(initFileList.length === 0 && statusPhase === 'secondary') {
+        //we're processing the secondary files now
+        if(secondaryFileList.length === 0 ) {
+            let targetAuds = [];
+            targetAuds.push(targetObject);
+            parseData(targetAuds);
+        }
+    }
 }
 
+/**
+ * statusPhase
+ * @type {string}
+ */
 let statusPhase = 'initial';
-     function getDataFiles() {
-        /*
-            get list of data files
-            this list will be used to verify all the files have been processed
-         */
-        let fileList = dataConfig.files;
-        let initFileList = [];
-        let secondaryFileList = [];
-        /*
-            the initFileList array is the first group of files to be processed - the initial audience selected
-            the secondaryFileList is the second group of files to be processed - the unselected audiences
-         */
-        fileList.forEach(function(file) {
-            if(file.audience === dataConfig.config.activeAudience) {
-                initFileList.push(file);
-            } else {
-                secondaryFileList.push(file);
-            }
-        });
 
-        return new Promise(function(resolve, reject) {
-            if(typeof (w) === "undefined") {
-                let w = new Worker('lib/webWorker.js');
-
-                if(statusPhase === 'initial') {
-                    console.log('initial status phase');
-                    w.postMessage({'cmd': 'setDataFileCount', 'msg': initFileList.length});
-                    w.postMessage({'cmd': 'queueDataFiles', 'msg': initFileList});
-                } else {
-                    console.log('secondary status phase');
-                    w.postMessage({'cmd': 'setDataFileCount', 'msg': secondaryFileList.length});
-                    w.postMessage({'cmd': 'queueDataFiles', 'msg': secondaryFileList});
+/**
+ *  getDataFiles()
+ */
+     function initializeWorker() {
+        let worker;
+            if(typeof (Worker) !== "undefined") {
+                if(typeof(worker) === "undefined") {
+                    worker = new Worker('lib/webWorker.js');
                 }
+                worker.postMessage({'cmd': 'configFile', 'msg': JSON.stringify(dataConfig)});
 
-                w.onmessage = function(event) {
+                worker.onmessage = function(event) {
                     switch(event.data.cmd) {
                         case "fileTransferComplete":
-                            myStore.dispatch(addDataToStore(event.data.msg.title, event.data.msg.data));
-                            if(statusPhase === 'initial') {
-                                initFileList.splice(initFileList.indexOf(event.data.msg.title), 1);
-                                if(initFileList.length === 0) {
-                                    processData();
-                                }
-                            } else {
-                                if(statusPhase === 'secondary') {
-                                    secondaryFileList.splice(secondaryFileList.indexOf(event.data.msg.title), 1);
-                                    if(secondaryFileList.length === 0) {
-                                        console.log('processing data for secondary files');
-                                        processData();
-                                    }
-                                }
-                            }
-                            if(initFileList.length === 0 && statusPhase === 'initial') {statusPhase = 'secondary'}
+                            // save data to Redux store
+                             myStore.dispatch(addDataToStore(event.data.msg.title, event.data.msg.data));
+                             // don't keep this here forever - for testing only
+                             if(event.data.msg.title === "audience1") {
+                                 parseData(event.data.msg.title);
+                             }
+
                             break;
                         case "transferFailed":
-                            w.postMessage({'cmd': 'transferFailed'});
+                            worker.postMessage({'cmd': 'transferFailed'});
                             reject('transfer failed');
                             break;
                         case "transferCanceled":
-                            w.postMessage({'cmd': 'transferCancelled'});
+                            worker.postMessage({'cmd': 'transferCancelled'});
                             reject('transfer cancelled');
                             break;
-                        case "queueStatus":
-                            if(event.data.msg === 'full') {
-                                w.postMessage({'cmd': 'getDataFiles'})
-                            }
-                            if(event.data.msg === 'fileCountSet') {
-                                w.postMessage({'cmd': 'getDataFiles'})
-                            }
-                            break;
                         case "queueEmpty":
-                            resolve('queueEmpty');
-                            //processData();
+                          //  processData();
                             break;
                         case 'transferStatus':
                           //  console.log('transfer status ' + event.data.msg);
                     }
                 }
             }
-        })
+
     } // end getDataFiles
 
-    /**
-     displayAudienceData function
-     @input array of audience ids
-
-     */
-    function displayAudienceData(defaultSelected, selectedAudiences) {
-        if(this.selectedAudienceArr.indexOf(selectedAudiences) !== -1) {
-            this.selectedAudienceArr.push(selectedAudiences);
-        } else {this.selectedAudienceArr.splice(this.selectedAudienceArr.indexOf(selectedAudiences))}
-        // array must contain only unique values
-     //   console.log('I was told to display audience data ' + this.selectedAudienceArr);
-    }
 
 
-export { getDataFiles }
+export { initializeWorker }

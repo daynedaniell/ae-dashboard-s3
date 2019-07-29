@@ -15,6 +15,8 @@ const app = angular.module('vizApp',[]);
 app.controller('VisualizationController',["$scope",  function($scope) {
     let vizCtrl = this;
     let myViz = Visualization;
+
+    myViz.initializeWorker();
     vizCtrl.view = 'dashboard';
     vizCtrl.audienceTitle = myViz.storeName;
     vizCtrl.audience2Title = audienceTitles[1];
@@ -29,7 +31,6 @@ app.controller('VisualizationController',["$scope",  function($scope) {
     };
 
     vizCtrl.selectAudience = function(audienceVal) {
-        console.log('audienceVal is ' + audienceVal);
         vizCtrl.selectedAudiences.push(audienceVal);
         vizCtrl.addAudienceLegend();
     };
@@ -111,13 +112,4 @@ app.controller('VisualizationController',["$scope",  function($scope) {
         chart.prev(".tile-header").append(statString);
     };
 
-
-
- (function() {
-        myViz.getDataFiles().then(function(result) {
-            if(result === 'queueEmpty') {
-                vizCtrl.addAudienceLegend();
-            }
-        })
-    })();
 }]);
