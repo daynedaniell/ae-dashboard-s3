@@ -24,7 +24,27 @@ export class BarChart extends LitElement {
             margin-bottom: 10px;
             font-weight: 500;
             line-height: 1.1
-        }`;
+        }
+        
+        .ds-tooltip {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-width: 500px;
+  padding: 15px;
+  word-break: break-all;
+  position: fixed;
+  background-color: #fff;
+  margin-top: -20px;
+  font: 15px "MuseoSans-300", sans-serif;
+  color: #333;
+  pointer-events: none;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+  opacity: 0;
+  z-index: 1;
+}
+        
+        `;
     }
 
     render() {
@@ -34,6 +54,7 @@ export class BarChart extends LitElement {
        </div>
        <div id="${this.chartIdentifier}">
          <svg class="bar-chart"></svg>
+         <div class="ds-tooltip"></div>
        </div>`;
     }
 
@@ -41,10 +62,12 @@ export class BarChart extends LitElement {
         let element = this.shadowRoot.querySelector(".bar-chart");
         let dataSource = this.dataSource;
         let formatAsInteger = d3.format(",");
+        let tooltipNode = this.shadowRoot.querySelector('.ds-tooltip');
 
-        function addTooltip(tooltipNode, htmlString, xOffset, yOffset) {
-            let e = window.event;
-            var x = e.clientX,
+
+        function addTooltip(element, tooltipNode, htmlString, xOffset, yOffset) {
+            let e = element;
+            let x = e.clientX,
                 y = e.clientY;
 
             let tipY = (y + yOffset) + 'px';
@@ -55,10 +78,10 @@ export class BarChart extends LitElement {
                 tipX = (x - 130) + 'px';
             }
 
-            tooltipNode.html(htmlString)
-                .style("opacity", .9)
-                .style('left', `${(tipX)}`)
-                .style('top', `${(tipY)}`);
+            $(tooltipNode).html(htmlString)
+                .css("opacity", .9)
+                .css('left', `${(tipX)}`)
+                .css('top', `${(tipY)}`);
         }
 
         function barChartSetup(innerWidth=360) {
@@ -112,10 +135,6 @@ export class BarChart extends LitElement {
                 .attr("height", height + margin.top + margin.bottom)
                 .attr("id", attrName+"ChartPlot")
                 .attr("class", "ds-chart-base");
-
-            const tooltip = d3.select("#"+attrName+"Chart").append("div")
-                .attr("class", "ds-tooltip")
-                .style("opacity", 0);
 
             function make_y_gridlines() {
                 return d3.axisLeft(yScale)
@@ -253,12 +272,14 @@ export class BarChart extends LitElement {
 
             function mouseover(d) {
                 let htmlString = "Target Pct: " + d.target_pct + "%<br/>"  + "Index: " + d.index;
-                addTooltip(tooltip, htmlString, 0, -40);
+                element.addEventListener('mousemove', function(e) {
+                    addTooltip(e, tooltipNode, htmlString, 0, -40)
+                });
             }
 
-            function mouseup(d) {
+            function mouseup() {
                 // Hide tooltip when the mouse leaves the element
-                tooltip.style('opacity', 0);
+                $(tooltipNode).css('opacity', 0);
             }
 
         }
