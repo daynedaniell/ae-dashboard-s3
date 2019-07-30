@@ -1,0 +1,34 @@
+[
+  {
+    "attrib_value": "Asian",
+    "target_count": 310,
+    "random_count": 396,
+    "target_pct": 3,
+    "random_pct": 4,
+    "index": 75
+  },
+  {
+    "attrib_value": "African American",
+    "target_count": 444,
+    "random_count": 1038,
+    "target_pct": 4,
+    "random_pct": 10,
+    "index": 40
+  },
+  {
+    "attrib_value": "Hispanic",
+    "target_count": 733,
+    "random_count": 1192,
+    "target_pct": 7,
+    "random_pct": 12,
+    "index": 58
+  },
+  {
+    "attrib_value": "White/Other",
+    "target_count": 8513,
+    "random_count": 7290,
+    "target_pct": 85,
+    "random_pct": 74,
+    "index": 115
+  }
+]

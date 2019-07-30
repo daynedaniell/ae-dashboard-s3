@@ -1,0 +1,34 @@
+[
+  {
+    "attrib_value": "High School",
+    "target_count": 3907,
+    "random_count": 3510,
+    "target_pct": 48,
+    "random_pct": 55,
+    "index": 87
+  },
+  {
+    "attrib_value": "College",
+    "target_count": 2876,
+    "random_count": 2088,
+    "target_pct": 35,
+    "random_pct": 33,
+    "index": 106
+  },
+  {
+    "attrib_value": "Grad School",
+    "target_count": 1331,
+    "random_count": 755,
+    "target_pct": 16,
+    "random_pct": 12,
+    "index": 133
+  },
+  {
+    "attrib_value": "Vocational",
+    "target_count": 54,
+    "random_count": 32,
+    "target_pct": 1,
+    "random_pct": 1,
+    "index": 100
+  }
+]

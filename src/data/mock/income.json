@@ -1,0 +1,74 @@
+[
+  {
+    "attrib_value": "< 15K",
+    "target_count": 0,
+    "random_count": 1003,
+    "target_pct": 0,
+    "random_pct": 10,
+    "index": 0
+  },
+  {
+    "attrib_value": "15K-20K",
+    "target_count": 0,
+    "random_count": 508,
+    "target_pct": 0,
+    "random_pct": 5,
+    "index": 0
+  },
+  {
+    "attrib_value": "20K-30K",
+    "target_count": 0,
+    "random_count": 972,
+    "target_pct": 0,
+    "random_pct": 10,
+    "index": 0
+  },
+  {
+    "attrib_value": "30K-40K",
+    "target_count": 838,
+    "random_count": 928,
+    "target_pct": 8,
+    "random_pct": 9,
+    "index": 89
+  },
+  {
+    "attrib_value": "40K-50K",
+    "target_count": 1162,
+    "random_count": 988,
+    "target_pct": 12,
+    "random_pct": 10,
+    "index": 120
+  },
+  {
+    "attrib_value": "50K-75K",
+    "target_count": 2784,
+    "random_count": 2146,
+    "target_pct": 28,
+    "random_pct": 21,
+    "index": 133
+  },
+  {
+    "attrib_value": "75K-100K",
+    "target_count": 1861,
+    "random_count": 1240,
+    "target_pct": 19,
+    "random_pct": 12,
+    "index": 158
+  },
+  {
+    "attrib_value": "100K-125K",
+    "target_count": 1022,
+    "random_count": 659,
+    "target_pct": 10,
+    "random_pct": 7,
+    "index": 143
+  },
+  {
+    "attrib_value": "> 125K",
+    "target_count": 2333,
+    "random_count": 1556,
+    "target_pct": 23,
+    "random_pct": 16,
+    "index": 144
+  }
+]

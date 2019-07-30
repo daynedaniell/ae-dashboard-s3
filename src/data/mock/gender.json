@@ -1,0 +1,18 @@
+[
+  {
+    "attrib_value": "F",
+    "target_count": 5231,
+    "random_count": 4969,
+    "target_pct": 54,
+    "random_pct": 53,
+    "index": 102
+  },
+  {
+    "attrib_value": "M",
+    "target_count": 4533,
+    "random_count": 4361,
+    "target_pct": 46,
+    "random_pct": 47,
+    "index": 98
+  }
+]

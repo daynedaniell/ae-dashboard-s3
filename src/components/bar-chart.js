@@ -279,7 +279,10 @@ export class BarChart extends LitElement {
 
             function mouseup() {
                 // Hide tooltip when the mouse leaves the element
-                $(tooltipNode).css('opacity', 0);
+                element.addEventListener('mouseout', function(e) {
+                    $(tooltipNode).css('opacity', 0);
+                });
+
             }
 
         }

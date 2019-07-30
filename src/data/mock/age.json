@@ -1,0 +1,50 @@
+[
+  {
+    "attrib_value": "18-25",
+    "target_count": 612,
+    "random_count": 566,
+    "target_pct": 7,
+    "random_pct": 7,
+    "index": 100
+  },
+  {
+    "attrib_value": "26-35",
+    "target_count": 940,
+    "random_count": 1244,
+    "target_pct": 10,
+    "random_pct": 15,
+    "index": 67
+  },
+  {
+    "attrib_value": "36-45",
+    "target_count": 1389,
+    "random_count": 1234,
+    "target_pct": 15,
+    "random_pct": 15,
+    "index": 100
+  },
+  {
+    "attrib_value": "46-55",
+    "target_count": 1805,
+    "random_count": 1520,
+    "target_pct": 19,
+    "random_pct": 19,
+    "index": 100
+  },
+  {
+    "attrib_value": "56-65",
+    "target_count": 2143,
+    "random_count": 1504,
+    "target_pct": 23,
+    "random_pct": 18,
+    "index": 128
+  },
+  {
+    "attrib_value": "66+",
+    "target_count": 2370,
+    "random_count": 2139,
+    "target_pct": 26,
+    "random_pct": 26,
+    "index": 100
+  }
+]

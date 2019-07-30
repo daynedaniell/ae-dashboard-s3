@@ -1,0 +1,18 @@
+[
+  {
+    "attrib_value": "Married",
+    "target_count": 7879,
+    "random_count": 5207,
+    "target_pct": 79,
+    "random_pct": 52,
+    "index": 152
+  },
+  {
+    "attrib_value": "Single",
+    "target_count": 2121,
+    "random_count": 4793,
+    "target_pct": 21,
+    "random_pct": 48,
+    "index": 44
+  }
+]
